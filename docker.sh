@@ -9,8 +9,6 @@ fi
 readonly DOCKER_NAME=mywordpress
 CONTAINER=$(docker ps -qf name="$DOCKER_NAME")
 
-echo "Container $CONTAINER"
-
 # Build
 if [ "${1}" == "build" ]; then
 

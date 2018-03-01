@@ -1,39 +1,4 @@
-# AWS Elastic Beanstalk Deployment Boilerplate
-
-Do you deploy to AWS Elastic Beanstalk? Do you need to run application in
-multiple environments? If both answers are yes, read on.
-
-This is a starting point repository for web application. You can use the
-included scripts to customize application building and AWS deployment processes.
-You are required to have some knowledge of AWS and bash scripting to be able
-to configure and add on your custom code, however I have made this boilerplate
-really simple and easy to understand.
-
-Included scripts automate tasks below for you:
-* Create or update an application in AWS
-* Create or update an Elastic Beanstalk environment base on your GIT branch
-* Archive application files in S3, also purges old files after configurable days
-* **Seamlessly deploy your production(master branch) code to EBS without downtime.** See AWS [Blue/Green deployment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.CNAMESwap.html) and beware of the DNS caveat noted in the documentation.
-
-You're required to:
-* Add your own web content
-* Add on your own custom logics for application building. For examples, you might
-need to move files around or configure database credentials
-* Modify deployment processes to fit your needs
-
-## Demo
-
-In this demo, I created a new application with 3 environments in AWS Elastic Beanstalk using commands only.
-
-![Alt Text](https://s3.amazonaws.com/azhao-public/github/aws-ebs-deploy-demo.gif)
-
-Click [here](https://s3.amazonaws.com/azhao-public/github/aws-ebs-deploy-demo.webm) to see a high resolution video of the demo.
-
-## Branches
-
-* **master** This is the branch you want to start fresh
-* **wordpress** This is the branch I experiment with Wordpress
-* **beta** This is the branch I commit and test features
+# AWS Elastic Beanstalk Deployment
 
 ## Quick Start
 
