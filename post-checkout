@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# Exit of file checkout, more: https://stackoverflow.com/questions/1011557/is-there-a-way-to-trigger-a-hook-after-a-new-branch-has-been-checked-out-in-git
+if [ "$3" ] && [ "$3" == "0" ]; then
+  exit
+fi
+
+# This file will get copied to .git/hooks and will execute upon branch checkout
+
+# Get db params base on branch from db.json
+readonly BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+readonly HOST=$(jq -r ".${BRANCH}.endpoint" ./db.json)
+readonly DATABASE=$(jq -r ".${BRANCH}.database" ./db.json)
+readonly USER=$(jq -r ".${BRANCH}.user" ./db.json)
+readonly PASSWORD=$(jq -r ".${BRANCH}.password" ./db.json)
+
+# Create wp-config.php
+cp ./src/wp-config-default.php ./src/wp-config.php
+
+# Update wp-config.php
+sed -i '' -e "s/define('DB_NAME', '.*');/define('DB_NAME', '$DATABASE');/g" ./src/wp-config.php
+sed -i '' -e "s/define('DB_USER', '.*');/define('DB_USER', '$USER');/g" ./src/wp-config.php
+sed -i '' -e "s/define('DB_PASSWORD', '.*');/define('DB_PASSWORD', '$PASSWORD');/g" ./src/wp-config.php
+sed -i '' -e "s/define('DB_HOST', '.*');/define('DB_HOST', '$HOST');/g" ./src/wp-config.php
+

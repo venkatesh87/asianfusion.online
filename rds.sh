@@ -1,15 +1,15 @@
 #!/bin/bash
 
 function wait-for-status {
-    instance=$1
-    target_status=$2
-    status=unknown
-    while [[ "$status" != "$target_status" ]]; do
-        status=($(aws rds describe-db-instances \
-            --db-instance-identifier $instance | jq -r '.DBInstances[].DBInstanceStatus'))
-        echo "Please wait...db is $status"
-        sleep 10
-    done
+  instance=$1
+  target_status=$2
+  status=unknown
+  while [[ "$status" != "$target_status" ]]; do
+    status=($(aws rds describe-db-instances \
+      --db-instance-identifier $instance | jq -r '.DBInstances[].DBInstanceStatus'))
+    echo "Please wait...db is $status"
+    sleep 10
+  done
 }
 
 function get-endpoint {
@@ -25,7 +25,7 @@ function get-password {
 }
 
 readonly DB_INSTANCE_IDENTIFIER=mywp
-readonly MASTER_USERNAME=${DB_INSTANCE_IDENTIFIER}
+readonly MASTER_USERNAME=$DB_INSTANCE_IDENTIFIER
 readonly MASTER_USER_PASSWORD=$(get-password)
 readonly VPC_SECURITY_GROUP_IDS=sg-6ee73218
 readonly REGION=us-east-1
@@ -93,28 +93,36 @@ mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "FLUSH PRIVILEGE
 
 echo "Done, check db.json for info, please save this file"
 
-echo "[
-  "root": {
-    "endpoint": $ENDPOINT,
-    "user": $MASTER_USERNAME,
-    "password": $MASTER_USER_PASSWORD 
+# Generate db.json file
+echo "{
+  \"root\": {
+    \"endpoint\": \"$ENDPOINT\",
+    \"user\": \"$MASTER_USERNAME\",
+    \"password\": \"$MASTER_USER_PASSWORD\"
   },
-  "dev": {
-    "endpoint": $ENDPOINT,
-    "database": $DB_DEV,
-    "user": $DB_DEV_USER,
-    "password": $DB_DEV_PASSWORD
+  \"dev\": {
+    \"endpoint\": \"$ENDPOINT\",
+    \"database\": \"$DB_DEV\",
+    \"user\": \"$DB_DEV_USER\",
+    \"password\": \"$DB_DEV_PASSWORD\"
   },
-  "qa": {
-    "endpoint": $ENDPOINT,
-    "database": $DB_QA,
-    "user": $DB_QA_USER,
-    "password": $DB_QA_PASSWORD
+  \"qa\": {
+    \"endpoint\": \"$ENDPOINT\",
+    \"database\": \"$DB_QA\",
+    \"user\": \"$DB_QA_USER\",
+    \"password\": \"$DB_QA_PASSWORD\"
   },
-  "live": {
-    "endpoint": $ENDPOINT,
-    "database": $DB_LIVE,
-    "user": $DB_LIVE_USER,
-    "password": $DB_LIVE_PASSWORD
+  \"master\": {
+    \"endpoint\": \"$ENDPOINT\",
+    \"database\": \"$DB_LIVE\",
+    \"user\": \"$DB_LIVE_USER\",
+    \"password\": \"$DB_LIVE_PASSWORD\"
   }
 }" > ./db.json
+
+cat ./db.json
+
+# Create post-checkout
+sh ./post-checkout
+cp ./post-checkout .git/hooks/post-checkout
+chmod u+x .git/hooks/post-checkout

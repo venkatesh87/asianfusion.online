@@ -3,8 +3,7 @@ MAINTAINER Alan Zhao <alanzhaonys@yahoo.com>
 
 # Install packages
 RUN yum update -y
-RUN yum install vim httpd24 php71 php71-mcrypt php71-memcache php71-gd \
-  mysql56-server php71-mysqlnd -y
+RUN yum install vim httpd24 php71 php71-mcrypt php71-memcache php71-gd php71-mysqlnd -y
 
 RUN echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
 

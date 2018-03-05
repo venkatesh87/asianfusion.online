@@ -16,7 +16,7 @@ if [ "${1}" == "build" ]; then
 
 elif [ "${1}" == "run" ]; then
 
-    docker run -d -p $DOCKER_PORT:80 --name $DOCKER_NAME $DOCKER_TAG
+    docker run -d -v ${PWD}/src:/var/www/html -p $DOCKER_PORT:80 --name $DOCKER_NAME $DOCKER_TAG
 
 elif [ "${1}" == "remove" ]; then
 
