@@ -237,6 +237,14 @@ fi
 touch ./src/build.txt
 echo $BUILD_NUMBER >> ./src/build.txt
 
+
+# wp-config.php
+
+sed -i -e "s/define('DB_NAME', '.*');/define('DB_NAME', 'mywordpress1_live');/g" ./src/wp-config.php
+sed -i -e "s/define('DB_USER', '.*');/define('DB_USER', 'mywordpress1_live');/g" ./src/wp-config.php
+sed -i -e "s/define('DB_PASSWORD', '.*');/define('DB_PASSWORD', 'mywordpress1_live');/g" ./src/wp-config.php
+sed -i -e "s/define('DB_HOST', '.*');/define('DB_HOST', 'mywordpress1_live');/g" ./src/wp-config.php
+
 #####################################################
 # END                                               #
 #####################################################

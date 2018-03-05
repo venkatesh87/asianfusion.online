@@ -20,7 +20,7 @@ RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 # Enable networking
 RUN echo "NETWORKING=yes" >/etc/sysconfig/network
 
-ADD src /var/www/html
+ADD ./src /var/www/html
 
 VOLUME /var/www/html
 
