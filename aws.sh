@@ -247,7 +247,7 @@ rm -f /tmp/$APP_FILE.zip
 # Zip up web content
 echo ZIPPING UP WEB CONTENT IN $PUBLIC_WEB_DIR
 cd ./$PUBLIC_WEB_DIR
-zip -qr /tmp/$APP_FILE.zip .
+zip -qr /tmp/$APP_FILE.zip . -x "*.git*" "*/\.DS_Store" "wordpress/db.json"
 cd - >/dev/null 2>&1
 
 echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
