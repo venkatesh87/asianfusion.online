@@ -158,7 +158,7 @@ readonly BUILD_NUMBER=$(date '+%Y%m%d-%H%M%S')
 # Unique file name used for versioning
 readonly APP_FILE_VERSIONED=${APP_FILE}-${BUILD_NUMBER}
 # Public web directory
-readonly PUBLIC_WEB_DIR="src"
+readonly PUBLIC_WEB_DIR="wordpress"
 # Platform stack
 readonly STACK="64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1"
 # EC2 instance type
@@ -231,11 +231,11 @@ fi
 # Continue with deployment
 
 #####################################################
-# BEGIN - BUILD YOUR WEB CONTENT (src) HERE #
+# BEGIN - BUILD YOUR WEB CONTENT (wordpress) HERE #
 #####################################################
 
-touch ./src/build.txt
-echo $BUILD_NUMBER >> ./src/build.txt
+touch ./wordpress/build.txt
+echo $BUILD_NUMBER >> ./wordpress/build.txt
 
 #####################################################
 # END                                               #

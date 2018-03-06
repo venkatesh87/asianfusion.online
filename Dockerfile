@@ -3,7 +3,7 @@ MAINTAINER Alan Zhao <alanzhaonys@yahoo.com>
 
 # Install packages
 RUN yum update -y
-RUN yum install vim httpd24 php71 php71-mcrypt php71-memcache php71-gd php71-mysqlnd -y
+RUN yum install vim httpd24 php71 php71-mbstring php71-mcrypt php71-memcache php71-gd php71-mysqlnd -y
 
 RUN echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
 
@@ -19,7 +19,7 @@ RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 # Enable networking
 RUN echo "NETWORKING=yes" >/etc/sysconfig/network
 
-ADD ./src /var/www/html
+ADD ./wordpress /var/www/html
 
 VOLUME /var/www/html
 

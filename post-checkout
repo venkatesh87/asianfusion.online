@@ -15,11 +15,11 @@ readonly USER=$(jq -r ".${BRANCH}.user" ./db.json)
 readonly PASSWORD=$(jq -r ".${BRANCH}.password" ./db.json)
 
 # Create wp-config.php
-cp ./src/wp-config-default.php ./src/wp-config.php
+cp ./wordpress/wp-config-default.php ./wordpress/wp-config.php
 
 # Update wp-config.php
-sed -i '' -e "s/define('DB_NAME', '.*');/define('DB_NAME', '$DATABASE');/g" ./src/wp-config.php
-sed -i '' -e "s/define('DB_USER', '.*');/define('DB_USER', '$USER');/g" ./src/wp-config.php
-sed -i '' -e "s/define('DB_PASSWORD', '.*');/define('DB_PASSWORD', '$PASSWORD');/g" ./src/wp-config.php
-sed -i '' -e "s/define('DB_HOST', '.*');/define('DB_HOST', '$HOST');/g" ./src/wp-config.php
+sed -i '' -e "s/define('DB_NAME', '.*');/define('DB_NAME', '$DATABASE');/g" ./wordpress/wp-config.php
+sed -i '' -e "s/define('DB_USER', '.*');/define('DB_USER', '$USER');/g" ./wordpress/wp-config.php
+sed -i '' -e "s/define('DB_PASSWORD', '.*');/define('DB_PASSWORD', '$PASSWORD');/g" ./wordpress/wp-config.php
+sed -i '' -e "s/define('DB_HOST', '.*');/define('DB_HOST', '$HOST');/g" ./wordpress/wp-config.php
 
