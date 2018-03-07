@@ -1,4 +1,5 @@
 .DS_Store
+*.pem
 db.json
 app.json
 wordpress/wp-config.php
