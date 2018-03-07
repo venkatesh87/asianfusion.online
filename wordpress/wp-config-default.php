@@ -18,6 +18,12 @@
  * @package WordPress
  */
 
+// Configure server URL dynamically so that multiple environment URLs work
+$serverUrl = ($_SERVER['HTTPS'] ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
+
+define('WP_SITEURL', $serverUrl);
+define('WP_HOME', $serverUrl);
+
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 define('DB_NAME', 'to-be-replaced');

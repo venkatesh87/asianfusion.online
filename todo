@@ -3,3 +3,5 @@ read me
 ssh ebs
 create script/description
 create ebs wait method
+cron setup
+ssl
