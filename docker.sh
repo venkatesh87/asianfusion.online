@@ -6,9 +6,10 @@ if [ "${1}" != "build" ] && [ "${1}" != "run" ] && [ "${1}" != "remove" ] && [ "
   exit
 fi
 
-readonly DOCKER_TAG=wp
-readonly DOCKER_NAME=mywordpress
-readonly DOCKER_PORT=8500
+readonly DOCKER_NAME=$(jq -r ".dockerName" ./app.json)
+readonly DOCKER_TAG=$(jq -r ".dockerTag" ./app.json)
+readonly DOCKER_PORT=$(jq -r ".dockerPort" ./app.json)
+readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
 
 if [ "${1}" == "build" ]; then
 
@@ -16,7 +17,7 @@ if [ "${1}" == "build" ]; then
 
 elif [ "${1}" == "run" ]; then
 
-    docker run -d -v ${PWD}/wordpress:/var/www/html -p $DOCKER_PORT:80 --name $DOCKER_NAME $DOCKER_TAG
+    docker run -d -v ${PWD}/${PUBLIC_WEB_DIR}:/var/www/html -p $DOCKER_PORT:80 --name $DOCKER_NAME $DOCKER_TAG
 
 elif [ "${1}" == "remove" ]; then
 

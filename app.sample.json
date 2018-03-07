@@ -1,0 +1,15 @@
+{
+  "appName": "mywordpress",
+  "securityGroup": "",
+  "ec2KeyName": "",
+  "dockerName": "mywordpress",
+  "dockerTag": "mywp",
+  "dockerPort": "8500",
+  "s3Bucket": "azhao",
+  "publicWebDir": "wordpress",
+  "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
+  "instanceType": "t2.micro",
+  "s3Delete": 1,
+  "s3DeleteDaysOld": 7,
+  "openInBrowserAfterUpdate": 1
+}
