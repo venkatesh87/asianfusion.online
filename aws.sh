@@ -146,7 +146,7 @@ fi
 ########################
 
 # AWS application name
-readonly APP_NAME="MUST CHANGE"
+readonly APP_NAME=$(jq -r ".appName" ./app.json)
 # Detect git branch
 readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 # Application file name
@@ -158,27 +158,27 @@ readonly BUILD_NUMBER=$(date '+%Y%m%d-%H%M%S')
 # Unique file name used for versioning
 readonly APP_FILE_VERSIONED=${APP_FILE}-${BUILD_NUMBER}
 # Public web directory
-readonly PUBLIC_WEB_DIR="wordpress"
+readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
 # Platform stack
-readonly STACK="64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1"
+readonly STACK=$(jq -r ".stack" ./app.json)
 # EC2 instance type
-readonly INSTANCE_TYPE="t2.micro"
+readonly INSTANCE_TYPE=$(jq -r ".instanceType" ./app.json)
 # Security group
-readonly SECURITY_GROUP="MUST CHANGE"
+readonly SECURITY_GROUP=$(jq -r ".securityGroup" ./app.json)
 # EC2 key pair name
-readonly EC2_KEY_NAME="MUST CHANGE"
+readonly EC2_KEY_NAME=$(jq -r ".ec2KeyName" ./app.json)
 # S3 bucket name
-readonly S3_BUCKET="MUST CHANGE"
+readonly S3_BUCKET=$(jq -r ".s3Bucket" ./app.json)
 # S3 directory
 readonly S3_BUCKET_DIR="apps/${APP_NAME}/${APP_BRANCH}"
 # S3 file name
 readonly S3_BUCKET_FILE=${S3_BUCKET_DIR}/${APP_FILE_VERSIONED}.zip
 # Delete S3 file?
-readonly S3_DELETE=1
+readonly S3_DELETE=$(jq -r ".s3Delete" ./app.json)
 # Delete S3 file "n" days old
-readonly S3_DELETE_DAYS_OLD=7
+readonly S3_DELETE_DAYS_OLD=$(jq -r ".s3DeleteDaysOld" ./app.json)
 # Open environment in browser after update
-readonly OPEN_IN_BROWSER_AFTER_UPDATE=1
+readonly OPEN_IN_BROWSER_AFTER_UPDATE=$(jq -r ".openInBrowserAfterUpdate" ./app.json)
 
 ######################
 # End configurations #
@@ -231,11 +231,11 @@ fi
 # Continue with deployment
 
 #####################################################
-# BEGIN - BUILD YOUR WEB CONTENT (wordpress) HERE #
+# BEGIN - BUILD YOUR WEB CONTENT HERE #
 #####################################################
 
-touch ./wordpress/build.txt
-echo $BUILD_NUMBER >> ./wordpress/build.txt
+touch ./${PUBLIC_WEB_DIR}/build.txt
+echo $BUILD_NUMBER >> ./${PUBLIC_WEB_DIR}/build.txt
 
 #####################################################
 # END                                               #
