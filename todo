@@ -5,3 +5,4 @@ create script/description
 create ebs wait method
 cron setup
 ssl
+wordpress username/email
