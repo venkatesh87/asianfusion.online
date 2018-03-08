@@ -247,8 +247,13 @@ rm -f /tmp/$APP_FILE.zip
 # Zip up web content
 echo ZIPPING UP WEB CONTENT IN $PUBLIC_WEB_DIR
 cd ./$PUBLIC_WEB_DIR
+
+# Get a list of untracked GIT files
+readonly UNTRACKED_GIT_FILES=$(git ls-files --others --exclude-standard)
+
 # Exclude some files
-zip -qr /tmp/$APP_FILE.zip . -x "*.git*" "*/\.DS_Store"
+zip -qr /tmp/$APP_FILE.zip . -x "*.git*" "*/\.DS_Store" $UNTRACKED_GIT_FILES
+
 # Go back
 cd - >/dev/null 2>&1
 

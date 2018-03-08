@@ -5,7 +5,6 @@ create ebs wait method
 cron setup
 ssl
 wordpress username/email
-don't package untracked files
 report ebs health
 // Get all instances
 aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
