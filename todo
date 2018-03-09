@@ -10,8 +10,16 @@ when terminal master branch, make sure alt env is also terminated
 put php config in app.json
 instance profile
 change app name
+disable blue/green deployment
 rearrange app.json
   * different stack for environments
   * disk/hardware options
 // Get all instances
 aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
+
+
+bugs:
+- clean certificate
+- two master env which to ssh?
+- configure cert variable in ebextention config
+- wordpress loading none https content

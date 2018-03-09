@@ -70,7 +70,7 @@ function swap_environment() {
   i="0"
 
   while [ $i -lt $try ]; do
-    echo "WAIT FOR SECONDARY ENVIRONMENT TO BE READY, DON'T QUIT"
+    echo "WAIT FOR ALTERNATE ENVIRONMENT TO BE READY, DON'T QUIT"
     # Give it a min
     sleep 30
     ((i++))
@@ -181,6 +181,8 @@ readonly S3_DELETE=$(jq -r ".s3Delete" $APP_CONFIG_FILE)
 readonly S3_DELETE_DAYS_OLD=$(jq -r ".s3DeleteDaysOld" $APP_CONFIG_FILE)
 # Open environment in browser after update
 readonly OPEN_IN_BROWSER_AFTER_UPDATE=$(jq -r ".openInBrowserAfterUpdate" $APP_CONFIG_FILE)
+# Blue green deployment
+readonly BLUE_GREEN_DEPLOYMENT=$(jq -r ".blueGreenDeployment" $APP_CONFIG_FILE)
 # Basic auth enabled?
 readonly BASIC_AUTH_ENABLED=$(jq -r ".basicAuth.${APP_BRANCH}.enabled" $APP_CONFIG_FILE)
 # Basic auth user
@@ -335,10 +337,10 @@ else
 
       # Deploying to production and environment exists:
       # - We don't want to update exsting environment as it will create down time.
-      # - Instead we create a secondary environment and swap CNAME when it's ready.
-      # - This secondary environment will stay there for future use, don't delete.
+      # - Instead we create an alternate environment and swap CNAME when it's ready.
+      # - This alternate environment will stay there for future use, don't delete.
 
-      if [ "$APP_BRANCH" == "master" ]; then
+      if [ "$APP_BRANCH" == "master" ] && [ "$BLUE_GREEN_DEPLOYMENT" -eq 1 ]; then
 
         echo "YOU'RE PUSHING TO PRODUCTION..."
 
@@ -348,23 +350,23 @@ else
 
         if [ "$MASTER_ALT_ENV_AVAILABLE" == "true" ]; then
 
-          echo "LET'S MAKE A SECONDARY ENVIRONMENT TO SWAP OVER TO AVOID DOWNTIME"
-          # Create a secondary master environment
+          echo "LET'S MAKE AN ALTERNATE ENVIRONMENT TO SWAP OVER TO AVOID DOWNTIME"
+          # Create an alternate master environment
           create_environment $MASTER_ALT_ENV
           swap_environment $MASTER_ALT_ENV $ENV_NAME
 
         else
 
-          # If secondary environment has already been used as production,
+          # If alternate environment has already been used as production,
           # use the main environment for swapping
           ENV_URL=($(aws elasticbeanstalk describe-environments \
             --environment-names $ENV_NAME | jq -r '.Environments[].CNAME'))
           if [[ $ENV_URL == "${ENV_NAME}."* ]]; then
-            echo "UPDATING SECONDARY ENVIRONMENT (${MASTER_ALT_ENV})"
+            echo "UPDATING ALTERNATE ENVIRONMENT (${MASTER_ALT_ENV})"
             update_environment $MASTER_ALT_ENV
             swap_environment $MASTER_ALT_ENV $ENV_NAME
           else
-            echo "UPDATING SECONDARY ENVIRONMENT (${ENV_NAME})"
+            echo "UPDATING ALTERNATE ENVIRONMENT (${ENV_NAME})"
             update_environment $ENV_NAME
             swap_environment $ENV_NAME $MASTER_ALT_ENV
           fi
