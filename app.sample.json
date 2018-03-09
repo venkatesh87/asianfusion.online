@@ -24,8 +24,8 @@
       "user": "change-me",
       "password": "change-me"
     },
-    "live": {
-      "enabled": 1,
+    "master": {
+      "enabled": 0,
       "user": "change-me",
       "password": "change-me"
     }

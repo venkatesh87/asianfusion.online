@@ -3,11 +3,10 @@ read me
 create script/description
 create ebs wait method
 cron setup
-ssl
+ssl termination and redirect
 initial wordpress username/email
 report ebs health
 when terminal master branch, make sure alt env is also terminated
-basic auth for test and qa sites
 put php config in app.json
 instance profile
 change app name
