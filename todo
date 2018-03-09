@@ -10,7 +10,9 @@ when terminal master branch, make sure alt env is also terminated
 basic auth for test and qa sites
 put php config in app.json
 instance profile
+change app name
 rearrange app.json
   * different stack for environments
+  * disk/hardware options
 // Get all instances
 aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'

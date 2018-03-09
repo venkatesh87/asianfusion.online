@@ -5,7 +5,7 @@ readonly APP_NAME=$(jq -r ".appName" ./app.json)
 readonly BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 readonly ENV_NAME=${APP_NAME}-${BRANCH}
 
-readonly PUBLIC_IP=($(aws ec2 describe-instances --filters "Name=tag:Name,Values=mywordpress-dev" | jq -r ".Reservations[].Instances[].PublicIpAddress"))
+readonly PUBLIC_IP=($(aws ec2 describe-instances --filters "Name=tag:Name,Values=${APP_NAME}-${BRANCH}" | jq -r ".Reservations[].Instances[].PublicIpAddress"))
 
 echo "Connecting to $PUBLIC_IP"
 
