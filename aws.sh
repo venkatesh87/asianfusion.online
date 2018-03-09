@@ -254,6 +254,9 @@ rm -f /tmp/$APP_FILE.zip
 echo ZIPPING UP WEB CONTENT IN $PUBLIC_WEB_DIR
 cd ./${PUBLIC_WEB_DIR}
 
+# Make sure wp-config.php is up to date
+sh ./post-checkout
+
 # .ebextensions config
 mkdir -p ./.ebextensions
 readonly EBEXTENSIONS_DIR=./.ebextensions

@@ -15,7 +15,8 @@ rearrange app.json
   * disk/hardware options
 // Get all instances
 aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
-
+run post-checkout to aws.sh
+be able to configure aws account on branch
 
 bugs:
 - two master env which to ssh?
