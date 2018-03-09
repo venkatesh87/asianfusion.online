@@ -6,5 +6,7 @@ cron setup
 ssl
 wordpress username/email
 report ebs health
+when terminal master branch, make sure alt env is also terminated
+basic auth for test and qa sites
 // Get all instances
 aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
