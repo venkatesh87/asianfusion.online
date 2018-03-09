@@ -19,10 +19,15 @@
  */
 
 // Configure server URL dynamically so that multiple environment URLs work
-$serverUrl = ($_SERVER['HTTPS'] ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'];
+
+// More reliable way to determine https protocol in load balancing environments
+define('SERVER_PROTOCOL', isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : ((isset( $_SERVER["HTTPS"] ) && strtolower( $_SERVER["HTTPS"] ) == "on" ) ? 'https' : 'http')); 
+
+$serverUrl = SERVER_PROTOCOL . '://' . $_SERVER['HTTP_HOST'];
 
 define('WP_SITEURL', $serverUrl);
 define('WP_HOME', $serverUrl);
+
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
