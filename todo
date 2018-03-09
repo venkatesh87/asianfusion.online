@@ -20,4 +20,5 @@ aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tag
 bugs:
 - two master env which to ssh?
 - configure cert variable in ebextention config
-- wordpress loading none https content
+
+- report to wordpress is_ssl() method
