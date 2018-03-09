@@ -145,8 +145,10 @@ fi
 # Start configurations #
 ########################
 
+# App config file
+readonly APP_CONFIG_FILE=./app.json
 # AWS application name
-readonly APP_NAME=$(jq -r ".appName" ./app.json)
+readonly APP_NAME=$(jq -r ".appName" $APP_CONFIG_FILE)
 # Detect git branch
 readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 # Application file name
@@ -158,27 +160,33 @@ readonly BUILD_NUMBER=$(date '+%Y%m%d-%H%M%S')
 # Unique file name used for versioning
 readonly APP_FILE_VERSIONED=${APP_FILE}-${BUILD_NUMBER}
 # Public web directory
-readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
+readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
 # Platform stack
-readonly STACK=$(jq -r ".stack" ./app.json)
+readonly STACK=$(jq -r ".stack" $APP_CONFIG_FILE)
 # EC2 instance type
-readonly INSTANCE_TYPE=$(jq -r ".instanceType" ./app.json)
+readonly INSTANCE_TYPE=$(jq -r ".instanceType" $APP_CONFIG_FILE)
 # Security group
-readonly SECURITY_GROUP=$(jq -r ".securityGroup" ./app.json)
+readonly SECURITY_GROUP=$(jq -r ".securityGroup" $APP_CONFIG_FILE)
 # EC2 key pair name
-readonly EC2_KEY_NAME=$(jq -r ".ec2KeyName" ./app.json)
+readonly EC2_KEY_NAME=$(jq -r ".ec2KeyName" $APP_CONFIG_FILE)
 # S3 bucket name
-readonly S3_BUCKET=$(jq -r ".s3Bucket" ./app.json)
+readonly S3_BUCKET=$(jq -r ".s3Bucket" $APP_CONFIG_FILE)
 # S3 directory
 readonly S3_BUCKET_DIR="apps/${APP_NAME}/${APP_BRANCH}"
 # S3 file name
 readonly S3_BUCKET_FILE=${S3_BUCKET_DIR}/${APP_FILE_VERSIONED}.zip
 # Delete S3 file?
-readonly S3_DELETE=$(jq -r ".s3Delete" ./app.json)
+readonly S3_DELETE=$(jq -r ".s3Delete" $APP_CONFIG_FILE)
 # Delete S3 file "n" days old
-readonly S3_DELETE_DAYS_OLD=$(jq -r ".s3DeleteDaysOld" ./app.json)
+readonly S3_DELETE_DAYS_OLD=$(jq -r ".s3DeleteDaysOld" $APP_CONFIG_FILE)
 # Open environment in browser after update
-readonly OPEN_IN_BROWSER_AFTER_UPDATE=$(jq -r ".openInBrowserAfterUpdate" ./app.json)
+readonly OPEN_IN_BROWSER_AFTER_UPDATE=$(jq -r ".openInBrowserAfterUpdate" $APP_CONFIG_FILE)
+# Basic auth enabled?
+readonly BASIC_AUTH_ENABLED=$(jq -r ".basicAuth.${APP_BRANCH}.enabled" $APP_CONFIG_FILE)
+# Basic auth user
+readonly BASIC_AUTH_USER=$(jq -r ".basicAuth.${APP_BRANCH}.user" $APP_CONFIG_FILE)
+# Basic auth password
+readonly BASIC_AUTH_PASSWORD=$(jq -r ".basicAuth.${APP_BRANCH}.password" $APP_CONFIG_FILE)
 
 ######################
 # End configurations #
@@ -231,22 +239,34 @@ fi
 # Continue with deployment
 
 #####################################################
-# BEGIN - BUILD YOUR WEB CONTENT HERE #
+# BEGIN - BUILD YOUR WEB CONTENT HERE               #
 #####################################################
 
 touch ./${PUBLIC_WEB_DIR}/build.txt
 echo $BUILD_NUMBER >> ./${PUBLIC_WEB_DIR}/build.txt
-
-#####################################################
-# END                                               #
-#####################################################
 
 # Remove previous build
 rm -f /tmp/$APP_FILE.zip
 
 # Zip up web content
 echo ZIPPING UP WEB CONTENT IN $PUBLIC_WEB_DIR
-cd ./$PUBLIC_WEB_DIR
+cd ./${PUBLIC_WEB_DIR}
+
+# .ebextensions config
+readonly EBEXTENSIONS_DIR=./.ebextensions
+cp ../ebextensions.default.config ${EBEXTENSIONS_DIR}/default.config
+
+# Basic auth
+if [ "$BASIC_AUTH_ENABLED" -eq 1 ]; then
+  echo "ENABLING BASIC AUTH"
+  # Search, replace and uncomment these lines
+  readonly HTPASSWD=$(htpasswd -nb $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD)
+  sed -i '' -e "s~#user:password-md5-string~${HTPASSWD}~g" ${EBEXTENSIONS_DIR}/default.config
+  sed -i '' -e "s/#AuthType Basic/AuthType Basic/g" ${EBEXTENSIONS_DIR}/default.config
+  sed -i '' -e "s/#AuthName \"My Protected Area\"/AuthName \"${APP_NAME} ${APP_BRANCH}\"/g" ${EBEXTENSIONS_DIR}/default.config
+  sed -i '' -e "s/#AuthUserFile \/etc\/httpd\/\.htpasswd/AuthUserFile \/etc\/httpd\/\.htpasswd/g" ${EBEXTENSIONS_DIR}/default.config
+  sed -i '' -e "s/#Require valid-user/Require valid-user/g" ${EBEXTENSIONS_DIR}/default.config
+fi
 
 # Get a list of untracked GIT files
 readonly UNTRACKED_GIT_FILES=$(git ls-files --others --exclude-standard)
@@ -258,6 +278,10 @@ zip -qr /tmp/$APP_FILE.zip . -x "*.git*" "*/\.DS_Store" $UNTRACKED_GIT_FILES
 cd - >/dev/null 2>&1
 
 echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
+
+#####################################################
+# END                                               #
+#####################################################
 
 # Send app to S3
 echo "SENDING APP TO S3: s3://${S3_BUCKET}/${S3_BUCKET_FILE}"
@@ -315,7 +339,7 @@ else
 
         echo "YOU'RE PUSHING TO PRODUCTION..."
 
-        readonly MASTER_ALT_ENV=${ENV_NAME}-alt
+        readonly MASTER_ALT_ENV=${ENV_NAME}-alternate
         readonly MASTER_ALT_ENV_AVAILABLE=($(aws elasticbeanstalk \
           check-dns-availability --cname-prefix $MASTER_ALT_ENV | jq -r '.Available'))
 

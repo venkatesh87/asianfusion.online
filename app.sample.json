@@ -1,15 +1,33 @@
 {
-  "appName": "mywordpress",
-  "securityGroup": "",
-  "ec2KeyName": "",
-  "dockerName": "mywordpress",
-  "dockerTag": "mywp",
+  "appName": "change-me",
+  "securityGroup": "change-me",
+  "ec2KeyName": "change-me",
+  "ec2KeyPath": "change-me",
+  "dockerName": "change-me",
+  "dockerTag": "change-me",
   "dockerPort": "8500",
-  "s3Bucket": "azhao",
+  "s3Bucket": "change-me",
   "publicWebDir": "wordpress",
   "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
   "instanceType": "t2.micro",
   "s3Delete": 1,
   "s3DeleteDaysOld": 7,
-  "openInBrowserAfterUpdate": 1
+  "openInBrowserAfterUpdate": 0,
+  "basicAuth": {
+    "dev": {
+      "enabled": 1,
+      "user": "change-me",
+      "password": "change-me"
+    },
+    "qa": {
+      "enabled": 1,
+      "user": "change-me",
+      "password": "change-me"
+    },
+    "live": {
+      "enabled": 1,
+      "user": "change-me",
+      "password": "change-me"
+    }
+  }
 }

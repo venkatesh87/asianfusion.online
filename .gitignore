@@ -3,4 +3,5 @@
 db.json
 app.json
 wordpress/wp-config.php
+wordpress/.ebextensions/default.config
 wordpress/build.txt

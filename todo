@@ -4,9 +4,13 @@ create script/description
 create ebs wait method
 cron setup
 ssl
-wordpress username/email
+initial wordpress username/email
 report ebs health
 when terminal master branch, make sure alt env is also terminated
 basic auth for test and qa sites
+put php config in app.json
+instance profile
+rearrange app.json
+  * different stack for environments
 // Get all instances
 aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
