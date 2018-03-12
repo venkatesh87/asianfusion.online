@@ -189,6 +189,8 @@ readonly BASIC_AUTH_ENABLED=$(jq -r ".basicAuth.${APP_BRANCH}.enabled" $APP_CONF
 readonly BASIC_AUTH_USER=$(jq -r ".basicAuth.${APP_BRANCH}.user" $APP_CONFIG_FILE)
 # Basic auth password
 readonly BASIC_AUTH_PASSWORD=$(jq -r ".basicAuth.${APP_BRANCH}.password" $APP_CONFIG_FILE)
+# SSL certificate ID
+readonly SSL_CERTIFICATE_ID=$(jq -r ".aws.sslCertificateId" $APP_CONFIG_FILE)
 
 ######################
 # End configurations #
@@ -252,15 +254,19 @@ rm -f /tmp/$APP_FILE.zip
 
 # Zip up web content
 echo ZIPPING UP WEB CONTENT IN $PUBLIC_WEB_DIR
-cd ./${PUBLIC_WEB_DIR}
 
-# Make sure wp-config.php is up to date
+# Make sure wp-config.php is up to date                                         
 sh ./post-checkout
 
-# .ebextensions config
+# Go into public web directory
+cd ./${PUBLIC_WEB_DIR}
+
+# Make .ebextensions config file
 mkdir -p ./.ebextensions
 readonly EBEXTENSIONS_DIR=./.ebextensions
 cp ../ebextensions.default.config ${EBEXTENSIONS_DIR}/default.config
+
+# Search and replace in .ebextensions/default.config
 
 # Basic auth
 if [ "$BASIC_AUTH_ENABLED" -eq 1 ]; then
@@ -274,6 +280,13 @@ if [ "$BASIC_AUTH_ENABLED" -eq 1 ]; then
   sed -i '' -e "s/#Require valid-user/Require valid-user/g" ${EBEXTENSIONS_DIR}/default.config
 else
   sed -i '' -e "s/#Require all granted/Require all granted/g" ${EBEXTENSIONS_DIR}/default.config
+fi
+
+# SSL certificate ID
+if [ "$SSL_CERTIFICATE_ID" == "" ]; then
+  sed -i '' -e "s~SSLCertificateId:~SSLCertificateId: ${SSL_CERTIFICATE_ID}~g" ${EBEXTENSIONS_DIR}/default.config
+else
+  sed -i '' -e "s/SSLCertificateId:/#SSLCertificateId:/g" ${EBEXTENSIONS_DIR}/default.config
 fi
 
 # Get a list of untracked GIT files

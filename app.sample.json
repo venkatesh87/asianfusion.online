@@ -13,6 +13,9 @@
   "s3Delete": 1,
   "s3DeleteDaysOld": 7,
   "openInBrowserAfterUpdate": 0,
+  "aws": {                                                                     
+    "sslCertificateId": ""
+  }, 
   "basicAuth": {
     "dev": {
       "enabled": 1,
