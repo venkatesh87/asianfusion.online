@@ -284,9 +284,9 @@ fi
 
 # SSL certificate ID
 if [ "$SSL_CERTIFICATE_ID" == "" ]; then
-  sed -i '' -e "s~SSLCertificateId:~SSLCertificateId: ${SSL_CERTIFICATE_ID}~g" ${EBEXTENSIONS_DIR}/default.config
-else
   sed -i '' -e "s/SSLCertificateId:/#SSLCertificateId:/g" ${EBEXTENSIONS_DIR}/default.config
+else
+  sed -i '' -e "s~SSLCertificateId:~SSLCertificateId: ${SSL_CERTIFICATE_ID}~g" ${EBEXTENSIONS_DIR}/default.config
 fi
 
 # Get a list of untracked GIT files
