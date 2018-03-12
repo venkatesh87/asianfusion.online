@@ -14,8 +14,8 @@ rearrange app.json
 // Get all instances
 aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
 be able to configure aws account on branch
+lower case log
 
 bugs:
 - two master env which to ssh?
-
 - report to wordpress is_ssl() method
