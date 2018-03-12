@@ -11,11 +11,13 @@ instance profile
 rearrange app.json
   * different stack for environments
   * disk/hardware options
-// Get all instances
-aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
 be able to configure aws account on branch
 lower case log
+put rds config in app.json
 
 bugs:
 - two master env which to ssh?
 - report to wordpress is_ssl() method
+
+
+aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'

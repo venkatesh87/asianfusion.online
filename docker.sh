@@ -6,9 +6,9 @@ if [ "${1}" != "build" ] && [ "${1}" != "run" ] && [ "${1}" != "remove" ] && [ "
   exit
 fi
 
-readonly DOCKER_NAME=$(jq -r ".dockerName" ./app.json)
-readonly DOCKER_TAG=$(jq -r ".dockerTag" ./app.json)
-readonly DOCKER_PORT=$(jq -r ".dockerPort" ./app.json)
+readonly DOCKER_NAME=$(jq -r ".docker.name" ./app.json)
+readonly DOCKER_TAG=$(jq -r ".docker.tag" ./app.json)
+readonly DOCKER_PORT=$(jq -r ".docker.port" ./app.json)
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
 
 if [ "${1}" == "build" ]; then

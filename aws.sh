@@ -164,27 +164,25 @@ readonly APP_FILE_VERSIONED=${APP_FILE}-${BUILD_NUMBER}
 # Public web directory
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
 # Platform stack
-readonly STACK=$(jq -r ".stack" $APP_CONFIG_FILE)
+readonly STACK=$(jq -r ".aws.stack" $APP_CONFIG_FILE)
 # EC2 instance type
-readonly INSTANCE_TYPE=$(jq -r ".instanceType" $APP_CONFIG_FILE)
+readonly INSTANCE_TYPE=$(jq -r ".aws.instanceType" $APP_CONFIG_FILE)
 # Security group
-readonly SECURITY_GROUP=$(jq -r ".securityGroup" $APP_CONFIG_FILE)
+readonly SECURITY_GROUP=$(jq -r ".aws.securityGroup" $APP_CONFIG_FILE)
 # EC2 key pair name
-readonly EC2_KEY_NAME=$(jq -r ".ec2KeyName" $APP_CONFIG_FILE)
+readonly EC2_KEY_NAME=$(jq -r ".aws.ec2KeyName" $APP_CONFIG_FILE)
 # S3 bucket name
-readonly S3_BUCKET=$(jq -r ".s3Bucket" $APP_CONFIG_FILE)
+readonly S3_BUCKET=$(jq -r ".aws.s3Bucket" $APP_CONFIG_FILE)
 # S3 directory
 readonly S3_BUCKET_DIR="apps/${APP_NAME}/${APP_BRANCH}"
 # S3 file name
 readonly S3_BUCKET_FILE=${S3_BUCKET_DIR}/${APP_FILE_VERSIONED}.zip
 # Delete S3 file?
-readonly S3_DELETE=$(jq -r ".s3Delete" $APP_CONFIG_FILE)
+readonly S3_DELETE=$(jq -r ".aws.s3Delete" $APP_CONFIG_FILE)
 # Delete S3 file "n" days old
-readonly S3_DELETE_DAYS_OLD=$(jq -r ".s3DeleteDaysOld" $APP_CONFIG_FILE)
-# Open environment in browser after update
-readonly OPEN_IN_BROWSER_AFTER_UPDATE=$(jq -r ".openInBrowserAfterUpdate" $APP_CONFIG_FILE)
+readonly S3_DELETE_DAYS_OLD=$(jq -r ".aws.s3DeleteDaysOld" $APP_CONFIG_FILE)
 # Blue green deployment
-readonly BLUE_GREEN_DEPLOYMENT=$(jq -r ".blueGreenDeployment" $APP_CONFIG_FILE)
+readonly BLUE_GREEN_DEPLOYMENT=$(jq -r ".aws.blueGreenDeployment" $APP_CONFIG_FILE)
 # Basic auth enabled?
 readonly BASIC_AUTH_ENABLED=$(jq -r ".basicAuth.${APP_BRANCH}.enabled" $APP_CONFIG_FILE)
 # Basic auth user
@@ -426,11 +424,6 @@ if [ "$UPDATED" -eq 1 ]; then
     --environment-names $ENV_NAME | jq -r '.Environments[].CNAME'))
   echo "LATEST BUILD NUMBER IS: ${BUILD_NUMBER}"
   echo "ENVIRONMENT WILL BE SHORTLY AT: http://${ENV_URL}"
-
-  # Open in browser
-  if [ "$OPEN_IN_BROWSER_AFTER_UPDATE" -eq 1 ]; then
-    open http://$ENV_URL
-  fi
 fi
 
 end
