@@ -30,7 +30,7 @@ function create_environment() {
   aws elasticbeanstalk create-environment --cname-prefix $ENV_TO_CREATE \
     --application-name $APP_NAME --version-label $APP_FILE_VERSIONED \
     --environment-name $ENV_TO_CREATE --solution-stack-name "$STACK" \
-    --tags "$ENVIRONMENT_TAGS" \
+    --tags $ENVIRONMENT_TAGS \
     --option-settings "[
             {
                 \"Namespace\": \"aws:autoscaling:launchconfiguration\",
@@ -167,7 +167,7 @@ readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
 # Platform stack
 readonly STACK=$(jq -r ".aws.stack" $APP_CONFIG_FILE)
 # EC2 instance type
-readonly INSTANCE_TYPE=$(jq -r ".aws.${APP_BRANCH}.instanceType" $APP_CONFIG_FILE)
+readonly INSTANCE_TYPE=$(jq -r ".aws.instanceType.${APP_BRANCH}" $APP_CONFIG_FILE)
 # Security group
 readonly SECURITY_GROUP=$(jq -r ".aws.securityGroup" $APP_CONFIG_FILE)
 # Environment tags
