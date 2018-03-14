@@ -8,12 +8,10 @@ report ebs health
 when terminal master branch, make sure alt env is also terminated
 put php config in app.json
 instance profile
-rearrange app.json
-  * different stack for environments
-  * disk/hardware options
 be able to configure aws account on branch
 lower case log
 put rds config in app.json
+speedup docker - docker sync
 
 bugs:
 - two master env which to ssh?
