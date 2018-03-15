@@ -59,6 +59,26 @@
       "maxExecutionTime": 60
     }
   },
+  "wordpress": {
+    "dev": {
+      "adminUsername": "admin",
+      "adminPassword": "change-me",
+      "adminDisplayName": "admin",
+      "adminEmail": "change-me"
+    },
+    "qa": {
+      "adminUsername": "admin",
+      "adminPassword": "change-me",
+      "adminDisplayName": "admin",
+      "adminEmail": "change-me"
+    },
+    "master": {
+      "adminUsername": "admin",
+      "adminPassword": "change-me",
+      "adminDisplayName": "admin",
+      "adminEmail": "change-me"
+    }
+  },
   "basicAuth": {
     "dev": {
       "enabled": 1,

@@ -150,6 +150,8 @@ fi
 
 # App config file
 readonly APP_CONFIG_FILE=./app.json
+# Db config file
+readonly DB_CONFIG_FILE=./db.json
 # AWS application name
 readonly APP_NAME=$(jq -r ".appName" $APP_CONFIG_FILE)
 # Detect git branch
@@ -204,7 +206,20 @@ readonly PHP_ALLOW_URL_FOPEN=$(jq -r ".php.${APP_BRANCH}.allowUrlFopen" $APP_CON
 readonly PHP_DISPLAY_ERRORS=$(jq -r ".php.${APP_BRANCH}.displayErrors" $APP_CONFIG_FILE)
 # PHP MAX EXECUTION TIME
 readonly PHP_MAX_EXECUTION_TIME=$(jq -r ".php.${APP_BRANCH}.maxExecutionTime" $APP_CONFIG_FILE)
+# WORDPRESS ADMIN USERNAME
+readonly WORDPRESS_ADMIN_USERNAME=$(jq -r ".wordpress.${APP_BRANCH}.adminUsername" $APP_CONFIG_FILE)
+# WORDPRESS ADMIN PASSWORD
+readonly WORDPRESS_ADMIN_PASSWORD=$(jq -r ".wordpress.${APP_BRANCH}.adminPassword" $APP_CONFIG_FILE)
+# WORDPRESS ADMIN DISPLAY NAME
+readonly WORDPRESS_ADMIN_DISPLAY_NAME=$(jq -r ".wordpress.${APP_BRANCH}.adminDisplayName" $APP_CONFIG_FILE)
+# WORDPRESS ADMIN EMAIL
+readonly WORDPRESS_ADMIN_EMAIL=$(jq -r "wordpress.${APP_BRANCH}.adminEmail" $APP_CONFIG_FILE)
 
+# Db credentials
+readonly DB_HOST=$(jq -r ".${APP_BRANCH}.endpoint" $DB_CONFIG_FILE)
+readonly DB_DATABASE=$(jq -r ".${APP_BRANCH}.database" $DB_CONFIG_FILE)
+readonly DB_USER=$(jq -r ".${APP_BRANCH}.user" $DB_CONFIG_FILE)
+readonly DB_PASSWORD=$(jq -r ".${APP_BRANCH}.password" $DB_CONFIG_FILE)
 
 ######################
 # End configurations #
@@ -320,6 +335,10 @@ zip -qr /tmp/$APP_FILE.zip . -x "*.git*" "*/\.DS_Store" $UNTRACKED_GIT_FILES
 cd - >/dev/null 2>&1
 
 echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
+
+# Update wordpress admin info
+mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
+  -e "UPDATE `${DB_DATABASE}.wp_users` SET `user_login` = '${WORDPRESS_ADMIN_USERNAME}', `user_nicename` = '${WORDPRESS_ADMIN_DISPLAY_NAME}', `user_email` = '${WORDPRESS_ADMIN_EMAIL}', `display_name` = '${WORDPRESS_ADMIN_DISPLAY_NAME}', `user_pass` = MD5('${WORDPRESS_ADMIN_PASSWORD}') WHERE `${DB_DATABASE}.wp_users`.`ID` = "1";"
 
 #####################################################
 # END                                               #
