@@ -1,4 +1,3 @@
-db push script
 read me
 create script/description
 create ebs wait method
@@ -6,11 +5,9 @@ cron setup
 initial wordpress username/email
 report ebs health
 when terminal master branch, make sure alt env is also terminated
-put php config in app.json
 instance profile
 be able to configure aws account on branch
 lower case log
-put rds config in app.json
 speedup docker - docker sync
 
 bugs:

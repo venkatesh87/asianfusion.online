@@ -24,15 +24,17 @@ function get-password {
   echo $password
 }
 
-readonly DB_INSTANCE_IDENTIFIER=mywp
+# App config file
+readonly APP_CONFIG_FILE=./app.json
+readonly DB_INSTANCE_IDENTIFIER=$(jq -r ".rds.instanceName" $APP_CONFIG_FILE)
 readonly MASTER_USERNAME=$DB_INSTANCE_IDENTIFIER
 readonly MASTER_USER_PASSWORD=$(get-password)
-readonly VPC_SECURITY_GROUP_IDS=sg-6ee73218
-readonly REGION=us-east-1
-readonly ALLOCATED_STORAGE=40
-readonly DB_INSTANCE_CLASS=db.m1.small
-readonly ENGINE=mysql
-readonly ENGINE_VERSION=5.6.37
+readonly VPC_SECURITY_GROUP_IDS=$(jq -r ".rds.vpcSecurityGroupIds" $APP_CONFIG_FILE)
+readonly REGION=$(jq -r ".rds.region" $APP_CONFIG_FILE)
+readonly ALLOCATED_STORAGE=$(jq -r ".rds.allocatedStorage" $APP_CONFIG_FILE)
+readonly DB_INSTANCE_CLASS=$(jq -r ".rds.instanceClass" $APP_CONFIG_FILE)
+readonly ENGINE=$(jq -r ".rds.engine" $APP_CONFIG_FILE)
+readonly ENGINE_VERSION=$(jq -r ".rds.engineVersion" $APP_CONFIG_FILE)
 
 ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
 
@@ -126,3 +128,5 @@ cat ./db.json
 sh ./post-checkout
 cp ./post-checkout .git/hooks/post-checkout
 chmod u+x .git/hooks/post-checkout
+
+echo "Database has been created. Please load your Wordpress SQL"
