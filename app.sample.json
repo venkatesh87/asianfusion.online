@@ -27,6 +27,29 @@
     "s3DeleteDaysOld": 7,
     "blueGreenDeployment": 0
   },
+  "php": {
+    "dev": {
+      "memoryLimit": "256M",
+      "outputCompression": "Off",
+      "allowUrlFopen": "Off",
+      "displayErrors": "On",
+      "maxExecutionTime": 60
+    },
+    "qa": {
+      "memoryLimit": "256M",
+      "outputCompression": "On",
+      "allowUrlFopen": "Off",
+      "displayErrors": "Off",
+      "maxExecutionTime": 60
+    },
+    "master": {
+      "memoryLimit": "256M",
+      "outputCompression": "On",
+      "allowUrlFopen": "Off",
+      "displayErrors": "Off",
+      "maxExecutionTime": 60
+    }
+  },
   "basicAuth": {
     "dev": {
       "enabled": 1,

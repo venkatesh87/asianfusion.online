@@ -194,6 +194,17 @@ readonly BASIC_AUTH_USER=$(jq -r ".basicAuth.${APP_BRANCH}.user" $APP_CONFIG_FIL
 readonly BASIC_AUTH_PASSWORD=$(jq -r ".basicAuth.${APP_BRANCH}.password" $APP_CONFIG_FILE)
 # SSL certificate ID
 readonly SSL_CERTIFICATE_ID=$(jq -r ".aws.sslCertificateId" $APP_CONFIG_FILE)
+# PHP MEMORY LIMIT
+readonly PHP_MEMORY_LIMIT=$(jq -r ".php.${APP_BRANCH}.memoryLimit" $APP_CONFIG_FILE)
+# PHP OUTPUT COMPRESSION
+readonly PHP_OUTPUT_COMPRESSION=$(jq -r ".php.${APP_BRANCH}.outputCompression" $APP_CONFIG_FILE)
+# PHP ALLOW URL FOPEN
+readonly PHP_ALLOW_URL_FOPEN=$(jq -r ".php.${APP_BRANCH}.allowUrlFopen" $APP_CONFIG_FILE)
+# PHP DISPLAY ERRORS
+readonly PHP_DISPLAY_ERRORS=$(jq -r ".php.${APP_BRANCH}.displayErrors" $APP_CONFIG_FILE)
+# PHP MAX EXECUTION TIME
+readonly PHP_MAX_EXECUTION_TIME=$(jq -r ".php.${APP_BRANCH}.maxExecutionTime" $APP_CONFIG_FILE)
+
 
 ######################
 # End configurations #
@@ -291,6 +302,13 @@ if [ "$SSL_CERTIFICATE_ID" == "" ]; then
 else
   sed -i '' -e "s~SSLCertificateId:~SSLCertificateId: ${SSL_CERTIFICATE_ID}~g" ${EBEXTENSIONS_DIR}/default.config
 fi
+
+# PHP SETTINGS
+sed -i '' -e "s/memory_limit: 128M/memory_limit: $PHP_MEMORY_LIMIT/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/zlib.output_compression: \"Off\"/zlib.output_compression: \"$PHP_OUTPUT_COMPRESSION\"/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/allow_url_fopen: \"On\"/allow_url_fopen: \"$PHP_ALLOW_URL_FOPEN\"/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/display_errors: \"Off\"/display_errors: \"$PHP_DISPLAY_ERRORS\"/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/max_execution_time: 60/max_execution_time: $PHP_MAX_EXECUTION_TIME/g" ${EBEXTENSIONS_DIR}/default.config
 
 # Get a list of untracked GIT files
 readonly UNTRACKED_GIT_FILES=$(git ls-files --others --exclude-standard)
