@@ -213,7 +213,7 @@ readonly WORDPRESS_ADMIN_PASSWORD=$(jq -r ".wordpress.${APP_BRANCH}.adminPasswor
 # WORDPRESS ADMIN DISPLAY NAME
 readonly WORDPRESS_ADMIN_DISPLAY_NAME=$(jq -r ".wordpress.${APP_BRANCH}.adminDisplayName" $APP_CONFIG_FILE)
 # WORDPRESS ADMIN EMAIL
-readonly WORDPRESS_ADMIN_EMAIL=$(jq -r "wordpress.${APP_BRANCH}.adminEmail" $APP_CONFIG_FILE)
+readonly WORDPRESS_ADMIN_EMAIL=$(jq -r ".wordpress.${APP_BRANCH}.adminEmail" $APP_CONFIG_FILE)
 
 # Db credentials
 readonly DB_HOST=$(jq -r ".${APP_BRANCH}.endpoint" $DB_CONFIG_FILE)
@@ -338,7 +338,7 @@ echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
 
 # Update wordpress admin info
 mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
-  -e "UPDATE `${DB_DATABASE}.wp_users` SET `user_login` = '${WORDPRESS_ADMIN_USERNAME}', `user_nicename` = '${WORDPRESS_ADMIN_DISPLAY_NAME}', `user_email` = '${WORDPRESS_ADMIN_EMAIL}', `display_name` = '${WORDPRESS_ADMIN_DISPLAY_NAME}', `user_pass` = MD5('${WORDPRESS_ADMIN_PASSWORD}') WHERE `${DB_DATABASE}.wp_users`.`ID` = "1";"
+  -e "UPDATE ${DB_DATABASE}.wp_users SET user_login = '${WORDPRESS_ADMIN_USERNAME}', user_nicename = '${WORDPRESS_ADMIN_DISPLAY_NAME}', user_email = '${WORDPRESS_ADMIN_EMAIL}', display_name = '${WORDPRESS_ADMIN_DISPLAY_NAME}', user_pass = MD5('${WORDPRESS_ADMIN_PASSWORD}') WHERE ${DB_DATABASE}.wp_users.ID = 1;"
 
 #####################################################
 # END                                               #
