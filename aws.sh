@@ -214,6 +214,20 @@ readonly WORDPRESS_ADMIN_PASSWORD=$(jq -r ".wordpress.${APP_BRANCH}.adminPasswor
 readonly WORDPRESS_ADMIN_DISPLAY_NAME=$(jq -r ".wordpress.${APP_BRANCH}.adminDisplayName" $APP_CONFIG_FILE)
 # WORDPRESS ADMIN EMAIL
 readonly WORDPRESS_ADMIN_EMAIL=$(jq -r ".wordpress.${APP_BRANCH}.adminEmail" $APP_CONFIG_FILE)
+# WP EMAIL SMTP SETTINGS
+readonly WP_EMAIL_SMTP_FROM_EMAIL=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.fromEmail" $APP_CONFIG_FILE)
+readonly WP_EMAIL_SMTP_FROM_NAME=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.fromName" $APP_CONFIG_FILE)
+readonly WP_EMAIL_SMTP_HOST=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.smtpHost" $APP_CONFIG_FILE)
+readonly WP_EMAIL_SMTP_PORT=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.smtpPort" $APP_CONFIG_FILE)
+readonly WP_EMAIL_SMTP_USERNAME=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.smtpUsername" $APP_CONFIG_FILE)
+readonly WP_EMAIL_SMTP_PASSWORD=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.smtpPassword" $APP_CONFIG_FILE)
+
+readonly WP_EMAIL_SMTP_FROM_EMAIL_COUNT=${#WP_EMAIL_SMTP_FROM_EMAIL}
+readonly WP_EMAIL_SMTP_FROM_NAME_COUNT=${#WP_EMAIL_SMTP_FROM_NAME}
+readonly WP_EMAIL_SMTP_HOST_COUNT=${#WP_EMAIL_SMTP_HOST}
+readonly WP_EMAIL_SMTP_PORT_COUNT=${#WP_EMAIL_SMTP_PORT}
+readonly WP_EMAIL_SMTP_USERNAME_COUNT=${#WP_EMAIL_SMTP_USERNAME}
+readonly WP_EMAIL_SMTP_PASSWORD_COUNT=${#WP_EMAIL_SMTP_PASSWORD}
 
 # Db credentials
 readonly DB_HOST=$(jq -r ".${APP_BRANCH}.endpoint" $DB_CONFIG_FILE)
@@ -339,6 +353,10 @@ echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
 # Update wordpress admin info
 mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
   -e "UPDATE ${DB_DATABASE}.wp_users SET user_login = '${WORDPRESS_ADMIN_USERNAME}', user_nicename = '${WORDPRESS_ADMIN_DISPLAY_NAME}', user_email = '${WORDPRESS_ADMIN_EMAIL}', display_name = '${WORDPRESS_ADMIN_DISPLAY_NAME}', user_pass = MD5('${WORDPRESS_ADMIN_PASSWORD}') WHERE ${DB_DATABASE}.wp_users.ID = 1;"
+
+# Update WP Email Smtp plugin settings
+mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
+  -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'a:10:{s:10:\"from_email\";s:${WP_EMAIL_SMTP_FROM_EMAIL_COUNT}:\"${WP_EMAIL_SMTP_FROM_EMAIL}\";s:9:\"from_name\";s:${WP_EMAIL_SMTP_FROM_NAME_COUNT}:\"${WP_EMAIL_SMTP_FROM_NAME}\";s:6:\"mailer\";s:4:\"smtp\";s:20:\"mail_set_return_path\";s:4:\"true\";s:9:\"smtp_host\";s:${WP_EMAIL_SMTP_HOST_COUNT}:\"${WP_EMAIL_SMTP_HOST}\";s:9:\"smtp_port\";s:${WP_EMAIL_SMTP_PORT_COUNT}:\"${WP_EMAIL_SMTP_PORT}\";s:15:\"smtp_encryption\";s:3:\"tls\";s:19:\"smtp_authentication\";s:4:\"true\";s:13:\"smtp_username\";s:${WP_EMAIL_SMTP_USERNAME_COUNT}:\"${WP_EMAIL_SMTP_USERNAME}\";s:13:\"smtp_password\";s:${WP_EMAIL_SMTP_PASSWORD_COUNT}:\"${WP_EMAIL_SMTP_PASSWORD}\";}' WHERE option_name = 'wp_email_smtp_option_name';"
 
 #####################################################
 # END                                               #

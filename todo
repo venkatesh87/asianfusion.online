@@ -3,7 +3,6 @@ create setup script
 create script/description
 create ebs wait method
 email setup
-cron setup
 report ebs health
 when terminal master branch, make sure alt env is also terminated
 instance profile

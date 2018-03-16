@@ -36,6 +36,32 @@
     "engine": "mysql",
     "engineVersion": "5.6.37"
   },
+  "wpEmailSmtp": {
+    "dev": {
+      "fromEmail": "change-me",
+      "fromName": "change-me",
+      "smtpServer": "email-smtp.us-east-1.amazonaws.com",
+      "smtpPort": 587,
+      "smtpUsername": "change-me",
+      "smtpPassword": "change-me"
+    },
+    "qa": {
+      "fromEmail": "change-me",
+      "fromName": "change-me",
+      "smtpServer": "email-smtp.us-east-1.amazonaws.com",
+      "smtpPort": 587,
+      "smtpUsername": "change-me",
+      "smtpPassword": "change-me"
+    },
+    "master": {
+      "fromEmail": "change-me",
+      "fromName": "change-me",
+      "smtpServer": "email-smtp.us-east-1.amazonaws.com",
+      "smtpPort": 587,
+      "smtpUsername": "change-me",
+      "smtpPassword": "change-me"
+    },
+  },
   "php": {
     "dev": {
       "memoryLimit": "256M",
