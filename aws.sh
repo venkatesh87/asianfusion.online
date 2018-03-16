@@ -354,9 +354,25 @@ echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
 mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
   -e "UPDATE ${DB_DATABASE}.wp_users SET user_login = '${WORDPRESS_ADMIN_USERNAME}', user_nicename = '${WORDPRESS_ADMIN_DISPLAY_NAME}', user_email = '${WORDPRESS_ADMIN_EMAIL}', display_name = '${WORDPRESS_ADMIN_DISPLAY_NAME}', user_pass = MD5('${WORDPRESS_ADMIN_PASSWORD}') WHERE ${DB_DATABASE}.wp_users.ID = 1;"
 
+mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WORDPRESS_ADMIN_EMAIL}' WHERE option_name = 'admin_email';"
+
 # Update WP Email Smtp plugin settings
-mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
-  -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'a:10:{s:10:\"from_email\";s:${WP_EMAIL_SMTP_FROM_EMAIL_COUNT}:\"${WP_EMAIL_SMTP_FROM_EMAIL}\";s:9:\"from_name\";s:${WP_EMAIL_SMTP_FROM_NAME_COUNT}:\"${WP_EMAIL_SMTP_FROM_NAME}\";s:6:\"mailer\";s:4:\"smtp\";s:20:\"mail_set_return_path\";s:4:\"true\";s:9:\"smtp_host\";s:${WP_EMAIL_SMTP_HOST_COUNT}:\"${WP_EMAIL_SMTP_HOST}\";s:9:\"smtp_port\";s:${WP_EMAIL_SMTP_PORT_COUNT}:\"${WP_EMAIL_SMTP_PORT}\";s:15:\"smtp_encryption\";s:3:\"tls\";s:19:\"smtp_authentication\";s:4:\"true\";s:13:\"smtp_username\";s:${WP_EMAIL_SMTP_USERNAME_COUNT}:\"${WP_EMAIL_SMTP_USERNAME}\";s:13:\"smtp_password\";s:${WP_EMAIL_SMTP_PASSWORD_COUNT}:\"${WP_EMAIL_SMTP_PASSWORD}\";}' WHERE option_name = 'wp_email_smtp_option_name';"
+readonly WP_EMAIL_SMTP_OPTION_VALUE="a:10:{s:10:\"from_email\";s:${WP_EMAIL_SMTP_FROM_EMAIL_COUNT}:\"${WP_EMAIL_SMTP_FROM_EMAIL}\";s:9:\"from_name\";s:${WP_EMAIL_SMTP_FROM_NAME_COUNT}:\"${WP_EMAIL_SMTP_FROM_NAME}\";s:6:\"mailer\";s:4:\"smtp\";s:20:\"mail_set_return_path\";s:4:\"true\";s:9:\"smtp_host\";s:${WP_EMAIL_SMTP_HOST_COUNT}:\"${WP_EMAIL_SMTP_HOST}\";s:9:\"smtp_port\";s:${WP_EMAIL_SMTP_PORT_COUNT}:\"${WP_EMAIL_SMTP_PORT}\";s:15:\"smtp_encryption\";s:3:\"tls\";s:19:\"smtp_authentication\";s:4:\"true\";s:13:\"smtp_username\";s:${WP_EMAIL_SMTP_USERNAME_COUNT}:\"${WP_EMAIL_SMTP_USERNAME}\";s:13:\"smtp_password\";s:${WP_EMAIL_SMTP_PASSWORD_COUNT}:\"${WP_EMAIL_SMTP_PASSWORD}\";}"
+
+readonly HAS_WP_EMAIL_SMTP=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'wp_email_smtp_option_name';")
+
+if [ "$HAS_WP_EMAIL_SMTP" == 1 ]; then
+
+  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_EMAIL_SMTP_OPTION_VALUE}' WHERE option_name = 'wp_email_smtp_option_name';"
+
+else
+
+  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('wp_email_smtp_option_name', '${WP_EMAIL_SMTP_OPTION_VALUE}', 'yes');"
+
+fi
+
+# Activate plugins
+mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'a:1:{i:0;s:31:\"wp-email-smtp/wp_email_smtp.php\";}' WHERE option_name = 'active_plugins';"
 
 #####################################################
 # END                                               #
