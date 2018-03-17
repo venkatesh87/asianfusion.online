@@ -155,9 +155,6 @@ if [ ! -f ~/.aws/config ] || [ ! -f ~/.aws/credentials ]; then
   end
 fi
 
-# Switch AWS profile
-sh ./set-aws-profile.sh
-
 ########################
 # Start configurations #
 ########################

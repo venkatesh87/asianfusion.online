@@ -24,9 +24,6 @@ function get-password {
   echo $password
 }
 
-# Switch AWS profile
-sh ./set-aws-profile.sh
-
 # App config file
 readonly APP_CONFIG_FILE=./app.json
 readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')

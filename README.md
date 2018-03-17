@@ -49,6 +49,6 @@ RDS
 ===
 run ./rds
 
-run ./load-db.sh db/mywp.sql
+run ./load-db.sh db/wordpress.sql
 
 EBS
