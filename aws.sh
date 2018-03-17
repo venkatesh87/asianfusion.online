@@ -69,8 +69,9 @@ function update_environment() {
     --environment-names $ENV_TO_UPDATE | jq -r '.Environments[].EnvironmentId'))
 
   aws elasticbeanstalk update-environment \
-    --environment-id $ENV_ID \
-    --version-label "$APP_FILE_VERSIONED"
+    --profile $AWS_PROFILE \
+    --environment-id "$ENV_ID" \
+    --version-label "$APP_FILE_VERSIONED" \
     >/dev/null 2>&1
 }
 
