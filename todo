@@ -5,9 +5,10 @@ create ebs wait method
 report ebs health
 when terminal master branch, make sure alt env is also terminated
 instance profile
-be able to configure aws account on branch
 lower case log
 speedup docker - docker sync
+activate sql plugin
+wordpress s3 upload
 
 bugs:
 - two master env which to ssh?

@@ -4,35 +4,50 @@
   "docker": {
     "name": "change-me",
     "tag": "change-me",
-    "port": "change-me"
+    "port": "8500"
   },
   "aws": {
-    "securityGroup": "change-me",
-    "ec2KeyName": "change-me",
-    "ec2KeyPath": "change-me",
-    "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
-    "instanceType": {
-      "dev": "t2.micro",
-      "qa": "t2.micro",
-      "master": "t2.micro"
+    "dev": {
+      "profile": "change-me",
+      "securityGroup": "change-me",
+      "ec2KeyName": "change-me",
+      "ec2KeyPath": "change-me",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
+      "instanceType": "t2.micro",
+      "s3Bucket": "change-me",
+      "tags": "Key=Environment,Value=Development Key=appType,Value=Wordpress"
     },
-    "tags": {
-      "dev": "Key=Environment,Value=Development Key=env,Value=dev Key=appType,Value=Wordpress",
-      "qa": "Key=Environment,Value=QA Key=env,Value=qa Key=appType,Value=Wordpress",
-      "master": "Key=Environment,Value=Production Key=env,Value=live Key=appType,Value=Wordpress"
+    "qa": {
+      "profile": "change-me",
+      "securityGroup": "change-me",
+      "ec2KeyName": "change-me",
+      "ec2KeyPath": "change-me",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
+      "instanceType": "t2.micro",
+      "s3Bucket": "change-me",
+      "tags": "Key=Environment,Value=Development Key=appType,Value=Wordpress"
     },
-    "sslCertificateId": "change-me",
-    "s3Bucket": "change-me",
+    "master": {
+      "profile": "change-me",
+      "securityGroup": "default-ec2-ebs-no-ssh",
+      "ec2KeyName": "change-me",
+      "ec2KeyPath": "change-me",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
+      "instanceType": "t2.micro",
+      "s3Bucket": "change-me",
+      "tags": "Key=Environment,Value=Development Key=appType,Value=Wordpress"
+    },
     "s3Delete": 1,
     "s3DeleteDaysOld": 7,
-    "blueGreenDeployment": 0
+    "blueGreenDeployment": 0,
+    "sslCertificateId": "change-me"
   },
   "rds": {
     "instanceName": "change-me",
-    "instanceClass": "db.m1.small",
-    "vpcSecurityGroupIds": "change-me",
+    "instanceClass": "db.t2.micro",
     "region": "us-east-1",
-    "allocatedStorage": 40,
+    "allocatedStorage": 20,
+    "storageType": "gp2",
     "engine": "mysql",
     "engineVersion": "5.6.37"
   },
@@ -40,7 +55,7 @@
     "dev": {
       "fromEmail": "change-me",
       "fromName": "change-me",
-      "smtpServer": "email-smtp.us-east-1.amazonaws.com",
+      "smtpHost": "email-smtp.us-east-1.amazonaws.com",
       "smtpPort": 587,
       "smtpUsername": "change-me",
       "smtpPassword": "change-me"
@@ -48,7 +63,7 @@
     "qa": {
       "fromEmail": "change-me",
       "fromName": "change-me",
-      "smtpServer": "email-smtp.us-east-1.amazonaws.com",
+      "smtpHost": "email-smtp.us-east-1.amazonaws.com",
       "smtpPort": 587,
       "smtpUsername": "change-me",
       "smtpPassword": "change-me"
@@ -56,11 +71,11 @@
     "master": {
       "fromEmail": "change-me",
       "fromName": "change-me",
-      "smtpServer": "email-smtp.us-east-1.amazonaws.com",
+      "smtpHost": "email-smtp.us-east-1.amazonaws.com",
       "smtpPort": 587,
       "smtpUsername": "change-me",
       "smtpPassword": "change-me"
-    },
+    }
   },
   "php": {
     "dev": {
@@ -87,21 +102,21 @@
   },
   "wordpress": {
     "dev": {
-      "adminUsername": "admin",
+      "adminUsername": "change-me",
       "adminPassword": "change-me",
-      "adminDisplayName": "admin",
+      "adminDisplayName": "change-me",
       "adminEmail": "change-me"
     },
     "qa": {
-      "adminUsername": "admin",
+      "adminUsername": "change-me",
       "adminPassword": "change-me",
-      "adminDisplayName": "admin",
+      "adminDisplayName": "change-me",
       "adminEmail": "change-me"
     },
     "master": {
-      "adminUsername": "admin",
+      "adminUsername": "change-me",
       "adminPassword": "change-me",
-      "adminDisplayName": "admin",
+      "adminDisplayName": "change-me",
       "adminEmail": "change-me"
     }
   },

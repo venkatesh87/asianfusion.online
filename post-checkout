@@ -8,13 +8,13 @@ fi
 # This file will get copied to .git/hooks and will execute upon branch checkout
 
 # Get db params base on branch from db.json
-readonly BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
 readonly WP_CONFIG_FILE=./${PUBLIC_WEB_DIR}/wp-config.php
-readonly HOST=$(jq -r ".${BRANCH}.endpoint" ./db.json)
-readonly DATABASE=$(jq -r ".${BRANCH}.database" ./db.json)
-readonly USER=$(jq -r ".${BRANCH}.user" ./db.json)
-readonly PASSWORD=$(jq -r ".${BRANCH}.password" ./db.json)
+readonly HOST=$(jq -r ".${APP_BRANCH}.endpoint" ./db.json)
+readonly DATABASE=$(jq -r ".${APP_BRANCH}.database" ./db.json)
+readonly USER=$(jq -r ".${APP_BRANCH}.user" ./db.json)
+readonly PASSWORD=$(jq -r ".${APP_BRANCH}.password" ./db.json)
 
 # Create wp-config.php
 cp ./${PUBLIC_WEB_DIR}/wp-config-default.php $WP_CONFIG_FILE

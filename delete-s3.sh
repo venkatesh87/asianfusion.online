@@ -10,6 +10,9 @@ fi
 PLATFORM=$(uname)
 COMMAND='date'
 
+readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" ./app.json)
+
 if [ "$PLATFORM" == "Darwin" ]; then
   if ! hash gdate 2>/dev/null; then
     echo gdate is not installed
@@ -18,7 +21,7 @@ if [ "$PLATFORM" == "Darwin" ]; then
   COMMAND='gdate'
 fi
 
-aws s3 ls "${1}/" | while read -r line; do
+aws s3 --profile $AWS_PROFILE ls "${1}/" | while read -r line; do
   # Get file modified date
   MODIFIED_DATE=$(echo $line | awk {'print $1" "$2'})
 
@@ -32,7 +35,7 @@ aws s3 ls "${1}/" | while read -r line; do
   if [ "$MODIFIED_SEC" -lt "$OLDER_THAN_SEC" ]; then
     FILE_NAME=$(echo $line | awk {'print $4'})
     if [ "$FILE_NAME" != "" ]; then
-      aws s3 rm "${1}/${FILE_NAME}"
+      aws s3 --profile $AWS_PROFILE rm "${1}/${FILE_NAME}"
     fi
   fi
 done

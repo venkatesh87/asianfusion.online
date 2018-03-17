@@ -21,13 +21,17 @@ function create_environment() {
   readonly ENV_TO_CREATE=$1
 
   # Create new Application version
-  aws elasticbeanstalk create-application-version --application-name $APP_NAME \
+  aws elasticbeanstalk create-application-version \
+    --profile $AWS_PROFILE \
+    --application-name $APP_NAME \
     --version-label $APP_FILE_VERSIONED --description $ENV_TO_CREATE \
     --source-bundle S3Bucket="$S3_BUCKET",S3Key="$S3_BUCKET_FILE" \
     >/dev/null 2>&1
 
   # Create new environment
-  aws elasticbeanstalk create-environment --cname-prefix $ENV_TO_CREATE \
+  aws elasticbeanstalk create-environment \
+    --profile $AWS_PROFILE \
+    --cname-prefix $ENV_TO_CREATE \
     --application-name $APP_NAME --version-label $APP_FILE_VERSIONED \
     --environment-name $ENV_TO_CREATE --solution-stack-name "$STACK" \
     --tags $ENVIRONMENT_TAGS \
@@ -53,14 +57,19 @@ function create_environment() {
 function update_environment() {
   readonly ENV_TO_UPDATE=$1
 
-  aws elasticbeanstalk create-application-version --application-name $APP_NAME \
+  aws elasticbeanstalk create-application-version \
+    --application-name $APP_NAME \
+    --profile $AWS_PROFILE \
     --version-label $APP_FILE_VERSIONED --description $ENV_TO_UPDATE \
     --source-bundle S3Bucket="$S3_BUCKET",S3Key="$S3_BUCKET_FILE" \
     >/dev/null 2>&1
 
   ENV_ID=($(aws elasticbeanstalk describe-environments \
+    --profile $AWS_PROFILE \
     --environment-names $ENV_TO_UPDATE | jq -r '.Environments[].EnvironmentId'))
-  aws elasticbeanstalk update-environment --environment-id $ENV_ID \
+
+  aws elasticbeanstalk update-environment \
+    --environment-id $ENV_ID \
     --version-label "$APP_FILE_VERSIONED" >/dev/null 2>&1
 }
 
@@ -79,10 +88,12 @@ function swap_environment() {
     ((i++))
 
     ENV_TO_WAIT_HEALTH=($(aws elasticbeanstalk describe-environments \
+      --profile $AWS_PROFILE \
       --environment-names $ENV_TO_WAIT | jq -r '.Environments[].Health'))
 
     if [ "$ENV_TO_WAIT_HEALTH" == "Green" ]; then
       aws elasticbeanstalk swap-environment-cnames \
+        --profile $AWS_PROFILE \
         --source-environment-name $ENV_TO_SWAP \
         --destination-environment-name $ENV_TO_WAIT
 
@@ -144,6 +155,9 @@ if [ ! -f ~/.aws/config ] || [ ! -f ~/.aws/credentials ]; then
   end
 fi
 
+# Switch AWS profile
+sh ./set-aws-profile.sh
+
 ########################
 # Start configurations #
 ########################
@@ -156,6 +170,8 @@ readonly DB_CONFIG_FILE=./db.json
 readonly APP_NAME=$(jq -r ".appName" $APP_CONFIG_FILE)
 # Detect git branch
 readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+# AWS PROFILE
+readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" $APP_CONFIG_FILE)
 # Application file name
 readonly APP_FILE=${APP_NAME}-${APP_BRANCH}
 # Environment name (AWS Elastic Beanstalk CNAME)
@@ -167,19 +183,21 @@ readonly APP_FILE_VERSIONED=${APP_FILE}-${BUILD_NUMBER}
 # Public web directory
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
 # Platform stack
-readonly STACK=$(jq -r ".aws.stack" $APP_CONFIG_FILE)
+readonly STACK=$(jq -r ".aws.${APP_BRANCH}.stack" $APP_CONFIG_FILE)
 # EC2 instance type
-readonly INSTANCE_TYPE=$(jq -r ".aws.instanceType.${APP_BRANCH}" $APP_CONFIG_FILE)
+readonly INSTANCE_TYPE=$(jq -r ".aws.${APP_BRANCH}.instanceType" $APP_CONFIG_FILE)
 # Security group
-readonly SECURITY_GROUP=$(jq -r ".aws.securityGroup" $APP_CONFIG_FILE)
+readonly SECURITY_GROUP=$(jq -r ".aws.${APP_BRANCH}.securityGroup" $APP_CONFIG_FILE)
 # Environment tags
-readonly ENVIRONMENT_TAGS=$(jq -r ".aws.tags.${APP_BRANCH}" $APP_CONFIG_FILE)
+readonly ENVIRONMENT_TAGS=$(jq -r ".aws.${APP_BRANCH}.tags" $APP_CONFIG_FILE)
 # EC2 key pair name
-readonly EC2_KEY_NAME=$(jq -r ".aws.ec2KeyName" $APP_CONFIG_FILE)
+readonly EC2_KEY_NAME=$(jq -r ".aws.${APP_BRANCH}.ec2KeyName" $APP_CONFIG_FILE)
 # S3 bucket name
-readonly S3_BUCKET=$(jq -r ".aws.s3Bucket" $APP_CONFIG_FILE)
+readonly S3_BUCKET=$(jq -r ".aws.${APP_BRANCH}.s3Bucket" $APP_CONFIG_FILE)
+# SSL certificate ID
+readonly SSL_CERTIFICATE_ID=$(jq -r ".aws.sslCertificateId" $APP_CONFIG_FILE)
 # S3 directory
-readonly S3_BUCKET_DIR="apps/${APP_NAME}/${APP_BRANCH}"
+readonly S3_BUCKET_DIR="${APP_NAME}/${APP_BRANCH}"
 # S3 file name
 readonly S3_BUCKET_FILE=${S3_BUCKET_DIR}/${APP_FILE_VERSIONED}.zip
 # Delete S3 file?
@@ -194,8 +212,6 @@ readonly BASIC_AUTH_ENABLED=$(jq -r ".basicAuth.${APP_BRANCH}.enabled" $APP_CONF
 readonly BASIC_AUTH_USER=$(jq -r ".basicAuth.${APP_BRANCH}.user" $APP_CONFIG_FILE)
 # Basic auth password
 readonly BASIC_AUTH_PASSWORD=$(jq -r ".basicAuth.${APP_BRANCH}.password" $APP_CONFIG_FILE)
-# SSL certificate ID
-readonly SSL_CERTIFICATE_ID=$(jq -r ".aws.sslCertificateId" $APP_CONFIG_FILE)
 # PHP MEMORY LIMIT
 readonly PHP_MEMORY_LIMIT=$(jq -r ".php.${APP_BRANCH}.memoryLimit" $APP_CONFIG_FILE)
 # PHP OUTPUT COMPRESSION
@@ -245,12 +261,15 @@ UPDATED=0
 
 # Check if app exists
 APP_EXISTS=($(aws elasticbeanstalk describe-application-versions \
+  --profile $AWS_PROFILE \
   --application-name $APP_NAME | jq -r '.ApplicationVersions[].ApplicationName'))
 # Check if environment available
 ENV_AVAILABLE=($(aws elasticbeanstalk check-dns-availability \
+  --profile $AWS_PROFILE \
   --cname-prefix $ENV_NAME | jq -r '.Available'))
 # Check environment health
 ENV_HEALTH=($(aws elasticbeanstalk describe-environments \
+  --profile $AWS_PROFILE \
   --environment-names $ENV_NAME | jq -r '.Environments[].Health'))
 
 # Terminate
@@ -263,15 +282,18 @@ if [ "${1}" == "terminate" ]; then
   # Terminate application
   if [ "${2}" == "app" ]; then
     echo "APPLICATION AND ALL IT'S RUNNING ENVIRONMENTS ARE TERMINATING..."
-    aws elasticbeanstalk delete-application --application-name $APP_NAME \
+    aws elasticbeanstalk delete-application \
+      --profile $AWS_PROFILE \
+      --application-name $APP_NAME \
       --terminate-env-by-force >/dev/null 2>&1
     end
   elif [ "$ENV_AVAILABLE" == "false" ]; then
     # Terminate environment
     if [ "$ENV_HEALTH" == "Green" ]; then
       echo "EVIRONMENT IS TERMINATING..."
-      aws elasticbeanstalk terminate-environment --environment-name $ENV_NAME \
-        >/dev/null 2>&1
+      aws elasticbeanstalk terminate-environment \
+        --profile $AWS_PROFILE
+        --environment-name $ENV_NAME >/dev/null 2>&1
       end
     else
       echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
@@ -380,7 +402,8 @@ mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options 
 
 # Send app to S3
 echo "SENDING APP TO S3: s3://${S3_BUCKET}/${S3_BUCKET_FILE}"
-aws s3 cp --quiet /tmp/${APP_FILE}.zip s3://${S3_BUCKET}/${S3_BUCKET_FILE}
+aws s3 cp --quiet --profile $AWS_PROFILE \
+  /tmp/${APP_FILE}.zip s3://${S3_BUCKET}/${S3_BUCKET_FILE}
 
 echo "DEPLOYING..."
 
@@ -392,6 +415,7 @@ if [ "$APP_EXISTS" == "" ]; then
 
     # Create NEW application and environment
     aws elasticbeanstalk create-application --application-name $APP_NAME \
+      --profile $AWS_PROFILE \
       --description "$APP_NAME" >/dev/null 2>&1
     create_environment $ENV_NAME
 
@@ -403,7 +427,8 @@ if [ "$APP_EXISTS" == "" ]; then
     # Can't create
     echo "ENVIRONMENT NAME $APP_NAME IS NOT AVAILABLE"
     # Clean up
-    aws s3 rm s3://${S3_BUCKET}/$S3_BUCKET_FILE >/dev/null 2>&1
+    aws s3 --profile $AWS_PROFILE \
+      rm s3://${S3_BUCKET}/$S3_BUCKET_FILE >/dev/null 2>&1
 
   fi
 
@@ -436,6 +461,7 @@ else
 
         readonly MASTER_ALT_ENV=${ENV_NAME}-alternate
         readonly MASTER_ALT_ENV_AVAILABLE=($(aws elasticbeanstalk \
+          --profile $AWS_PROFILE \
           check-dns-availability --cname-prefix $MASTER_ALT_ENV | jq -r '.Available'))
 
         if [ "$MASTER_ALT_ENV_AVAILABLE" == "true" ]; then
@@ -450,6 +476,7 @@ else
           # If alternate environment has already been used as production,
           # use the main environment for swapping
           ENV_URL=($(aws elasticbeanstalk describe-environments \
+            --profile $AWS_PROFILE \
             --environment-names $ENV_NAME | jq -r '.Environments[].CNAME'))
           if [[ $ENV_URL == "${ENV_NAME}."* ]]; then
             echo "UPDATING ALTERNATE ENVIRONMENT (${MASTER_ALT_ENV})"
@@ -477,7 +504,8 @@ else
 
       echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
       # Clean up
-      aws s3 rm s3://${S3_BUCKET}/$S3_BUCKET_FILE >/dev/null 2>&1
+      aws s3 --profile $AWS_PROFILE \
+        rm s3://${S3_BUCKET}/$S3_BUCKET_FILE >/dev/null 2>&1
 
     fi
 
@@ -495,6 +523,7 @@ if [ "$UPDATED" -eq 1 ]; then
 
   # Get environment URL
   ENV_URL=($(aws elasticbeanstalk describe-environments \
+    --profile $AWS_PROFILE \
     --environment-names $ENV_NAME | jq -r '.Environments[].CNAME'))
   echo "LATEST BUILD NUMBER IS: ${BUILD_NUMBER}"
   echo "ENVIRONMENT WILL BE SHORTLY AT: http://${ENV_URL}"

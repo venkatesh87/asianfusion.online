@@ -6,7 +6,7 @@ function wait-for-status {
   status=unknown
   while [[ "$status" != "$target_status" ]]; do
     status=($(aws rds describe-db-instances \
-      --db-instance-identifier $instance | jq -r '.DBInstances[].DBInstanceStatus'))
+      --db-instance-identifier $instance --profile $AWS_PROFILE | jq -r '.DBInstances[].DBInstanceStatus'))
     echo "Please wait...db is $status"
     sleep 10
   done
@@ -15,7 +15,7 @@ function wait-for-status {
 function get-endpoint {
   instance=$1
   endpoint=($(aws rds describe-db-instances \
-    --db-instance-identifier $instance | jq -r '.DBInstances[].Endpoint.Address'))
+    --db-instance-identifier $instance --profile $AWS_PROFILE | jq -r '.DBInstances[].Endpoint.Address'))
   echo $endpoint
 }
 
@@ -24,13 +24,18 @@ function get-password {
   echo $password
 }
 
+# Switch AWS profile
+sh ./set-aws-profile.sh
+
 # App config file
 readonly APP_CONFIG_FILE=./app.json
+readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" $APP_CONFIG_FILE)
 readonly DB_INSTANCE_IDENTIFIER=$(jq -r ".rds.instanceName" $APP_CONFIG_FILE)
 readonly MASTER_USERNAME=$DB_INSTANCE_IDENTIFIER
 readonly MASTER_USER_PASSWORD=$(get-password)
-readonly VPC_SECURITY_GROUP_IDS=$(jq -r ".rds.vpcSecurityGroupIds" $APP_CONFIG_FILE)
 readonly REGION=$(jq -r ".rds.region" $APP_CONFIG_FILE)
+readonly STORAGE_TYPE=$(jq -r ".rds.storageType" $APP_CONFIG_FILE)
 readonly ALLOCATED_STORAGE=$(jq -r ".rds.allocatedStorage" $APP_CONFIG_FILE)
 readonly DB_INSTANCE_CLASS=$(jq -r ".rds.instanceClass" $APP_CONFIG_FILE)
 readonly ENGINE=$(jq -r ".rds.engine" $APP_CONFIG_FILE)
@@ -46,15 +51,15 @@ fi
 echo "Creating new db instance: $DB_INSTANCE_IDENTIFIER"
 
 aws rds create-db-instance \
+  --profile $AWS_PROFILE \
   --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
   --allocated-storage $ALLOCATED_STORAGE \
   --db-instance-class $DB_INSTANCE_CLASS \
   --engine $ENGINE \
   --engine-version $ENGINE_VERSION \
-  --storage-type gp2 \
+  --storage-type $STORAGE_TYPE \
   --master-username $MASTER_USERNAME \
   --master-user-password $MASTER_USER_PASSWORD \
-  --vpc-security-group-ids $VPC_SECURITY_GROUP_IDS \
   --region $REGION > /dev/null 2>&1
 
 wait-for-status $DB_INSTANCE_IDENTIFIER available
@@ -129,4 +134,7 @@ sh ./post-checkout
 cp ./post-checkout .git/hooks/post-checkout
 chmod u+x .git/hooks/post-checkout
 
-echo "Database has been created. Please load your Wordpress SQL"
+# Load starting point database
+sh ./load-db.sh wp/mywp.sql
+
+echo "Database has been created."
