@@ -3,11 +3,9 @@ create setup script
 create script/description
 create ebs wait method
 report ebs health
-when terminal master branch, make sure alt env is also terminated
 instance profile
 lower case log
 speedup docker - docker sync
-activate sql plugin
 wordpress s3 upload
 
 bugs:

@@ -58,8 +58,8 @@ function update_environment() {
   readonly ENV_TO_UPDATE=$1
 
   aws elasticbeanstalk create-application-version \
-    --application-name $APP_NAME \
     --profile $AWS_PROFILE \
+    --application-name $APP_NAME \
     --version-label $APP_FILE_VERSIONED --description $ENV_TO_UPDATE \
     --source-bundle S3Bucket="$S3_BUCKET",S3Key="$S3_BUCKET_FILE" \
     >/dev/null 2>&1
@@ -70,7 +70,8 @@ function update_environment() {
 
   aws elasticbeanstalk update-environment \
     --environment-id $ENV_ID \
-    --version-label "$APP_FILE_VERSIONED" >/dev/null 2>&1
+    --version-label "$APP_FILE_VERSIONED"
+    >/dev/null 2>&1
 }
 
 function swap_environment() {
@@ -257,15 +258,17 @@ UPDATED=0
 
 
 # Check if app exists
-APP_EXISTS=($(aws elasticbeanstalk describe-application-versions \
+readonly APP_EXISTS=($(aws elasticbeanstalk describe-application-versions \
   --profile $AWS_PROFILE \
   --application-name $APP_NAME | jq -r '.ApplicationVersions[].ApplicationName'))
+
 # Check if environment available
-ENV_AVAILABLE=($(aws elasticbeanstalk check-dns-availability \
+readonly ENV_AVAILABLE=($(aws elasticbeanstalk check-dns-availability \
   --profile $AWS_PROFILE \
   --cname-prefix $ENV_NAME | jq -r '.Available'))
+
 # Check environment health
-ENV_HEALTH=($(aws elasticbeanstalk describe-environments \
+readonly ENV_HEALTH=($(aws elasticbeanstalk describe-environments \
   --profile $AWS_PROFILE \
   --environment-names $ENV_NAME | jq -r '.Environments[].Health'))
 
@@ -278,19 +281,41 @@ if [ "${1}" == "terminate" ]; then
 
   # Terminate application
   if [ "${2}" == "app" ]; then
+    
     echo "APPLICATION AND ALL IT'S RUNNING ENVIRONMENTS ARE TERMINATING..."
     aws elasticbeanstalk delete-application \
       --profile $AWS_PROFILE \
       --application-name $APP_NAME \
       --terminate-env-by-force >/dev/null 2>&1
     end
+
   elif [ "$ENV_AVAILABLE" == "false" ]; then
+    
     # Terminate environment
     if [ "$ENV_HEALTH" == "Green" ]; then
+      
       echo "EVIRONMENT IS TERMINATING..."
       aws elasticbeanstalk terminate-environment \
         --profile $AWS_PROFILE
         --environment-name $ENV_NAME >/dev/null 2>&1
+     
+      # Delete the alternate environment
+      if [ "$APP_BRANCH" == "master" ] && [ "$BLUE_GREEN_DEPLOYMENT" -eq 1 ]; then
+        
+        readonly MASTER_ALT_ENV=${ENV_NAME}-alternate
+        MASTER_ALT_ENV_AVAILABLE=($(aws elasticbeanstalk check-dns-availability \
+          --profile $AWS_PROFILE \
+          --cname-prefix $MASTER_ALT_ENV | jq -r '.Available'))
+        MASTER_ALT_ENV_HEALTH=($(aws elasticbeanstalk describe-environments \
+          --profile $AWS_PROFILE \
+          --environment-names $MASTER_ALT_ENV | jq -r '.Environments[].Health'))
+  
+        if [ "$MASTER_ALT_ENV_AVAILABLE" == "false" ] && [ "$MASTER_ALT_ENV_HEALTH" == "Green" ]; then
+          aws elasticbeanstalk terminate-environment \
+            --profile $AWS_PROFILE
+            --environment-name $MASTER_ALT_ENV >/dev/null 2>&1
+        fi
+      fi
       end
     else
       echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
@@ -301,8 +326,6 @@ if [ "${1}" == "terminate" ]; then
     end
   fi
 fi
-
-# Continue with deployment
 
 #####################################################
 # BEGIN - BUILD YOUR WEB CONTENT HERE               #
@@ -390,9 +413,6 @@ else
 
 fi
 
-# Activate plugins
-mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'a:1:{i:0;s:31:\"wp-email-smtp/wp_email_smtp.php\";}' WHERE option_name = 'active_plugins';"
-
 #####################################################
 # END                                               #
 #####################################################
@@ -411,7 +431,8 @@ if [ "$APP_EXISTS" == "" ]; then
   if [ "$ENV_AVAILABLE" == "true" ]; then
 
     # Create NEW application and environment
-    aws elasticbeanstalk create-application --application-name $APP_NAME \
+    aws elasticbeanstalk create-application \
+      --application-name $APP_NAME \
       --profile $AWS_PROFILE \
       --description "$APP_NAME" >/dev/null 2>&1
     create_environment $ENV_NAME
@@ -475,6 +496,7 @@ else
           ENV_URL=($(aws elasticbeanstalk describe-environments \
             --profile $AWS_PROFILE \
             --environment-names $ENV_NAME | jq -r '.Environments[].CNAME'))
+
           if [[ $ENV_URL == "${ENV_NAME}."* ]]; then
             echo "UPDATING ALTERNATE ENVIRONMENT (${MASTER_ALT_ENV})"
             update_environment $MASTER_ALT_ENV

@@ -43,7 +43,10 @@ aws configure list
 set AWS_PROFILE=default
 
 * When switching instanceType, please terminate the EBS instance and re-deploy
-
+* Initial password:
+  admin/password
+  * After deployment:
+    admin/whatever set in the app.json
 
 RDS
 ===
