@@ -48,6 +48,10 @@ define('DB_CHARSET', 'utf8mb4');
 /** The Database Collate type. Don't change this if in doubt. */
 define('DB_COLLATE', '');
 
+/** AWS **/
+define('DBI_AWS_ACCESS_KEY_ID', 'to-be-replaced');
+define('DBI_AWS_SECRET_ACCESS_KEY', 'to-be-replaced');
+
 /**#@+
  * Authentication Unique Keys and Salts.
  *

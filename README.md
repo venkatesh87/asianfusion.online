@@ -46,6 +46,11 @@ set AWS_PROFILE=default
   * After deployment:
     admin/whatever set in the app.json
 
+AWS User
+==========
+Add User -> Programmtic access -> Attach existing policies directly -> AmazonS3FullAccess -> Get Access Key ID/Screct access key
+
+
 RDS
 ===
 run ./rds
@@ -57,4 +62,7 @@ SSH access
 Don't specify ec2 key name and path if you don't want SSH access. EBS will create the default
 security group with port 22 open if ec2 key name is specified.
 
-EBS
+ebextensions
+
+
+Cost

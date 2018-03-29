@@ -25,7 +25,7 @@ function create_environment() {
     --profile $AWS_PROFILE \
     --application-name $APP_NAME \
     --version-label $APP_FILE_VERSIONED --description $ENV_TO_CREATE \
-    --source-bundle S3Bucket="$S3_BUCKET",S3Key="$S3_BUCKET_FILE" \
+    --source-bundle S3Bucket="$APP_S3_BUCKET",S3Key="$APP_S3_BUCKET_FILE" \
     >/dev/null 2>&1
 
   # https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html
@@ -72,7 +72,7 @@ function update_environment() {
     --profile $AWS_PROFILE \
     --application-name $APP_NAME \
     --version-label $APP_FILE_VERSIONED --description $ENV_TO_UPDATE \
-    --source-bundle S3Bucket="$S3_BUCKET",S3Key="$S3_BUCKET_FILE" \
+    --source-bundle S3Bucket="$APP_S3_BUCKET",S3Key="$APP_S3_BUCKET_FILE" \
     >/dev/null 2>&1
 
   ENV_ID=($(aws elasticbeanstalk describe-environments \
@@ -206,14 +206,16 @@ readonly IAM_INSTANCE_PROFILE=$(jq -r ".aws.${APP_BRANCH}.iamInstanceProfile" $A
 readonly ENVIRONMENT_TAGS=$(jq -r ".aws.${APP_BRANCH}.tags" $APP_CONFIG_FILE)
 # EC2 key pair name
 readonly EC2_KEY_NAME=$(jq -r ".aws.${APP_BRANCH}.ec2KeyName" $APP_CONFIG_FILE)
-# S3 bucket name
-readonly S3_BUCKET=$(jq -r ".aws.${APP_BRANCH}.s3Bucket" $APP_CONFIG_FILE)
+# S3 bucket for application files
+readonly APP_S3_BUCKET=$(jq -r ".aws.appS3Bucket" $APP_CONFIG_FILE)
+# S3 bucket for public upload files
+readonly UPLOAD_S3_BUCKET=$(jq -r ".aws.uploadS3Bucket" $APP_CONFIG_FILE)
 # SSL certificate ID
 readonly SSL_CERTIFICATE_ID=$(jq -r ".aws.sslCertificateId" $APP_CONFIG_FILE)
 # S3 directory
-readonly S3_BUCKET_DIR="${APP_NAME}/${APP_BRANCH}"
+readonly APP_S3_BUCKET_DIR="${APP_NAME}/${APP_BRANCH}"
 # S3 file name
-readonly S3_BUCKET_FILE=${S3_BUCKET_DIR}/${APP_FILE_VERSIONED}.zip
+readonly APP_S3_BUCKET_FILE=${APP_S3_BUCKET_DIR}/${APP_FILE_VERSIONED}.zip
 # Delete S3 file?
 readonly S3_DELETE=$(jq -r ".aws.s3Delete" $APP_CONFIG_FILE)
 # Delete S3 file "n" days old
@@ -434,9 +436,9 @@ fi
 #####################################################
 
 # Send app to S3
-echo "SENDING APP TO S3: s3://${S3_BUCKET}/${S3_BUCKET_FILE}"
+echo "SENDING APP TO S3: s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}"
 aws s3 cp --quiet --profile $AWS_PROFILE \
-  /tmp/${APP_FILE}.zip s3://${S3_BUCKET}/${S3_BUCKET_FILE}
+  /tmp/${APP_FILE}.zip s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}
 
 echo "DEPLOYING..."
 
@@ -462,7 +464,7 @@ if [ "$APP_EXISTS" == "" ]; then
     echo "ENVIRONMENT NAME $APP_NAME IS NOT AVAILABLE"
     # Clean up
     aws s3 --profile $AWS_PROFILE \
-      rm s3://${S3_BUCKET}/$S3_BUCKET_FILE >/dev/null 2>&1
+      rm s3://${APP_S3_BUCKET}/$APP_S3_BUCKET_FILE >/dev/null 2>&1
 
   fi
 
@@ -540,7 +542,7 @@ else
       echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
       # Clean up
       aws s3 --profile $AWS_PROFILE \
-        rm s3://${S3_BUCKET}/$S3_BUCKET_FILE >/dev/null 2>&1
+        rm s3://${APP_S3_BUCKET}/$APP_S3_BUCKET_FILE >/dev/null 2>&1
 
     fi
 
@@ -550,8 +552,8 @@ fi
 
 # Clean up old app files
 if [ "$S3_DELETE" -eq 1 ] && [ "$UPDATED" -eq 1 ]; then
-  echo "TRY TO DELETE OLD S3 FILES($S3_DELETE_DAYS_OLD days old) at s3://${S3_BUCKET}/${S3_BUCKET_DIR}"
-  ./delete-s3.sh "s3://${S3_BUCKET}/$S3_BUCKET_DIR" "${S3_DELETE_DAYS_OLD} days"
+  echo "TRY TO DELETE OLD S3 FILES($S3_DELETE_DAYS_OLD days old) at s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_DIR}"
+  ./delete-s3.sh "s3://${APP_S3_BUCKET}/$APP_S3_BUCKET_DIR" "${S3_DELETE_DAYS_OLD} days"
 fi
 
 if [ "$UPDATED" -eq 1 ]; then
