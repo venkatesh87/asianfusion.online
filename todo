@@ -1,12 +1,11 @@
 read me
-create setup script
-create script/description
 create ebs wait method
 report ebs health
-instance profile
 lower case log
 speedup docker - docker sync
 wordpress s3 upload
+activate plugin
+change wp-admin url
 
 bugs:
 - two master env which to ssh?

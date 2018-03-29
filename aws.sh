@@ -28,6 +28,7 @@ function create_environment() {
     --source-bundle S3Bucket="$S3_BUCKET",S3Key="$S3_BUCKET_FILE" \
     >/dev/null 2>&1
 
+  # https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html
   # Create new environment
   aws elasticbeanstalk create-environment \
     --profile $AWS_PROFILE \
@@ -44,7 +45,17 @@ function create_environment() {
             {
                 \"Namespace\": \"aws:autoscaling:launchconfiguration\",
                 \"OptionName\": \"SecurityGroups\",
-                \"Value\": \"${SECURITY_GROUP}\"
+                \"Value\": \"${EC2_SECURITY_GROUPS}\"
+            },
+            {
+                \"Namespace\": \"aws:elb:loadbalancer\",
+                \"OptionName\": \"SecurityGroups\",
+                \"Value\": \"${ELB_SECURITY_GROUPS}\"
+            },
+            {
+              \"Namespace\": \"aws:autoscaling:launchconfiguration\",
+              \"OptionName\": \"IamInstanceProfile\",
+              \"Value\": \"${IAM_INSTANCE_PROFILE}\"
             },
             {
                 \"Namespace\": \"aws:autoscaling:launchconfiguration\",
@@ -185,8 +196,12 @@ readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
 readonly STACK=$(jq -r ".aws.${APP_BRANCH}.stack" $APP_CONFIG_FILE)
 # EC2 instance type
 readonly INSTANCE_TYPE=$(jq -r ".aws.${APP_BRANCH}.instanceType" $APP_CONFIG_FILE)
-# Security group
-readonly SECURITY_GROUP=$(jq -r ".aws.${APP_BRANCH}.securityGroup" $APP_CONFIG_FILE)
+# EC2 security group
+readonly EC2_SECURITY_GROUPS=$(jq -r ".aws.${APP_BRANCH}.securityGroups" $APP_CONFIG_FILE)
+# EBS load balancer security group
+readonly ELB_SECURITY_GROUPS=$(jq -r ".aws.${APP_BRANCH}.elbSecurityGroups" $APP_CONFIG_FILE)
+# IAM instance profile
+readonly IAM_INSTANCE_PROFILE=$(jq -r ".aws.${APP_BRANCH}.iamInstanceProfile" $APP_CONFIG_FILE)
 # Environment tags
 readonly ENVIRONMENT_TAGS=$(jq -r ".aws.${APP_BRANCH}.tags" $APP_CONFIG_FILE)
 # EC2 key pair name
@@ -297,7 +312,7 @@ if [ "${1}" == "terminate" ]; then
       
       echo "EVIRONMENT IS TERMINATING..."
       aws elasticbeanstalk terminate-environment \
-        --profile $AWS_PROFILE
+        --profile $AWS_PROFILE \
         --environment-name $ENV_NAME >/dev/null 2>&1
      
       # Delete the alternate environment

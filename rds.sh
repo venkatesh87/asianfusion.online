@@ -29,6 +29,7 @@ readonly APP_CONFIG_FILE=./app.json
 readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" $APP_CONFIG_FILE)
 readonly DB_INSTANCE_IDENTIFIER=$(jq -r ".rds.instanceName" $APP_CONFIG_FILE)
+readonly DB_SECURITY_GROUPS=$(jq -r ".rds.dbSecurityGroups" $APP_CONFIG_FILE)
 readonly MASTER_USERNAME=$DB_INSTANCE_IDENTIFIER
 readonly MASTER_USER_PASSWORD=$(get-password)
 readonly REGION=$(jq -r ".rds.region" $APP_CONFIG_FILE)
@@ -57,6 +58,7 @@ aws rds create-db-instance \
   --db-instance-identifier $DB_INSTANCE_IDENTIFIER \
   --allocated-storage $ALLOCATED_STORAGE \
   --db-instance-class $DB_INSTANCE_CLASS \
+  --db-security-groups $DB_SECURITY_GROUPS \
   --engine $ENGINE \
   --engine-version $ENGINE_VERSION \
   --storage-type $STORAGE_TYPE \

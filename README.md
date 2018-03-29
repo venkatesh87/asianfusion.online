@@ -5,9 +5,7 @@ AWS
 
 Network & Security -> Security Groups
   * Create new Security Group for EC2 and EBS
-    * Allow Inbound from Anywhere on SSH, HTTP, HTTPS
-  * Create new Security Group for RDS
-    * Allow Inbound from Anywhere on MYSQL
+  * Allow Inbound from Anywhere on SSH, HTTP, HTTPS
 
 Network & Security -> Key Pairs
   * Create new Key Pair
@@ -53,5 +51,10 @@ RDS
 run ./rds
 
 run ./load-db.sh db/wordpress.sql
+
+SSH access
+=========
+Don't specify ec2 key name and path if you don't want SSH access. EBS will create the default
+security group with port 22 open if ec2 key name is specified.
 
 EBS

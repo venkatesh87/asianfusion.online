@@ -9,7 +9,9 @@
   "aws": {
     "dev": {
       "profile": "change-me",
-      "securityGroup": "change-me",
+      "ec2SecurityGroups": "change-me",
+      "elbSecurityGroups": "change-me",
+      "iamInstanceProfile": "change-me",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
       "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
@@ -19,7 +21,9 @@
     },
     "qa": {
       "profile": "change-me",
-      "securityGroup": "change-me",
+      "ec2SecurityGroups": "change-me",
+      "elbSecurityGroups": "change-me",
+      "iamInstanceProfile": "change-me",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
       "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
@@ -29,7 +33,9 @@
     },
     "master": {
       "profile": "change-me",
-      "securityGroup": "default-ec2-ebs-no-ssh",
+      "ec2SecurityGroups": "change-me",
+      "elbSecurityGroups": "change-me",
+      "iamInstanceProfile": "change-me",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
       "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
@@ -45,6 +51,7 @@
   "rds": {
     "instanceName": "change-me",
     "instanceClass": "db.t2.micro",
+    "dbSecurityGroups": "",
     "region": "us-east-1",
     "allocatedStorage": 20,
     "storageType": "gp2",
