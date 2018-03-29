@@ -39,14 +39,14 @@ readonly DB_INSTANCE_CLASS=$(jq -r ".rds.instanceClass" $APP_CONFIG_FILE)
 readonly ENGINE=$(jq -r ".rds.engine" $APP_CONFIG_FILE)
 readonly ENGINE_VERSION=$(jq -r ".rds.engineVersion" $APP_CONFIG_FILE)
 
-ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
+DB_HOST=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
 
 if [ "$APP_BRANCH" != "dev" ]; then
   echo "You're not on dev branch"
   exit
 fi
 
-if [ $ENDPOINT ]; then
+if [ $DB_HOST ]; then
   echo "Db instance already exists"
   exit
 fi
@@ -68,7 +68,7 @@ aws rds create-db-instance \
 
 wait-for-status $DB_INSTANCE_IDENTIFIER available
 
-ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
+DB_HOST=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
 
 readonly DB_DEV=${DB_INSTANCE_IDENTIFIER}_dev
 readonly DB_DEV_USER=${DB_INSTANCE_IDENTIFIER}_dev
@@ -85,42 +85,42 @@ readonly DB_LIVE_PASSWORD=$(get-password)
 echo "Db instance created"
 
 # Dev database and user
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_DEV;"
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_DEV_USER'@'%' IDENTIFIED BY '$DB_DEV_PASSWORD';"
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_DEV.* TO '$DB_DEV_USER'@'%';"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_DEV;"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_DEV_USER'@'%' IDENTIFIED BY '$DB_DEV_PASSWORD';"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_DEV.* TO '$DB_DEV_USER'@'%';"
 
 # Test database and user
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_QA;"
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_QA_USER'@'%' IDENTIFIED BY '$DB_QA_PASSWORD';"
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_QA.* TO '$DB_QA_USER'@'%';"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_QA;"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_QA_USER'@'%' IDENTIFIED BY '$DB_QA_PASSWORD';"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_QA.* TO '$DB_QA_USER'@'%';"
 
 # Live database and user
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_LIVE;"
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_LIVE_USER'@'%' IDENTIFIED BY '$DB_LIVE_PASSWORD';"
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_LIVE.* TO '$DB_LIVE_USER'@'%';"
-mysql -h$ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "FLUSH PRIVILEGES;"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_LIVE;"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_LIVE_USER'@'%' IDENTIFIED BY '$DB_LIVE_PASSWORD';"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_LIVE.* TO '$DB_LIVE_USER'@'%';"
+mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "FLUSH PRIVILEGES;"
 
 # Generate db.json file
 echo "{
   \"root\": {
-    \"endpoint\": \"$ENDPOINT\",
+    \"endpoint\": \"$DB_HOST\",
     \"user\": \"$MASTER_USERNAME\",
     \"password\": \"$MASTER_USER_PASSWORD\"
   },
   \"dev\": {
-    \"endpoint\": \"$ENDPOINT\",
+    \"endpoint\": \"$DB_HOST\",
     \"database\": \"$DB_DEV\",
     \"user\": \"$DB_DEV_USER\",
     \"password\": \"$DB_DEV_PASSWORD\"
   },
   \"qa\": {
-    \"endpoint\": \"$ENDPOINT\",
+    \"endpoint\": \"$DB_HOST\",
     \"database\": \"$DB_QA\",
     \"user\": \"$DB_QA_USER\",
     \"password\": \"$DB_QA_PASSWORD\"
   },
   \"master\": {
-    \"endpoint\": \"$ENDPOINT\",
+    \"endpoint\": \"$DB_HOST\",
     \"database\": \"$DB_LIVE\",
     \"user\": \"$DB_LIVE_USER\",
     \"password\": \"$DB_LIVE_PASSWORD\"
@@ -134,11 +134,11 @@ sh ./post-checkout
 cp ./post-checkout .git/hooks/post-checkout
 chmod u+x .git/hooks/post-checkout
 
-# Load starting point database
+# Load starting point database to dev db
 sh ./load-db.sh db/wordpress.sql
 
-# Activate plugins
-mysql -h$ENDPOINT -u$DB_DEV_USER -p$DB_DEV_PASSWORD -e "UPDATE ${DB_DEV}.wp_options SET option_value = 'a:5:{i:0;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:1;s:36:\"contact-form-7/wp-contact-form-7.php\";i:2;s:21:\"flamingo/flamingo.php\";i:3;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:4;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";}' WHERE option_name = 'active_plugins';"
+# Reset wordpress
+./reset-wordpress.sh $DB_HOST $DB_DEV $DB_DEV_USER $DB_DEV_PASSWORD 1
 
-echo "Database has been created."
-echo "Check db.json for info, please save this file"
+echo "Databases has been created. Wordpress SQL has been imported for dev database."
+echo "Check db.json for access info, please save this file."

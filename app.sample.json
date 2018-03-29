@@ -113,6 +113,7 @@
     }
   },
   "wordpress": {
+    "apiKey": "change-me",
     "dev": {
       "adminUsername": "change-me",
       "adminPassword": "change-me",

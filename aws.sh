@@ -178,7 +178,7 @@ readonly APP_CONFIG_FILE=./app.json
 readonly DB_CONFIG_FILE=./db.json
 # AWS application name
 readonly APP_NAME=$(jq -r ".appName" $APP_CONFIG_FILE)
-# Detect git branch
+# App branch
 readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 # AWS PROFILE
 readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" $APP_CONFIG_FILE)
@@ -206,20 +206,18 @@ readonly IAM_INSTANCE_PROFILE=$(jq -r ".aws.${APP_BRANCH}.iamInstanceProfile" $A
 readonly ENVIRONMENT_TAGS=$(jq -r ".aws.${APP_BRANCH}.tags" $APP_CONFIG_FILE)
 # EC2 key pair name
 readonly EC2_KEY_NAME=$(jq -r ".aws.${APP_BRANCH}.ec2KeyName" $APP_CONFIG_FILE)
-# S3 bucket for application files
+# Application S3 bucket
 readonly APP_S3_BUCKET=$(jq -r ".aws.appS3Bucket" $APP_CONFIG_FILE)
-# S3 bucket for public upload files
-readonly UPLOAD_S3_BUCKET=$(jq -r ".aws.uploadS3Bucket" $APP_CONFIG_FILE)
+# Application S3 directory
+readonly APP_S3_BUCKET_PATH=${APP_NAME}/${APP_BRANCH}
+# Application S3 file name
+readonly APP_S3_BUCKET_FILE=${APP_S3_BUCKET_PATH}/${APP_FILE_VERSIONED}.zip
+# Delete application files on S3?
+readonly APP_S3_DELETE=$(jq -r ".aws.appS3Delete" $APP_CONFIG_FILE)
+# Delete application file "n" days old on S3
+readonly APP_S3_DELETE_DAYS_OLD=$(jq -r ".aws.appS3DeleteDaysOld" $APP_CONFIG_FILE)
 # SSL certificate ID
 readonly SSL_CERTIFICATE_ID=$(jq -r ".aws.sslCertificateId" $APP_CONFIG_FILE)
-# S3 directory
-readonly APP_S3_BUCKET_DIR="${APP_NAME}/${APP_BRANCH}"
-# S3 file name
-readonly APP_S3_BUCKET_FILE=${APP_S3_BUCKET_DIR}/${APP_FILE_VERSIONED}.zip
-# Delete S3 file?
-readonly S3_DELETE=$(jq -r ".aws.s3Delete" $APP_CONFIG_FILE)
-# Delete S3 file "n" days old
-readonly S3_DELETE_DAYS_OLD=$(jq -r ".aws.s3DeleteDaysOld" $APP_CONFIG_FILE)
 # Blue green deployment
 readonly BLUE_GREEN_DEPLOYMENT=$(jq -r ".aws.blueGreenDeployment" $APP_CONFIG_FILE)
 # Basic auth enabled?
@@ -238,28 +236,6 @@ readonly PHP_ALLOW_URL_FOPEN=$(jq -r ".php.${APP_BRANCH}.allowUrlFopen" $APP_CON
 readonly PHP_DISPLAY_ERRORS=$(jq -r ".php.${APP_BRANCH}.displayErrors" $APP_CONFIG_FILE)
 # PHP MAX EXECUTION TIME
 readonly PHP_MAX_EXECUTION_TIME=$(jq -r ".php.${APP_BRANCH}.maxExecutionTime" $APP_CONFIG_FILE)
-# WORDPRESS ADMIN USERNAME
-readonly WORDPRESS_ADMIN_USERNAME=$(jq -r ".wordpress.${APP_BRANCH}.adminUsername" $APP_CONFIG_FILE)
-# WORDPRESS ADMIN PASSWORD
-readonly WORDPRESS_ADMIN_PASSWORD=$(jq -r ".wordpress.${APP_BRANCH}.adminPassword" $APP_CONFIG_FILE)
-# WORDPRESS ADMIN DISPLAY NAME
-readonly WORDPRESS_ADMIN_DISPLAY_NAME=$(jq -r ".wordpress.${APP_BRANCH}.adminDisplayName" $APP_CONFIG_FILE)
-# WORDPRESS ADMIN EMAIL
-readonly WORDPRESS_ADMIN_EMAIL=$(jq -r ".wordpress.${APP_BRANCH}.adminEmail" $APP_CONFIG_FILE)
-# WP EMAIL SMTP SETTINGS
-readonly WP_EMAIL_SMTP_FROM_EMAIL=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.fromEmail" $APP_CONFIG_FILE)
-readonly WP_EMAIL_SMTP_FROM_NAME=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.fromName" $APP_CONFIG_FILE)
-readonly WP_EMAIL_SMTP_HOST=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.smtpHost" $APP_CONFIG_FILE)
-readonly WP_EMAIL_SMTP_PORT=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.smtpPort" $APP_CONFIG_FILE)
-readonly WP_EMAIL_SMTP_USERNAME=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.smtpUsername" $APP_CONFIG_FILE)
-readonly WP_EMAIL_SMTP_PASSWORD=$(jq -r ".wpEmailSmtp.${APP_BRANCH}.smtpPassword" $APP_CONFIG_FILE)
-
-readonly WP_EMAIL_SMTP_FROM_EMAIL_COUNT=${#WP_EMAIL_SMTP_FROM_EMAIL}
-readonly WP_EMAIL_SMTP_FROM_NAME_COUNT=${#WP_EMAIL_SMTP_FROM_NAME}
-readonly WP_EMAIL_SMTP_HOST_COUNT=${#WP_EMAIL_SMTP_HOST}
-readonly WP_EMAIL_SMTP_PORT_COUNT=${#WP_EMAIL_SMTP_PORT}
-readonly WP_EMAIL_SMTP_USERNAME_COUNT=${#WP_EMAIL_SMTP_USERNAME}
-readonly WP_EMAIL_SMTP_PASSWORD_COUNT=${#WP_EMAIL_SMTP_PASSWORD}
 
 # Db credentials
 readonly DB_HOST=$(jq -r ".${APP_BRANCH}.endpoint" $DB_CONFIG_FILE)
@@ -410,26 +386,8 @@ cd - >/dev/null 2>&1
 
 echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
 
-# Update wordpress admin info
-mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
-  -e "UPDATE ${DB_DATABASE}.wp_users SET user_login = '${WORDPRESS_ADMIN_USERNAME}', user_nicename = '${WORDPRESS_ADMIN_DISPLAY_NAME}', user_email = '${WORDPRESS_ADMIN_EMAIL}', display_name = '${WORDPRESS_ADMIN_DISPLAY_NAME}', user_pass = MD5('${WORDPRESS_ADMIN_PASSWORD}') WHERE ${DB_DATABASE}.wp_users.ID = 1;"
-
-mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WORDPRESS_ADMIN_EMAIL}' WHERE option_name = 'admin_email';"
-
-# Update WP Email Smtp plugin settings
-readonly WP_EMAIL_SMTP_OPTION_VALUE="a:10:{s:10:\"from_email\";s:${WP_EMAIL_SMTP_FROM_EMAIL_COUNT}:\"${WP_EMAIL_SMTP_FROM_EMAIL}\";s:9:\"from_name\";s:${WP_EMAIL_SMTP_FROM_NAME_COUNT}:\"${WP_EMAIL_SMTP_FROM_NAME}\";s:6:\"mailer\";s:4:\"smtp\";s:20:\"mail_set_return_path\";s:4:\"true\";s:9:\"smtp_host\";s:${WP_EMAIL_SMTP_HOST_COUNT}:\"${WP_EMAIL_SMTP_HOST}\";s:9:\"smtp_port\";s:${WP_EMAIL_SMTP_PORT_COUNT}:\"${WP_EMAIL_SMTP_PORT}\";s:15:\"smtp_encryption\";s:3:\"tls\";s:19:\"smtp_authentication\";s:4:\"true\";s:13:\"smtp_username\";s:${WP_EMAIL_SMTP_USERNAME_COUNT}:\"${WP_EMAIL_SMTP_USERNAME}\";s:13:\"smtp_password\";s:${WP_EMAIL_SMTP_PASSWORD_COUNT}:\"${WP_EMAIL_SMTP_PASSWORD}\";}"
-
-readonly HAS_WP_EMAIL_SMTP=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'wp_email_smtp_option_name';")
-
-if [ "$HAS_WP_EMAIL_SMTP" == 1 ]; then
-
-  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_EMAIL_SMTP_OPTION_VALUE}' WHERE option_name = 'wp_email_smtp_option_name';"
-
-else
-
-  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('wp_email_smtp_option_name', '${WP_EMAIL_SMTP_OPTION_VALUE}', 'yes');"
-
-fi
+# Reset wordpress
+./reset-wordpress.sh $DB_HOST $DB_DATABASE $DB_USER $DB_PASSWORD 0
 
 #####################################################
 # END                                               #
@@ -542,7 +500,7 @@ else
       echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
       # Clean up
       aws s3 --profile $AWS_PROFILE \
-        rm s3://${APP_S3_BUCKET}/$APP_S3_BUCKET_FILE >/dev/null 2>&1
+        rm s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE} >/dev/null 2>&1
 
     fi
 
@@ -551,9 +509,9 @@ else
 fi
 
 # Clean up old app files
-if [ "$S3_DELETE" -eq 1 ] && [ "$UPDATED" -eq 1 ]; then
-  echo "TRY TO DELETE OLD S3 FILES($S3_DELETE_DAYS_OLD days old) at s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_DIR}"
-  ./delete-s3.sh "s3://${APP_S3_BUCKET}/$APP_S3_BUCKET_DIR" "${S3_DELETE_DAYS_OLD} days"
+if [ "$APP_S3_DELETE" -eq 1 ] && [ "$UPDATED" -eq 1 ]; then
+  echo "TRY TO DELETE OLD S3 FILES(${APP_S3_DELETE_DAYS_OLD} days old) at s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_PATH}"
+  ./delete-s3.sh "s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_PATH}" "${APP_S3_DELETE_DAYS_OLD} days"
 fi
 
 if [ "$UPDATED" -eq 1 ]; then
