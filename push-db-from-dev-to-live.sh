@@ -13,10 +13,10 @@ readonly DEV_DATABASE=$(jq -r ".dev.database" ./db.json)
 readonly DEV_USER=$(jq -r ".dev.user" ./db.json)
 readonly DEV_PASSWORD=$(jq -r ".dev.password" ./db.json)
 
-readonly LIVE_HOST=$(jq -r ".qa.endpoint" ./db.json)
-readonly LIVE_DATABASE=$(jq -r ".qa.database" ./db.json)
-readonly LIVE_USER=$(jq -r ".qa.user" ./db.json)
-readonly LIVE_PASSWORD=$(jq -r ".qa.password" ./db.json)
+readonly LIVE_HOST=$(jq -r ".master.endpoint" ./db.json)
+readonly LIVE_DATABASE=$(jq -r ".master.database" ./db.json)
+readonly LIVE_USER=$(jq -r ".master.user" ./db.json)
+readonly LIVE_PASSWORD=$(jq -r ".master.password" ./db.json)
 
 readonly SQL_FILE=/tmp/${APP_NAME}-dev.sql
 
