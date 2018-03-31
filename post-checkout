@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Exit of file checkout, more: https://stackoverflow.com/questions/1011557/is-there-a-way-to-trigger-a-hook-after-a-new-branch-has-been-checked-out-in-git
+# Exit on file checkout, more: https://stackoverflow.com/questions/1011557/is-there-a-way-to-trigger-a-hook-after-a-new-branch-has-been-checked-out-in-git
 if [ "$3" ] && [ "$3" == "0" ]; then
   exit
 fi
