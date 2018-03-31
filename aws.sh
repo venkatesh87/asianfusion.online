@@ -387,7 +387,7 @@ cd - >/dev/null 2>&1
 echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
 
 # Reset wordpress
-./reset-wordpress.sh $DB_HOST $DB_DATABASE $DB_USER $DB_PASSWORD 0
+./reset-wordpress.sh $DB_HOST $DB_DATABASE $DB_USER $DB_PASSWORD 1
 
 #####################################################
 # END                                               #

@@ -44,6 +44,9 @@ readonly UPLOAD_S3_BUCKET_CHAR_COUNT=${#UPLOAD_S3_BUCKET}
 # Wordpress Akismet
 readonly WP_API_KEY=$(jq -r ".wordpress.apiKey" $APP_CONFIG_FILE)
 
+# WPS Hide Login
+readonly WP_LOGIN_URL=$(jq -r ".wordpress.loginUrl" $APP_CONFIG_FILE)
+
 # Update wordpress admin info
 mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
   -e "UPDATE ${DB_DATABASE}.wp_users SET user_login = '${WP_ADMIN_USERNAME}', user_nicename = '${WP_ADMIN_DISPLAY_NAME}', user_email = '${WP_ADMIN_EMAIL}', display_name = '${WP_ADMIN_DISPLAY_NAME}', user_pass = MD5('${WP_ADMIN_PASSWORD}') WHERE ${DB_DATABASE}.wp_users.ID = 1;"
@@ -93,10 +96,24 @@ else
 
 fi
 
+# Update WPS Hide Login settings
+readonly HAS_LOGIN_URL=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'whl_page';")
+
+if [ "$HAS_LOGIN_URL" == 1 ]; then
+
+  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_LOGIN_URL}' WHERE option_name = 'whl_page';"
+
+else
+
+  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('whl_page', '${WP_LOGIN_URL}', 'yes');"
+
+fi
+
+
 # Activate pre-installed plugins
 # SELECT * FROM wp_options WHERE option_name = 'active_plugins';
 
 if [ "$ACTIVATE_PREINSTALLED_PLUGINS" == 1 ]; then
-  readonly WP_ACTIVATE_PLUGIN_VALUES="a:7:{i:0;s:19:\"akismet/akismet.php\";i:1;s:41:\"amazon-s3-and-cloudfront/wordpress-s3.php\";i:2;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:3;s:36:\"contact-form-7/wp-contact-form-7.php\";i:4;s:21:\"flamingo/flamingo.php\";i:5;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:6;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";}"
+  readonly WP_ACTIVATE_PLUGIN_VALUES="a:8:{i:0;s:19:\"akismet/akismet.php\";i:1;s:41:\"amazon-s3-and-cloudfront/wordpress-s3.php\";i:2;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:3;s:36:\"contact-form-7/wp-contact-form-7.php\";i:4;s:21:\"flamingo/flamingo.php\";i:5;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:6;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";i:7;s:33:\"wps-hide-login/wps-hide-login.php\";}"
   mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_ACTIVATE_PLUGIN_VALUES}' WHERE option_name = 'active_plugins';"
 fi

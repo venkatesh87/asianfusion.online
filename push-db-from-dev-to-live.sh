@@ -1,0 +1,25 @@
+#!/bin/sh
+
+readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
+readonly APP_NAME=$(jq -r ".appName" ./app.json)
+
+if [ "$APP_BRANCH" != "dev" ]; then
+  echo "You're not on dev branch"
+  exit
+fi
+
+readonly DEV_HOST=$(jq -r ".dev.endpoint" ./db.json)
+readonly DEV_DATABASE=$(jq -r ".dev.database" ./db.json)
+readonly DEV_USER=$(jq -r ".dev.user" ./db.json)
+readonly DEV_PASSWORD=$(jq -r ".dev.password" ./db.json)
+
+readonly LIVE_HOST=$(jq -r ".qa.endpoint" ./db.json)
+readonly LIVE_DATABASE=$(jq -r ".qa.database" ./db.json)
+readonly LIVE_USER=$(jq -r ".qa.user" ./db.json)
+readonly LIVE_PASSWORD=$(jq -r ".qa.password" ./db.json)
+
+readonly SQL_FILE=/tmp/${APP_NAME}-dev.sql
+
+mysqldump -h$DEV_HOST -u$DEV_USER -p$DEV_PASSWORD $DEV_DATABASE > "$SQL_FILE"
+
+mysql -h$LIVE_HOST -u$LIVE_USER -p$LIVE_PASSWORD $LIVE_DATABASE < "$SQL_FILE"

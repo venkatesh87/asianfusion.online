@@ -114,6 +114,7 @@
   },
   "wordpress": {
     "apiKey": "change-me",
+    "loginUrl": "backend",
     "dev": {
       "adminUsername": "change-me",
       "adminPassword": "change-me",

@@ -15,7 +15,7 @@ post_max_size = 64M
 evaluate:
 visual composer
 elementor
-
+a log viewer
 
 
 bugs:
