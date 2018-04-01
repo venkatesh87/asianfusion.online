@@ -64,5 +64,9 @@ security group with port 22 open if ec2 key name is specified.
 
 ebextensions
 
+Integration
+==========
+recaptcha
+ * Add your domain and localhost
 
 Cost

@@ -10,6 +10,9 @@ RUN echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
 # Change Apache server name
 RUN sed -i -e "s/#ServerName www.example.com:80/ServerName localhost/g" /etc/httpd/conf/httpd.conf
 
+# Allow .htaccess
+RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.conf
+
 # Change PHP timezone
 RUN sed -i -e "s/;date.timezone =/date.timezone = America\/New_York/g" /etc/php-7.1.ini
 

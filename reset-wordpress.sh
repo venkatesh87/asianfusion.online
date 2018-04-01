@@ -47,6 +47,11 @@ readonly WP_API_KEY=$(jq -r ".wordpress.apiKey" $APP_CONFIG_FILE)
 # WPS Hide Login
 readonly WP_LOGIN_URL=$(jq -r ".wordpress.loginUrl" $APP_CONFIG_FILE)
 
+# Recaptcha
+readonly RECAPTCHA_SITE_KEY=$(jq -r ".wordpress.recaptcha.siteKey" $APP_CONFIG_FILE)
+readonly RECAPTCHA_SECRET_KEY=$(jq -r ".wordpress.recaptcha.secretKey" $APP_CONFIG_FILE)
+
+
 # Update wordpress admin info
 mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD \
   -e "UPDATE ${DB_DATABASE}.wp_users SET user_login = '${WP_ADMIN_USERNAME}', user_nicename = '${WP_ADMIN_DISPLAY_NAME}', user_email = '${WP_ADMIN_EMAIL}', display_name = '${WP_ADMIN_DISPLAY_NAME}', user_pass = MD5('${WP_ADMIN_PASSWORD}') WHERE ${DB_DATABASE}.wp_users.ID = 1;"
@@ -69,6 +74,7 @@ else
 fi
 
 # Update Offload S3 plugin settings
+
 readonly WP_OFFLOAD_S3_OPTION_VALUE="a:13:{s:6:\"bucket\";s:${UPLOAD_S3_BUCKET_CHAR_COUNT}:\"${UPLOAD_S3_BUCKET}\";s:10:\"cloudfront\";s:0:\"\";s:10:\"copy-to-s3\";s:1:\"1\";s:6:\"domain\";s:4:\"path\";s:20:\"enable-object-prefix\";s:1:\"1\";s:11:\"force-https\";s:1:\"0\";s:13:\"object-prefix\";s:${UPLOAD_S3_BUCKET_PATH_CHAR_COUNT}:\"${UPLOAD_S3_BUCKET_PATH}\";s:17:\"object-versioning\";s:1:\"1\";s:17:\"post_meta_version\";i:6;s:6:\"region\";s:0:\"\";s:17:\"remove-local-file\";s:1:\"0\";s:13:\"serve-from-s3\";s:1:\"1\";s:21:\"use-yearmonth-folders\";s:1:\"1\";}"
 
 readonly HAS_WP_OFFLOAD_S3=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'tantan_wordpress_s3';")
@@ -84,31 +90,59 @@ else
 fi
 
 # Update Akismet plugin settings
-readonly HAS_WP_API_KEY=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'wordpress_api_key';")
 
-if [ "$HAS_WP_API_KEY" == 1 ]; then
+if [ "$WP_APK_KEY" != "" ]; then
+  readonly HAS_WP_API_KEY=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'wordpress_api_key';")
 
-  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_API_KEY}' WHERE option_name = 'wordpress_api_key';"
+  if [ "$HAS_WP_API_KEY" == 1 ]; then
 
-else
+    mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_API_KEY}' WHERE option_name = 'wordpress_api_key';"
 
-  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('wordpress_api_key', '${WP_API_KEY}', 'yes');"
+  else
+
+    mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('wordpress_api_key', '${WP_API_KEY}', 'yes');"
+
+  fi
 
 fi
 
 # Update WPS Hide Login settings
-readonly HAS_LOGIN_URL=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'whl_page';")
 
-if [ "$HAS_LOGIN_URL" == 1 ]; then
+if [ "$WP_LOGIN_URL" != "" ]; then
 
-  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_LOGIN_URL}' WHERE option_name = 'whl_page';"
+  readonly HAS_LOGIN_URL=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'whl_page';")
 
-else
+  if [ "$HAS_LOGIN_URL" == 1 ]; then
 
-  mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('whl_page', '${WP_LOGIN_URL}', 'yes');"
+    mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_LOGIN_URL}' WHERE option_name = 'whl_page';"
+
+  else
+
+    mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('whl_page', '${WP_LOGIN_URL}', 'yes');"
+
+  fi
 
 fi
 
+# Update Contact Form 7 reCAPTCHA
+
+if [ "$RECAPTCHA_SITE_KEY" != "" ] && [ "$RECAPTCHA_SECRET_KEY" != "" ]; then
+
+  readonly HAS_CF7_RECAPTCHA=$(mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'wpcf7';")
+
+  readonly CF7_RECAPTCHA_VALUE="a:2:{s:7:\"version\";s:5:\"5.0.1\";s:9:\"recaptcha\";a:1:{s:40:\"${RECAPTCHA_SITE_KEY}\";s:40:\"${RECAPTCHA_SECRET_KEY}\";}}"
+
+  if [ "$HAS_CF7_RECAPTCHA" == 1 ]; then
+
+    mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${CF7_RECAPTCHA_VALUE}' WHERE option_name = 'wpcf7';"
+
+else
+
+    mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('wpcf7', '${CF7_RECAPTCHA_VALUE}', 'yes');"
+
+  fi
+
+fi
 
 # Activate pre-installed plugins
 # SELECT * FROM wp_options WHERE option_name = 'active_plugins';

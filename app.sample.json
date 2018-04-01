@@ -115,6 +115,10 @@
   "wordpress": {
     "apiKey": "change-me",
     "loginUrl": "backend",
+    "recaptcha": {
+      "siteKey": "change-me",
+      "secretKey": "change-me"
+    },
     "dev": {
       "adminUsername": "change-me",
       "adminPassword": "change-me",
