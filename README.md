@@ -82,8 +82,5 @@ Max Mega Menu
 1. Create a new Menu
 2. Menu Settings -> Display Location -> Primary Menu
 3. Appearance -> Menus -> Max Mega Menu Settings -> Enable -> Save
-4. Elementor -> Add Section -> "Header" -> Drag Max Mega Menu -> Menu Location -> Primary Menu
--> Edit Layout -> Content Width -> Full Width -> Columns Gap -> No Gap -> Publish
 5. Appearance -> Header Footer Builder -> Select the type of template this is "Header"
 -> Edit Elementor -> Add Template -> My Templates -> "Header" -> Insert -> Update
-
