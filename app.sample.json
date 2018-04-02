@@ -95,21 +95,27 @@
       "outputCompression": "Off",
       "allowUrlFopen": "Off",
       "displayErrors": "On",
-      "maxExecutionTime": 60
+      "maxExecutionTime": 60,
+      "uploadMaxFilesize": "20M",
+      "postMaxSize": "20M"
     },
     "qa": {
       "memoryLimit": "256M",
       "outputCompression": "On",
       "allowUrlFopen": "Off",
       "displayErrors": "Off",
-      "maxExecutionTime": 60
+      "maxExecutionTime": 60,
+      "uploadMaxFilesize": "20M",
+      "postMaxSize": "20M"
     },
     "master": {
       "memoryLimit": "256M",
       "outputCompression": "On",
       "allowUrlFopen": "Off",
       "displayErrors": "Off",
-      "maxExecutionTime": 60
+      "maxExecutionTime": 60,
+      "uploadMaxFilesize": "20M",
+      "postMaxSize": "20M"
     }
   },
   "wordpress": {

@@ -236,6 +236,11 @@ readonly PHP_ALLOW_URL_FOPEN=$(jq -r ".php.${APP_BRANCH}.allowUrlFopen" $APP_CON
 readonly PHP_DISPLAY_ERRORS=$(jq -r ".php.${APP_BRANCH}.displayErrors" $APP_CONFIG_FILE)
 # PHP MAX EXECUTION TIME
 readonly PHP_MAX_EXECUTION_TIME=$(jq -r ".php.${APP_BRANCH}.maxExecutionTime" $APP_CONFIG_FILE)
+# PHP UPLOAD MAX FILE SIZE
+readonly PHP_UPLOAD_MAX_FILESIZE=$(jq -r ".php.${APP_BRANCH}.uploadMaxFilesize" $APP_CONFIG_FILE)
+# PHP POST MAX SIZE
+readonly PHP_POST_MAX_SIZE=$(jq -r ".php.${APP_BRANCH}.postMaxSize" $APP_CONFIG_FILE)
+
 
 # Db credentials
 readonly DB_HOST=$(jq -r ".${APP_BRANCH}.endpoint" $DB_CONFIG_FILE)
@@ -374,6 +379,8 @@ sed -i '' -e "s/zlib.output_compression: \"Off\"/zlib.output_compression: \"$PHP
 sed -i '' -e "s/allow_url_fopen: \"On\"/allow_url_fopen: \"$PHP_ALLOW_URL_FOPEN\"/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/display_errors: \"Off\"/display_errors: \"$PHP_DISPLAY_ERRORS\"/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/max_execution_time: 60/max_execution_time: $PHP_MAX_EXECUTION_TIME/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/upload_max_filesize: 10M/upload_max_filesize: $PHP_UPLOAD_MAX_FILESIZE/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/post_max_size: 10M/post_max_size: $PHP_POST_MAX_SIZE/g" ${EBEXTENSIONS_DIR}/default.config
 
 # Get a list of untracked GIT files
 readonly UNTRACKED_GIT_FILES=$(git ls-files --others --exclude-standard)
