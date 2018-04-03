@@ -4,8 +4,8 @@ AWS
 ======
 
 Network & Security -> Security Groups
-  * Create new Security Group for EC2 and EBS
-  * Allow Inbound from Anywhere on SSH, HTTP, HTTPS
+  * EBS create security groups automatically by default port 80, 442
+  * If key pair is specified, port 22 will be open in the security group
 
 Network & Security -> Key Pairs
   * Create new Key Pair
@@ -20,18 +20,17 @@ Route53
   * Update NS records
   * Point your domain DNS to Amazon DNS(update NS records)
 
+Certificate Manager
+  * Add domain names: www.domain.com, domain.com, *.domain.com
+   * Select DNS validation. Under each domain, do Create record in Route 53.
+    This will create additional CNAME records in route53 for validation
+
 SES
   * Email Addresses -> Verify a New Email Address
   * Domains -> Verify a New Domain (Generate DKIM settings)
     * This will create additional CNAME records in route53 for domain verification
   * SMTP Settings -> Create My SMTP Credentials
 
-Certificate Manager
-  * Add domain names: www.domain.com, domain.com, *.domain.com
-   * Select DNS validation. Under each domain, do Create record in Route 53.
-    This will create additional CNAME records in route53 for validation
-
-NOTE: If you setup environment under different accounts, you need to repeat steps above for each account
 
 AWS Profile
 ===========
@@ -41,8 +40,6 @@ aws configure list
 set AWS_PROFILE=default
 
 * When switching instanceType, please terminate the EBS instance and re-deploy
-* Initial password:
-  admin/password
   * After deployment:
     admin/whatever set in the app.json
 
