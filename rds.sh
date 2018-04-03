@@ -28,7 +28,7 @@ function get-endpoint {
 readonly DB_INSTANCE_IDENTIFIER=$(jq -r ".rds.instanceName" $APP_CONFIG_FILE)
 readonly DB_SECURITY_GROUPS=$(jq -r ".rds.dbSecurityGroups" $APP_CONFIG_FILE)
 readonly MASTER_USERNAME=$DB_INSTANCE_IDENTIFIER
-readonly MASTER_USER_PASSWORD=$(get-password)
+readonly MASTER_USER_PASSWORD=$(get_password)
 readonly REGION=$(jq -r ".rds.region" $APP_CONFIG_FILE)
 readonly STORAGE_TYPE=$(jq -r ".rds.storageType" $APP_CONFIG_FILE)
 readonly ALLOCATED_STORAGE=$(jq -r ".rds.allocatedStorage" $APP_CONFIG_FILE)
@@ -69,15 +69,15 @@ DB_HOST=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
 
 readonly DB_DEV=${DB_INSTANCE_IDENTIFIER}_dev
 readonly DB_DEV_USER=${DB_INSTANCE_IDENTIFIER}_dev
-readonly DB_DEV_PASSWORD=$(get-password)
+readonly DB_DEV_PASSWORD=$(get_password)
 
 readonly DB_QA=${DB_INSTANCE_IDENTIFIER}_qa
 readonly DB_QA_USER=${DB_INSTANCE_IDENTIFIER}_qa
-readonly DB_QA_PASSWORD=$(get-password)
+readonly DB_QA_PASSWORD=$(get_password)
 
 readonly DB_LIVE=${DB_INSTANCE_IDENTIFIER}_live
 readonly DB_LIVE_USER=${DB_INSTANCE_IDENTIFIER}_live
-readonly DB_LIVE_PASSWORD=$(get-password)
+readonly DB_LIVE_PASSWORD=$(get_password)
 
 echo "Db instance created"
 

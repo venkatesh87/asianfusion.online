@@ -11,7 +11,7 @@ no_output() {
 }
 
 # Get password
-function get-password {
+get_password() {
   password=$(openssl rand -base64 12)
   echo $password
 }

@@ -37,6 +37,12 @@ readonly UPLOAD_S3_BUCKET_PATH=${APP_NAME}/${APP_BRANCH}/wp-content/uploads
 readonly UPLOAD_S3_BUCKET_PATH_CHAR_COUNT=${#UPLOAD_S3_BUCKET_PATH}
 readonly UPLOAD_S3_BUCKET_CHAR_COUNT=${#UPLOAD_S3_BUCKET}
 
+# Wordpress site name
+readonly WP_SITE_NAME=$(jq -r ".wordpress.siteTitle" $APP_CONFIG_FILE)
+
+# Wordpress tagline
+readonly WP_TAGLINE=$(jq -r ".wordpress.tagline" $APP_CONFIG_FILE)
+
 # Wordpress Akismet
 readonly WP_API_KEY=$(jq -r ".wordpress.apiKey" $APP_CONFIG_FILE)
 
@@ -47,8 +53,13 @@ readonly WP_LOGIN_URL=$(jq -r ".wordpress.loginUrl" $APP_CONFIG_FILE)
 readonly RECAPTCHA_SITE_KEY=$(jq -r ".wordpress.recaptcha.siteKey" $APP_CONFIG_FILE)
 readonly RECAPTCHA_SECRET_KEY=$(jq -r ".wordpress.recaptcha.secretKey" $APP_CONFIG_FILE)
 
+# Update Wordpress site name
+no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_SITE_NAME}' WHERE option_name = 'blogname';"
 
-# Update wordpress admin info
+# Update Wordpress tagline
+no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_TAGLINE}' WHERE option_name = 'blogdescription';"
+
+# Update Wordpress admin info
 no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_users SET user_login = '${WP_ADMIN_USERNAME}', user_nicename = '${WP_ADMIN_DISPLAY_NAME}', user_email = '${WP_ADMIN_EMAIL}', display_name = '${WP_ADMIN_DISPLAY_NAME}', user_pass = MD5('${WP_ADMIN_PASSWORD}') WHERE ${DB_DATABASE}.wp_users.ID = 1;"
 
 no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_ADMIN_EMAIL}' WHERE option_name = 'admin_email';"
