@@ -17,20 +17,24 @@ function end() {
   exit
 }
 
+# Suppress AWS JSON output
+no_output() {
+    "$@" > /dev/null 2>&1
+}
+
 function create_environment() {
   readonly ENV_TO_CREATE=$1
 
   # Create new Application version
-  aws elasticbeanstalk create-application-version \
+  no_output aws elasticbeanstalk create-application-version \
     --profile $AWS_PROFILE \
     --application-name $APP_NAME \
     --version-label $APP_FILE_VERSIONED --description $ENV_TO_CREATE \
-    --source-bundle S3Bucket="$APP_S3_BUCKET",S3Key="$APP_S3_BUCKET_FILE" \
-    >/dev/null 2>&1
+    --source-bundle S3Bucket="$APP_S3_BUCKET",S3Key="$APP_S3_BUCKET_FILE"
 
   # https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html
   # Create new environment
-  aws elasticbeanstalk create-environment \
+  no_output aws elasticbeanstalk create-environment \
     --profile $AWS_PROFILE \
     --cname-prefix $ENV_TO_CREATE \
     --application-name $APP_NAME --version-label $APP_FILE_VERSIONED \
@@ -62,28 +66,26 @@ function create_environment() {
                 \"OptionName\": \"EC2KeyName\",
                 \"Value\": \"${EC2_KEY_NAME}\"
             }
-        ]" >/dev/null 2>&1
+        ]"
 }
 
 function update_environment() {
   readonly ENV_TO_UPDATE=$1
 
-  aws elasticbeanstalk create-application-version \
+  no_output aws elasticbeanstalk create-application-version \
     --profile $AWS_PROFILE \
     --application-name $APP_NAME \
     --version-label $APP_FILE_VERSIONED --description $ENV_TO_UPDATE \
-    --source-bundle S3Bucket="$APP_S3_BUCKET",S3Key="$APP_S3_BUCKET_FILE" \
-    >/dev/null 2>&1
+    --source-bundle S3Bucket="$APP_S3_BUCKET",S3Key="$APP_S3_BUCKET_FILE"
 
   ENV_ID=($(aws elasticbeanstalk describe-environments \
     --profile $AWS_PROFILE \
     --environment-names $ENV_TO_UPDATE | jq -r '.Environments[].EnvironmentId'))
 
-  aws elasticbeanstalk update-environment \
+  no_output no_output aws elasticbeanstalk update-environment \
     --profile $AWS_PROFILE \
     --environment-id "$ENV_ID" \
-    --version-label "$APP_FILE_VERSIONED" \
-    >/dev/null 2>&1
+    --version-label "$APP_FILE_VERSIONED"
 }
 
 function swap_environment() {
@@ -91,13 +93,13 @@ function swap_environment() {
   readonly ENV_TO_SWAP=$2
 
   # Wait for it to complete
-  try=10
+  try=30
   i="0"
 
   while [ $i -lt $try ]; do
     echo "WAIT FOR ALTERNATE ENVIRONMENT TO BE READY, DON'T QUIT"
-    # Give it a min
-    sleep 30
+    # Give it some time
+    sleep 10
     ((i++))
 
     ENV_TO_WAIT_HEALTH=($(aws elasticbeanstalk describe-environments \
@@ -105,7 +107,7 @@ function swap_environment() {
       --environment-names $ENV_TO_WAIT | jq -r '.Environments[].Health'))
 
     if [ "$ENV_TO_WAIT_HEALTH" == "Green" ]; then
-      aws elasticbeanstalk swap-environment-cnames \
+      no_output aws elasticbeanstalk swap-environment-cnames \
         --profile $AWS_PROFILE \
         --source-environment-name $ENV_TO_SWAP \
         --destination-environment-name $ENV_TO_WAIT
@@ -282,10 +284,10 @@ if [ "${1}" == "terminate" ]; then
   if [ "${2}" == "app" ]; then
     
     echo "APPLICATION AND ALL IT'S RUNNING ENVIRONMENTS ARE TERMINATING..."
-    aws elasticbeanstalk delete-application \
+    no_output aws elasticbeanstalk delete-application \
       --profile $AWS_PROFILE \
       --application-name $APP_NAME \
-      --terminate-env-by-force >/dev/null 2>&1
+      --terminate-env-by-force
     end
 
   elif [ "$ENV_AVAILABLE" == "false" ]; then
@@ -294,9 +296,9 @@ if [ "${1}" == "terminate" ]; then
     if [ "$ENV_HEALTH" == "Green" ]; then
       
       echo "EVIRONMENT IS TERMINATING..."
-      aws elasticbeanstalk terminate-environment \
+      no_output aws elasticbeanstalk terminate-environment \
         --profile $AWS_PROFILE \
-        --environment-name $ENV_NAME >/dev/null 2>&1
+        --environment-name $ENV_NAME
      
       # Delete the alternate environment
       if [ "$APP_BRANCH" == "master" ] && [ "$BLUE_GREEN_DEPLOYMENT" -eq 1 ]; then
@@ -310,9 +312,9 @@ if [ "${1}" == "terminate" ]; then
           --environment-names $MASTER_ALT_ENV | jq -r '.Environments[].Health'))
   
         if [ "$MASTER_ALT_ENV_AVAILABLE" == "false" ] && [ "$MASTER_ALT_ENV_HEALTH" == "Green" ]; then
-          aws elasticbeanstalk terminate-environment \
+          no_output aws elasticbeanstalk terminate-environment \
             --profile $AWS_PROFILE
-            --environment-name $MASTER_ALT_ENV >/dev/null 2>&1
+            --environment-name $MASTER_ALT_ENV
         fi
       fi
       end
@@ -414,10 +416,10 @@ if [ "$APP_EXISTS" == "" ]; then
   if [ "$ENV_AVAILABLE" == "true" ]; then
 
     # Create NEW application and environment
-    aws elasticbeanstalk create-application \
+    no_output aws elasticbeanstalk create-application \
       --application-name $APP_NAME \
       --profile $AWS_PROFILE \
-      --description "$APP_NAME" >/dev/null 2>&1
+      --description "$APP_NAME"
     create_environment $ENV_NAME
 
     UPDATED=1
@@ -429,7 +431,7 @@ if [ "$APP_EXISTS" == "" ]; then
     echo "ENVIRONMENT NAME $APP_NAME IS NOT AVAILABLE"
     # Clean up
     aws s3 --profile $AWS_PROFILE \
-      rm s3://${APP_S3_BUCKET}/$APP_S3_BUCKET_FILE >/dev/null 2>&1
+      rm s3://${APP_S3_BUCKET}/$APP_S3_BUCKET_FILE
 
   fi
 
@@ -507,7 +509,7 @@ else
       echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
       # Clean up
       aws s3 --profile $AWS_PROFILE \
-        rm s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE} >/dev/null 2>&1
+        rm s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}
 
     fi
 

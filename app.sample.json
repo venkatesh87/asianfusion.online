@@ -14,7 +14,7 @@
       "iamInstanceProfile": "change-me",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
-      "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
       "instanceType": "t2.micro",
       "accessKeyId": "change-me",
       "secretAccessKey": "change-me",
@@ -27,7 +27,7 @@
       "iamInstanceProfile": "change-me",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
-      "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
       "instanceType": "t2.micro",
       "accessKeyId": "change-me",
       "secretAccessKey": "change-me",
@@ -40,7 +40,7 @@
       "iamInstanceProfile": "change-me",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
-      "stack": "64bit Amazon Linux 2017.09 v2.6.5 running PHP 7.1",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
       "instanceType": "t2.micro",
       "accessKeyId": "change-me",
       "secretAccessKey": "change-me",
@@ -91,7 +91,7 @@
   },
   "php": {
     "dev": {
-      "memoryLimit": "256M",
+      "memoryLimit": "512M",
       "outputCompression": "Off",
       "allowUrlFopen": "Off",
       "displayErrors": "On",
@@ -100,7 +100,7 @@
       "postMaxSize": "20M"
     },
     "qa": {
-      "memoryLimit": "256M",
+      "memoryLimit": "512M",
       "outputCompression": "On",
       "allowUrlFopen": "Off",
       "displayErrors": "Off",
@@ -109,7 +109,7 @@
       "postMaxSize": "20M"
     },
     "master": {
-      "memoryLimit": "256M",
+      "memoryLimit": "512M",
       "outputCompression": "On",
       "allowUrlFopen": "Off",
       "displayErrors": "Off",

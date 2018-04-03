@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Wait for RDS to be ready
 function wait-for-status {
   instance=$1
   target_status=$2
@@ -12,6 +13,7 @@ function wait-for-status {
   done
 }
 
+# Get RDS endpoint
 function get-endpoint {
   instance=$1
   endpoint=($(aws rds describe-db-instances \
@@ -19,9 +21,15 @@ function get-endpoint {
   echo $endpoint
 }
 
+# Get password
 function get-password {
   password=$(openssl rand -base64 12)
   echo $password
+}
+
+# Suppress MySQL password warning command
+no_pw_warning() {
+    "$@" 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
 }
 
 # App config file
@@ -85,20 +93,20 @@ readonly DB_LIVE_PASSWORD=$(get-password)
 echo "Db instance created"
 
 # Dev database and user
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_DEV;"
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_DEV_USER'@'%' IDENTIFIED BY '$DB_DEV_PASSWORD';"
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_DEV.* TO '$DB_DEV_USER'@'%';"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_DEV;"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_DEV_USER'@'%' IDENTIFIED BY '$DB_DEV_PASSWORD';"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_DEV.* TO '$DB_DEV_USER'@'%';"
 
 # Test database and user
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_QA;"
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_QA_USER'@'%' IDENTIFIED BY '$DB_QA_PASSWORD';"
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_QA.* TO '$DB_QA_USER'@'%';"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_QA;"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_QA_USER'@'%' IDENTIFIED BY '$DB_QA_PASSWORD';"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_QA.* TO '$DB_QA_USER'@'%';"
 
 # Live database and user
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_LIVE;"
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_LIVE_USER'@'%' IDENTIFIED BY '$DB_LIVE_PASSWORD';"
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_LIVE.* TO '$DB_LIVE_USER'@'%';"
-mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "FLUSH PRIVILEGES;"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_LIVE;"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_LIVE_USER'@'%' IDENTIFIED BY '$DB_LIVE_PASSWORD';"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "GRANT ALL PRIVILEGES ON $DB_LIVE.* TO '$DB_LIVE_USER'@'%';"
+no_pw_warning mysql -h$DB_HOST -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "FLUSH PRIVILEGES;"
 
 # Generate db.json file
 echo "{

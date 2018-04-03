@@ -10,4 +10,6 @@ readonly DATABASE=$(jq -r ".${APP_BRANCH}.database" ./db.json)
 readonly USER=$(jq -r ".${APP_BRANCH}.user" ./db.json)
 readonly PASSWORD=$(jq -r ".${APP_BRANCH}.password" ./db.json)
 
-mysqldump -h$HOST -u$USER -p$PASSWORD $DATABASE > $DATABASE.sql
+echo Please wait...
+mysqldump -h$HOST -u$USER -p$PASSWORD $DATABASE > $DATABASE.sql 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
+echo SQL file ${DATABASE}.sql dumped

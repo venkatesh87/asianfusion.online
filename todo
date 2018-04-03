@@ -4,7 +4,6 @@ report ebs health
 lower case log
 speedup docker - docker sync
 rds dbname 16 chars
-shell ignore mysql warning
 when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
 
 datetime zone config
