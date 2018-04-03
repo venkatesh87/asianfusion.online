@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source ./variables.sh
+
 if [ "$#" -ne 2 ]; then
   echo Wrong parameter count
   echo Usage:
@@ -9,9 +11,6 @@ fi
 
 PLATFORM=$(uname)
 COMMAND='date'
-
-readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" ./app.json)
 
 if [ "$PLATFORM" == "Darwin" ]; then
   if ! hash gdate 2>/dev/null; then

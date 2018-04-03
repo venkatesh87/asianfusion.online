@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source ./variables.sh
+
 # Exit on file checkout, more: https://stackoverflow.com/questions/1011557/is-there-a-way-to-trigger-a-hook-after-a-new-branch-has-been-checked-out-in-git
 if [ "$3" ] && [ "$3" == "0" ]; then
   exit
@@ -8,7 +10,6 @@ fi
 # This file will get copied to .git/hooks and will execute upon branch checkout
 
 # Get db params base on branch from db.json
-readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
 readonly AWS_ACCESS_KEY_ID=$(jq -r ".aws.${APP_BRANCH}.accessKeyId" ./app.json) 
 readonly AWS_SECRET_ACCESS_KEY=$(jq -r ".aws.${APP_BRANCH}.secretAccessKey" ./app.json) 

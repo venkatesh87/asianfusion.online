@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source ./functions.sh
+
 if [[ $# -eq 0 ]] ; then
   echo "Missing a SQL file parameter"
   exit
@@ -14,5 +16,7 @@ readonly USER=$(jq -r ".${APP_BRANCH}.user" ./db.json)
 readonly PASSWORD=$(jq -r ".${APP_BRANCH}.password" ./db.json)
 
 echo Please wait...
-mysql -h$HOST -u$USER -p$PASSWORD $DATABASE < "$SQL_FILE" 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
+
+no_pw_warning mysql -h$HOST -u$USER -p$PASSWORD $DATABASE < "$SQL_FILE"
+
 echo SQL file loaded

@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source ./functions.sh
+
 readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 readonly APP_NAME=$(jq -r ".appName" ./app.json)
 
@@ -20,6 +22,12 @@ readonly LIVE_PASSWORD=$(jq -r ".master.password" ./db.json)
 
 readonly SQL_FILE=/tmp/${APP_NAME}-dev.sql
 
-mysqldump -h$DEV_HOST -u$DEV_USER -p$DEV_PASSWORD $DEV_DATABASE > "$SQL_FILE"
+echo Please wait...
 
-mysql -h$LIVE_HOST -u$LIVE_USER -p$LIVE_PASSWORD $LIVE_DATABASE < "$SQL_FILE"
+echo Dumping...
+no_pw_warning mysqldump -h$DEV_HOST -u$DEV_USER -p$DEV_PASSWORD $DEV_DATABASE > "$SQL_FILE"
+
+echo Loading...
+no_pw_warning mysql -h$LIVE_HOST -u$LIVE_USER -p$LIVE_PASSWORD $LIVE_DATABASE < "$SQL_FILE"
+
+echo Done

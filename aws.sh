@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source ./variables.sh
+source ./functions.sh
+
 #
 # Begin functions
 #
@@ -15,11 +18,6 @@ function end() {
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo
   exit
-}
-
-# Suppress AWS JSON output
-no_output() {
-    "$@" > /dev/null 2>&1
 }
 
 function create_environment() {
@@ -174,16 +172,6 @@ fi
 # Start configurations #
 ########################
 
-# App config file
-readonly APP_CONFIG_FILE=./app.json
-# Db config file
-readonly DB_CONFIG_FILE=./db.json
-# AWS application name
-readonly APP_NAME=$(jq -r ".appName" $APP_CONFIG_FILE)
-# App branch
-readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-# AWS PROFILE
-readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" $APP_CONFIG_FILE)
 # Application file name
 readonly APP_FILE=${APP_NAME}-${APP_BRANCH}
 # Environment name (AWS Elastic Beanstalk CNAME)

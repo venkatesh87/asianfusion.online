@@ -1,22 +1,13 @@
 #!/bin/bash
 
+source ./variables.sh
+source ./functions.sh
+
 DB_HOST=$1
 DB_DATABASE=$2
 DB_USER=$3
 DB_PASSWORD=$4
 ACTIVATE_PREINSTALLED_PLUGINS=$5
-
-# Suppress MySQL password warning command
-no_pw_warning() {
-    "$@" 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
-}
-
-# App config file
-readonly APP_CONFIG_FILE=./app.json
-# AWS application name
-readonly APP_NAME=$(jq -r ".appName" $APP_CONFIG_FILE)
-# App branch
-readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
 # Wordpress admin info
 readonly WP_ADMIN_USERNAME=$(jq -r ".wordpress.${APP_BRANCH}.adminUsername" $APP_CONFIG_FILE)

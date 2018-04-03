@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source ./variables.sh
+source ./functions.sh
+
 # Wait for RDS to be ready
 function wait-for-status {
   instance=$1
@@ -21,21 +24,7 @@ function get-endpoint {
   echo $endpoint
 }
 
-# Get password
-function get-password {
-  password=$(openssl rand -base64 12)
-  echo $password
-}
-
-# Suppress MySQL password warning command
-no_pw_warning() {
-    "$@" 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
-}
-
 # App config file
-readonly APP_CONFIG_FILE=./app.json
-readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
-readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" $APP_CONFIG_FILE)
 readonly DB_INSTANCE_IDENTIFIER=$(jq -r ".rds.instanceName" $APP_CONFIG_FILE)
 readonly DB_SECURITY_GROUPS=$(jq -r ".rds.dbSecurityGroups" $APP_CONFIG_FILE)
 readonly MASTER_USERNAME=$DB_INSTANCE_IDENTIFIER
