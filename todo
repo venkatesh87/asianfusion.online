@@ -5,12 +5,12 @@ lower case log
 speedup docker - docker sync
 rds dbname 16 chars
 when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
+config: when switching branch, change db credentials?
 
 datetime zone config
 
 elementor
 a log viewer
-cache pluin
 customize login logo
 
 bugs:
