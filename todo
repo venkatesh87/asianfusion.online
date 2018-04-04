@@ -18,7 +18,7 @@ a log viewer
 
 bugs:
 - two master env which to ssh?
-- report to wordpress is_ssl() method
+- report to wordpress is_ssl() method @wordpress/wp-includes/load.php
 
 
 aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'

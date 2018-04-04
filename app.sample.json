@@ -127,6 +127,22 @@
       "siteKey": "change-me",
       "secretKey": "change-me"
     },
+    "users": {
+      "alanzhao": {
+        "password": "YumDeesNo11",
+        "email": "alanzhaonys@gmail.com",
+        "role": "editor",
+        "userNicename": "Editor",
+        "displayName": "I am editor"
+      },
+      "alanzhaonys": {
+        "password": "YumDeesNo11",
+        "email": "alanzhaonys@gmail.com",
+        "role": "author",
+        "userNicename": "Editor",
+        "displayName": "I am editor"
+      }
+    },
     "dev": {
       "adminUsername": "change-me",
       "adminPassword": "change-me",
