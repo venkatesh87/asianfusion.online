@@ -9,9 +9,12 @@ config: when switching branch, change db credentials?
 
 datetime zone config
 
-elementor
+reload env
+
+clean dashboard
+create additional user
+
 a log viewer
-customize login logo
 
 bugs:
 - two master env which to ssh?
