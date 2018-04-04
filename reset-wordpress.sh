@@ -53,6 +53,12 @@ readonly WP_LOGIN_URL=$(jq -r ".wordpress.loginUrl" $APP_CONFIG_FILE)
 readonly RECAPTCHA_SITE_KEY=$(jq -r ".wordpress.recaptcha.siteKey" $APP_CONFIG_FILE)
 readonly RECAPTCHA_SECRET_KEY=$(jq -r ".wordpress.recaptcha.secretKey" $APP_CONFIG_FILE)
 
+# Wordpress users
+# https://starkandwayne.com/blog/bash-for-loop-over-json-array-using-jq/
+# -c = compact-output to get each object on a newline
+# @base64 to get rid of spaces
+readonly WP_USERS=$(jq -c -r ".wordpress.users[] | @base64" $APP_CONFIG_FILE)
+
 # Update Wordpress site name
 no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_SITE_NAME}' WHERE option_name = 'blogname';"
 
@@ -149,6 +155,25 @@ else
   fi
 
 fi
+
+for USER in $WP_USERS; do
+
+  USERNAME=$(echo $USER | base64 --decode | jq -r ".username")
+  
+  if [ "$USERNAME" != "change-me" ]; then
+
+    PASSWORD=$(echo $USER | base64 --decode | jq -r ".password")
+    EMAIL=$(echo $USER | base64 --decode | jq -r ".email")
+    ROLE=$(echo $USER | base64 --decode | jq -r ".role")
+    ROLE_COUNT=${#ROLE}
+    USER_NICENAME=$(echo $USER | base64 --decode | jq -r ".userNicename")
+    DISPLAY_NAME=$(echo $USER | base64 --decode | jq -r ".displayName")
+
+    no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_users (user_login, user_pass, user_nicename, display_name, user_email, user_status) VALUES ('${USERNAME}', MD5('${PASSWORD}'), '${USER_NICENAME}', '${DISPLAY_NAME}', '${EMAIL}', '0'); INSERT INTO ${DB_DATABASE}.wp_usermeta (umeta_id, user_id, meta_key, meta_value) VALUES (NULL, (SELECT id FROM ${DB_DATABASE}.wp_users WHERE user_login = '${USERNAME}'), 'wp_capabilities', 'a:1:{s:${ROLE_COUNT}:\"${ROLE}\";b:1;}'); INSERT INTO ${DB_DATABASE}.wp_usermeta (umeta_id, user_id, meta_key, meta_value) VALUES (NULL, (SELECT id FROM ${DB_DATABASE}.wp_users WHERE user_login = '${USERNAME}'), 'wp_user_level', '10');"
+  
+  fi
+
+done
 
 # Activate pre-installed plugins
 # SELECT * FROM wp_options WHERE option_name = 'active_plugins';

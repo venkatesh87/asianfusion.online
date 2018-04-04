@@ -128,19 +128,21 @@
       "secretKey": "change-me"
     },
     "users": {
-      "alanzhao": {
-        "password": "YumDeesNo11",
-        "email": "alanzhaonys@gmail.com",
+      "user1": {
+        "username": "change-me",
+        "password": "change-me",
+        "email": "change-me",
         "role": "editor",
-        "userNicename": "Editor",
-        "displayName": "I am editor"
+        "userNicename": "change-me",
+        "displayName": "change-me"
       },
-      "alanzhaonys": {
-        "password": "YumDeesNo11",
-        "email": "alanzhaonys@gmail.com",
-        "role": "author",
-        "userNicename": "Editor",
-        "displayName": "I am editor"
+      "user2": {
+        "username": "change-me",
+        "password": "change-me",
+        "email": "change-me",
+        "role": "editor",
+        "userNicename": "change-me",
+        "displayName": "change-me"
       }
     },
     "dev": {

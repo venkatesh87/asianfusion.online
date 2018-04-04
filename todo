@@ -10,10 +10,6 @@ config: when switching branch, change db credentials?
 datetime zone config
 
 reload env
-
-clean dashboard
-create additional user
-
 a log viewer
 
 bugs:
