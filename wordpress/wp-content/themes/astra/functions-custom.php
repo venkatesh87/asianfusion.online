@@ -54,6 +54,31 @@ add_filter('contextual_help', 'remove_help_tabs', 999, 3);
 // Remove screen option tab
 add_filter( 'screen_options_show_screen', '__return_false');
 
+// Disable notice for all users
+function hide_update_noticee_to_all_but_admin_users() {
+    //if (!is_super_admin()) {
+        remove_all_actions('admin_notices');
+    //}
+}
+add_action('admin_head', 'hide_update_noticee_to_all_but_admin_users', 1);
+
+// Remove admin menu items
+function remove_menus() {  
+
+  //remove_menu_page( 'index.php' );                  //Dashboard  
+  //remove_menu_page( 'edit.php' );                   //Posts  
+  //remove_menu_page( 'upload.php' );                 //Media  
+  //remove_menu_page( 'edit.php?post_type=page' );    //Pages  
+  //remove_menu_page( 'edit-comments.php' );          //Comments  
+  //remove_menu_page( 'themes.php' );                 //Appearance  
+  //remove_menu_page( 'plugins.php' );                //Plugins  
+  //remove_menu_page( 'users.php' );                  //Users  
+  //remove_menu_page( 'tools.php' );                  //Tools  
+  //remove_menu_page( 'options-general.php' );        //Settings  
+
+}  
+add_action( 'admin_menu', 'remove_menus' );  
+
 // example custom dashboard widget
 function custom_dashboard_widget() {
 	echo "<p>Dearest Client, Here&rsquo;s how to do that thing I told you about yesterday...</p>";
