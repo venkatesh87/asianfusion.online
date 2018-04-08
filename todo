@@ -8,6 +8,7 @@ when editing in localhost, user must be in dev branch, show warning if not(maybe
 config: when switching branch, change db credentials?
 
 datetime zone config
+add recaptcha to login form
 
 reload env
 a log viewer
