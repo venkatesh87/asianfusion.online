@@ -2,9 +2,16 @@
   "appName": "change-me",
   "publicWebDir": "wordpress",
   "docker": {
-    "name": "change-me",
-    "tag": "change-me",
-    "port": "8500"
+    "wordpress": {
+      "name": "change-me",
+      "port": "8500"
+    },
+    "phpmyadmin": {
+      "port": "8510"
+    },
+    "mysql": {
+      "port": "3307"
+    }
   },
   "aws": {
     "dev": {

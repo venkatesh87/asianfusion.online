@@ -338,7 +338,7 @@ cd ./${PUBLIC_WEB_DIR}
 # Make .ebextensions config file
 mkdir -p ./.ebextensions
 readonly EBEXTENSIONS_DIR=./.ebextensions
-cp ../ebextensions.default.config ${EBEXTENSIONS_DIR}/default.config
+cp ../ebextensions.sample.config ${EBEXTENSIONS_DIR}/default.config
 
 # Search and replace in .ebextensions/default.config
 

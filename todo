@@ -7,6 +7,7 @@ rds dbname 16 chars
 when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
 config: when switching branch, change db credentials?
 
+## if use local mysql for dev, change PHPMYADMIN_MYSQL_HOST/PORT to LOCAL_MYSQL container name/port
 datetime zone config
 add recaptcha to login form
 

@@ -2,6 +2,7 @@
 *.pem
 db.json
 app.json
+docker-compose.yml
 wordpress/wp-config.php
 wordpress/.ebextensions/default.config
 wordpress/build.txt
