@@ -5,9 +5,6 @@ MAINTAINER Alan Zhao <alanzhaonys@yahoo.com>
 RUN yum update -y
 RUN yum install vim jq httpd24 php71 php71-mbstring php71-mcrypt php71-memcache php71-gd php71-mysqlnd -y
 
-# Create phpinfo.php
-RUN echo "<?php phpinfo(); ?>" > /var/www/html/phpinfo.php
-
 # Change Apache server name
 RUN sed -i -e "s/#ServerName www.example.com:80/ServerName localhost/g" /etc/httpd/conf/httpd.conf
 
@@ -20,7 +17,7 @@ RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 # Enable networking
 RUN echo "NETWORKING=yes" >/etc/sysconfig/network
 
-# Add app.json to tmp directory
+# Add app.json to tmp directory for use later
 ADD app.json /tmp/
 
 # Get public web directory configuration
@@ -45,13 +42,11 @@ RUN PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/app.json); \
   sed -i -e "s/upload_max_filesize = 2M/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/g" /etc/php-7.1.ini; \
   sed -i -e "s/post_max_size = 8M/post_max_size = ${PHP_POST_MAX_SIZE}/g" /etc/php-7.1.ini
 
-# Remove app.json
+# Done with app.json, remove
 RUN rm /tmp/app.json
 
 # Mount public web directory
 ADD ./$PUBLIC_WEB_DIR /var/www/html
-
-# Configure public web directory volume VOLUME /var/www/html
 
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
 

@@ -1173,6 +1173,22 @@
         }
     },
     {
+        "Black And White Picture": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
+        "Black Han Sans": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
         "Black Ops One": {
             "variants": [
                 "regular"
@@ -2036,6 +2052,14 @@
         }
     },
     {
+        "Cute Font": {
+            "variants": [
+                "regular"
+            ],
+            "category": "display"
+        }
+    },
+    {
         "Cutive": {
             "variants": [
                 "regular"
@@ -2192,6 +2216,22 @@
         }
     },
     {
+        "Do Hyeon": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
+        "Dokdo": {
+            "variants": [
+                "regular"
+            ],
+            "category": "handwriting"
+        }
+    },
+    {
         "Domine": {
             "variants": [
                 "regular",
@@ -2281,6 +2321,14 @@
     },
     {
         "Eagle Lake": {
+            "variants": [
+                "regular"
+            ],
+            "category": "handwriting"
+        }
+    },
+    {
+        "East Sea Dokdo": {
             "variants": [
                 "regular"
             ],
@@ -2940,6 +2988,16 @@
         }
     },
     {
+        "Gaegu": {
+            "variants": [
+                "300",
+                "regular",
+                "700"
+            ],
+            "category": "handwriting"
+        }
+    },
+    {
         "Gafata": {
             "variants": [
                 "regular"
@@ -2969,6 +3027,14 @@
                 "regular"
             ],
             "category": "display"
+        }
+    },
+    {
+        "Gamja Flower": {
+            "variants": [
+                "regular"
+            ],
+            "category": "handwriting"
         }
     },
     {
@@ -3101,6 +3167,22 @@
         }
     },
     {
+        "Gothic A1": {
+            "variants": [
+                "100",
+                "200",
+                "300",
+                "regular",
+                "500",
+                "600",
+                "700",
+                "800",
+                "900"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
         "Goudy Bookletter 1911": {
             "variants": [
                 "regular"
@@ -3164,6 +3246,14 @@
                 "700"
             ],
             "category": "sans-serif"
+        }
+    },
+    {
+        "Gugi": {
+            "variants": [
+                "regular"
+            ],
+            "category": "display"
         }
     },
     {
@@ -3283,6 +3373,14 @@
     },
     {
         "Herr Von Muellerhoff": {
+            "variants": [
+                "regular"
+            ],
+            "category": "handwriting"
+        }
+    },
+    {
+        "Hi Melody": {
             "variants": [
                 "regular"
             ],
@@ -3451,6 +3549,7 @@
                 "500italic",
                 "600",
                 "600italic",
+                "700",
                 "700italic"
             ],
             "category": "serif"
@@ -3756,6 +3855,14 @@
         }
     },
     {
+        "Jua": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
         "Judson": {
             "variants": [
                 "regular",
@@ -3997,6 +4104,14 @@
                 "800"
             ],
             "category": "sans-serif"
+        }
+    },
+    {
+        "Kirang Haerang": {
+            "variants": [
+                "regular"
+            ],
+            "category": "display"
         }
     },
     {
@@ -6097,6 +6212,14 @@
         }
     },
     {
+        "Poor Story": {
+            "variants": [
+                "regular"
+            ],
+            "category": "display"
+        }
+    },
+    {
         "Poppins": {
             "variants": [
                 "100",
@@ -7308,6 +7431,14 @@
         }
     },
     {
+        "Song Myung": {
+            "variants": [
+                "regular"
+            ],
+            "category": "serif"
+        }
+    },
+    {
         "Sonsie One": {
             "variants": [
                 "regular"
@@ -7535,6 +7666,14 @@
         }
     },
     {
+        "Stylish": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
         "Sue Ellen Francisco": {
             "variants": [
                 "regular"
@@ -7557,6 +7696,16 @@
                 "700"
             ],
             "category": "serif"
+        }
+    },
+    {
+        "Sunflower": {
+            "variants": [
+                "300",
+                "500",
+                "700"
+            ],
+            "category": "sans-serif"
         }
     },
     {
@@ -7621,6 +7770,20 @@
             "variants": [
                 "regular",
                 "700"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
+        "Tajawal": {
+            "variants": [
+                "200",
+                "300",
+                "regular",
+                "500",
+                "700",
+                "800",
+                "900"
             ],
             "category": "sans-serif"
         }
@@ -8209,6 +8372,14 @@
                 "regular"
             ],
             "category": "handwriting"
+        }
+    },
+    {
+        "Yeon Sung": {
+            "variants": [
+                "regular"
+            ],
+            "category": "display"
         }
     },
     {

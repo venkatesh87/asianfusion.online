@@ -806,6 +806,20 @@ if ( ! class_exists( 'Astra_Admin_Settings' ) ) {
 							),
 						),
 					),
+					'learndash'             => array(
+						'title'       => __( 'LearnDash', 'astra' ),
+						'description' => __( 'Supercharge your LearnDash website with amazing design features.', 'astra' ),
+						'class'       => 'ast-addon',
+						'title_url'   => astra_get_pro_url( 'https://wpastra.com/docs/learndash-integration-overview/', 'astra-dashboard', 'learn-more', 'welcome-page' ),
+						'links'       => array(
+							array(
+								'link_class'   => 'ast-learn-more',
+								'link_url'     => astra_get_pro_url( 'https://wpastra.com/docs/lifterlms-module-pro/', 'astra-dashboard', 'learn-more', 'welcome-page' ),
+								'link_text'    => __( 'Learn More »', 'astra' ),
+								'target_blank' => true,
+							),
+						),
+					),
 					'lifterlms'             => array(
 						'title'     => __( 'LifterLMS', 'astra' ),
 						'class'     => 'ast-addon',

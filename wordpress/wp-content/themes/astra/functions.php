@@ -11,7 +11,7 @@
 /**
  * Define Constants
  */
-define( 'ASTRA_THEME_VERSION', '1.2.7.2' );
+define( 'ASTRA_THEME_VERSION', '1.3.1' );
 define( 'ASTRA_THEME_SETTINGS', 'astra-settings' );
 define( 'ASTRA_THEME_DIR', get_template_directory() . '/' );
 define( 'ASTRA_THEME_URI', get_template_directory_uri() . '/' );
@@ -101,6 +101,7 @@ require_once ASTRA_THEME_DIR . 'inc/customizer/class-astra-customizer.php';
 require_once ASTRA_THEME_DIR . 'inc/compatibility/class-astra-jetpack.php';
 require_once ASTRA_THEME_DIR . 'inc/compatibility/woocommerce/class-astra-woocommerce.php';
 require_once ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/class-astra-lifterlms.php';
+require_once ASTRA_THEME_DIR . 'inc/compatibility/learndash/class-astra-learndash.php';
 require_once ASTRA_THEME_DIR . 'inc/compatibility/class-astra-beaver-builder.php';
 require_once ASTRA_THEME_DIR . 'inc/compatibility/class-astra-bb-ultimate-addon.php';
 require_once ASTRA_THEME_DIR . 'inc/compatibility/class-astra-contact-form-7.php';
@@ -127,5 +128,3 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-filters.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-hooks.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-functions.php';
-
-require_once ASTRA_THEME_DIR . 'functions-custom.php';

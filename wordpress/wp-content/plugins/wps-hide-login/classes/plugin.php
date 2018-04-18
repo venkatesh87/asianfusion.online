@@ -385,6 +385,15 @@ if ( ! class_exists( 'WPS_Hide_Login' ) ) {
 
 				$pagenow = 'wp-login.php';
 
+			} elseif ( ( strpos( rawurldecode( $_SERVER['REQUEST_URI'] ), 'wp-register.php' ) !== false
+				       || untrailingslashit( $request['path'] ) === site_url( 'wp-register', 'relative' ) )
+				     && ! is_admin() ) {
+
+				$this->wp_login_php = true;
+
+				$_SERVER['REQUEST_URI'] = $this->user_trailingslashit( '/' . str_repeat( '-/', 10 ) );
+
+				$pagenow = 'index.php';
 			}
 
 		}
@@ -401,12 +410,12 @@ if ( ! class_exists( 'WPS_Hide_Login' ) ) {
 
 			global $pagenow;
 
-			if ( is_admin() && ! is_user_logged_in() && ! defined( 'DOING_AJAX' ) && $pagenow !== 'admin-post.php' ) {
+			$request = parse_url( $_SERVER['REQUEST_URI'] );
+
+			if ( is_admin() && ! is_user_logged_in() && ! defined( 'DOING_AJAX' ) && $pagenow !== 'admin-post.php' && ( isset( $_GET ) && empty( $_GET['adminhash'] ) && $request['path'] !== '/wp-admin/options.php' ) ) {
 				wp_safe_redirect( home_url( '/404' ) );
 				die();
 			}
-
-			$request = parse_url( $_SERVER['REQUEST_URI'] );
 
 			if ( $pagenow === 'wp-login.php'
 			     && $request['path'] !== $this->user_trailingslashit( $request['path'] )
@@ -524,10 +533,8 @@ if ( ! class_exists( 'WPS_Hide_Login' ) ) {
 		/**
 		 * Load scripts
 		 */
-		public function admin_enqueue_scripts() {
-			$screen = get_current_screen();
-
-			if ( 'options-general' != $screen->id ) {
+		public function admin_enqueue_scripts( $hook ) {
+			if ( 'options-general.php' != $hook ) {
 				return false;
 			}
 

@@ -148,15 +148,17 @@ if ( ! class_exists( 'Astra_Font_Families' ) ) :
 					$name = key( $font );
 					foreach ( $font[ $name ] as $font_key => $single_font ) {
 
-						$variant  = astar( $single_font, 'variants' );
-						$category = astar( $single_font, 'category' );
+						if ( 'variants' === $font_key ) {
 
-						if ( stristr( $variant, 'italic' ) ) {
-							unset( $font[ $name ][ $font_key ] );
-						}
+							foreach ( $single_font as $variant_key => $variant ) {
+								if ( stristr( $variant, 'italic' ) ) {
+									unset( $font[ $name ][ $font_key ][ $variant_key ] );
+								}
 
-						if ( 'regular' == $variant ) {
-							$font[ $name ][ $font_key ] = '400';
+								if ( 'regular' == $variant ) {
+									$font[ $name ][ $font_key ][ $variant_key ] = '400';
+								}
+							}
 						}
 
 						self::$google_fonts[ $name ] = array_values( $font[ $name ] );
