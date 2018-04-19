@@ -8,6 +8,9 @@ when editing in localhost, user must be in dev branch, show warning if not(maybe
 config: when switching branch, change db credentials?
 
 ## if use local mysql for dev, change PHPMYADMIN_MYSQL_HOST/PORT to LOCAL_MYSQL container name/port
+userLocalMysqlForDev
+php myadmin not connection
+load db to local mysql
 datetime zone config
 add recaptcha to login form
 

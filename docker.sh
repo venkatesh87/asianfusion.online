@@ -10,10 +10,18 @@ readonly WP_DIR=$(jq -r ".publicWebDir" ./app.json)
 readonly WP_NAME=$(jq -r ".docker.wordpress.name" ./app.json)
 readonly WP_PORT=$(jq -r ".docker.wordpress.port" ./app.json)
 readonly LOCAL_MYSQL_PORT=$(jq -r ".docker.mysql.port" ./app.json)
-readonly LOCAL_MYSQL_ROOT_PASSWORD=password
+readonly LOCAL_MYSQL_ROOT_PASSWORD=$(jq -r ".docker.mysql.rootPassword" ./app.json)
 readonly PHPMYADMIN_PORT=$(jq -r ".docker.phpmyadmin.port" ./app.json)
-readonly PHPMYADMIN_MYSQL_HOST=$(jq -r ".root.endpoint" ./db.json)
-readonly PHPMYADMIN_MYSQL_PORT=3306
+readonly PHPMYADMIN_CONNECT_LOCAL_MYSQL=$(jq -r ".docker.phpmyadmin.connectLocalMysql" ./app.json)
+
+PHPMYADMIN_MYSQL_HOST=$(jq -r ".root.endpoint" ./db.json)
+PHPMYADMIN_MYSQL_PORT=3306
+PHPMYADMIN_ARBITRARY=0
+
+if [ "$PHPMYADMIN_CONNECT_LOCAL_MYSQL" -eq 1 ]; then
+  PHPMYADMIN_MYSQL_HOST=${WP_NAME}_mysql
+  PHPMYADMIN_MYSQL_PORT=$LOCAL_MYSQL_PORT
+fi
 
 cp docker-compose.sample.yml docker-compose.yml
 
@@ -25,6 +33,7 @@ sed -i '' -e "s/{LOCAL_MYSQL_ROOT_PASSWORD}/${LOCAL_MYSQL_ROOT_PASSWORD}/g" ./do
 sed -i '' -e "s/{PHPMYADMIN_PORT}/${PHPMYADMIN_PORT}/g" ./docker-compose.yml
 sed -i '' -e "s/{PHPMYADMIN_MYSQL_HOST}/${PHPMYADMIN_MYSQL_HOST}/g" ./docker-compose.yml
 sed -i '' -e "s/{PHPMYADMIN_MYSQL_PORT}/${PHPMYADMIN_MYSQL_PORT}/g" ./docker-compose.yml
+sed -i '' -e "s/{PHPMYADMIN_ARBITRARY}/${PHPMYADMIN_ARBITRARY}/g" ./docker-compose.yml
 
 if [ "${1}" == "build" ]; then
 
@@ -32,14 +41,13 @@ if [ "${1}" == "build" ]; then
 
 elif [ "${1}" == "remove" ]; then
 
-    WP=$(docker ps -qf name="$WP_NAME")
-    docker rm -f $WP
-
     LOCAL_MYSQL=$(docker ps -qf name="${WP_NAME}_mysql")
-    docker rm -f $LOCAL_MYSQL
-
     PHPMYADMIN=$(docker ps -qf name="${WP_NAME}_phpmyadmin")
+    WP=$(docker ps -qf name="$WP_NAME")
+
+    docker rm -f $LOCAL_MYSQL
     docker rm -f $PHPMYADMIN
+    docker rm -f $WP
 
 elif [ "${1}" == "ssh" ]; then
 

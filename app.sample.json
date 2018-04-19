@@ -1,16 +1,19 @@
 {
   "appName": "change-me",
   "publicWebDir": "wordpress",
+  "connectLocalMysqlForDev": 1,
   "docker": {
     "wordpress": {
       "name": "change-me",
       "port": "8500"
     },
     "phpmyadmin": {
-      "port": "8510"
+      "port": "8501",
+      "connectLocalMysql": 1
     },
     "mysql": {
-      "port": "3307"
+      "port": "3307",
+      "rootPassword": "password"
     }
   },
   "aws": {
