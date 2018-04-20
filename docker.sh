@@ -19,7 +19,8 @@ PHPMYADMIN_MYSQL_PORT=3306
 PHPMYADMIN_ARBITRARY=0
 
 if [ "$PHPMYADMIN_CONNECT_LOCAL_MYSQL" -eq 1 ]; then
-  PHPMYADMIN_MYSQL_HOST=${WP_NAME}_mysql
+  #PHPMYADMIN_MYSQL_HOST=${WP_NAME}_mysql
+  PHPMYADMIN_MYSQL_HOST=mysql
   PHPMYADMIN_MYSQL_PORT=$LOCAL_MYSQL_PORT
 fi
 
@@ -41,13 +42,13 @@ if [ "${1}" == "build" ]; then
 
 elif [ "${1}" == "remove" ]; then
 
+    WP=$(docker ps -qf name="${WP_NAME}_wordpress")
     LOCAL_MYSQL=$(docker ps -qf name="${WP_NAME}_mysql")
     PHPMYADMIN=$(docker ps -qf name="${WP_NAME}_phpmyadmin")
-    WP=$(docker ps -qf name="$WP_NAME")
 
+    docker rm -f $WP
     docker rm -f $LOCAL_MYSQL
     docker rm -f $PHPMYADMIN
-    docker rm -f $WP
 
 elif [ "${1}" == "ssh" ]; then
 

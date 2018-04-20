@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: {WP_NAME}
+    container_name: {WP_NAME}_wordpress
     volumes:
       - ./{WP_DIR}:/var/www/html
     ports:
@@ -17,8 +17,11 @@ services:
     ports:
       - {LOCAL_MYSQL_PORT}:3306
     environment:
+      LOCALHOST: mysql
+      MYSQL_DATABASE: {WP_NAME}
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: {LOCAL_MYSQL_ROOT_PASSWORD}
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     volumes:
       - ./mysql/logs:/var/log/mysql
     restart: always
