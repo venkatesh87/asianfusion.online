@@ -18,10 +18,10 @@
   },
   "aws": {
     "dev": {
-      "profile": "change-me",
-      "ec2SecurityGroups": "change-me",
-      "elbSecurityGroups": "change-me",
-      "iamInstanceProfile": "change-me",
+      "profile": "default",
+      "ec2SecurityGroups": "",
+      "elbSecurityGroups": "",
+      "iamInstanceProfile": "",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
       "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
@@ -31,10 +31,10 @@
       "tags": "Key=Environment,Value=Development Key=Application,Value=Wordpress"
     },
     "qa": {
-      "profile": "change-me",
-      "ec2SecurityGroups": "change-me",
-      "elbSecurityGroups": "change-me",
-      "iamInstanceProfile": "change-me",
+      "profile": "default",
+      "ec2SecurityGroups": "",
+      "elbSecurityGroups": "",
+      "iamInstanceProfile": "",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
       "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
@@ -44,10 +44,10 @@
       "tags": "Key=Environment,Value=QA Key=Application,Value=Wordpress"
     },
     "master": {
-      "profile": "change-me",
-      "ec2SecurityGroups": "change-me",
-      "elbSecurityGroups": "change-me",
-      "iamInstanceProfile": "change-me",
+      "profile": "default",
+      "ec2SecurityGroups": "",
+      "elbSecurityGroups": "",
+      "iamInstanceProfile": "",
       "ec2KeyName": "change-me",
       "ec2KeyPath": "change-me",
       "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
