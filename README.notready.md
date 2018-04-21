@@ -35,6 +35,7 @@ SES
 AWS Profile
 ===========
 IAM -> Users -> Security credentials -> Create access key
+(~/.aws/credentials)
 
 aws configure list
 set AWS_PROFILE=default
