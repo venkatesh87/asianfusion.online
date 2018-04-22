@@ -11,8 +11,8 @@ fi
 
 # Get db params base on branch from db.json
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
-readonly AWS_ACCESS_KEY_ID=$(jq -r ".aws.${APP_BRANCH}.accessKeyId" ./app.json) 
-readonly AWS_SECRET_ACCESS_KEY=$(jq -r ".aws.${APP_BRANCH}.secretAccessKey" ./app.json) 
+readonly AWS_ACCESS_KEY_ID=$(jq -r ".aws.${APP_BRANCH}.s3AccessKeyId" ./app.json) 
+readonly AWS_SECRET_ACCESS_KEY=$(jq -r ".aws.${APP_BRANCH}.s3SecretAccessKey" ./app.json) 
 readonly WP_CONFIG_FILE=./${PUBLIC_WEB_DIR}/wp-config.php
 readonly HOST=$(jq -r ".${APP_BRANCH}.endpoint" ./db.json)
 readonly DATABASE=$(jq -r ".${APP_BRANCH}.database" ./db.json)

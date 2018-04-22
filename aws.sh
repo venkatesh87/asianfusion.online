@@ -343,7 +343,7 @@ cp ../ebextensions.sample.config ${EBEXTENSIONS_DIR}/default.config
 # Search and replace in .ebextensions/default.config
 
 # Basic auth
-if [ "$BASIC_AUTH_ENABLED" -eq 1 ]; then
+if [ "$BASIC_AUTH_ENABLED" -eq 1 ] && [ "$BASIC_AUTH_USER" != "" ] && [ "$BASIC_AUTH_PASSWORD" != "" ]; then
   echo "ENABLING BASIC AUTH"
   # Search, replace and uncomment these lines
   readonly HTPASSWD=$(htpasswd -nb $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD)

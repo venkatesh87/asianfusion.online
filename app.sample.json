@@ -1,10 +1,10 @@
 {
-  "appName": "change-me",
+  "appName": "required-change-me",
   "publicWebDir": "wordpress",
   "connectLocalMysqlForDev": 1,
   "docker": {
     "wordpress": {
-      "name": "change-me",
+      "name": "required-change-me",
       "port": "8500"
     },
     "phpmyadmin": {
@@ -22,12 +22,10 @@
       "ec2SecurityGroups": "",
       "elbSecurityGroups": "",
       "iamInstanceProfile": "",
-      "ec2KeyName": "change-me",
-      "ec2KeyPath": "change-me",
+      "ec2KeyName": "",
+      "ec2KeyPath": "",
       "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
-      "instanceType": "t2.micro",
-      "accessKeyId": "change-me",
-      "secretAccessKey": "change-me",
+      "instanceType": "t2.micro", 
       "tags": "Key=Environment,Value=Development Key=Application,Value=Wordpress"
     },
     "qa": {
@@ -35,12 +33,10 @@
       "ec2SecurityGroups": "",
       "elbSecurityGroups": "",
       "iamInstanceProfile": "",
-      "ec2KeyName": "change-me",
-      "ec2KeyPath": "change-me",
+      "ec2KeyName": "",
+      "ec2KeyPath": "",
       "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
       "instanceType": "t2.micro",
-      "accessKeyId": "change-me",
-      "secretAccessKey": "change-me",
       "tags": "Key=Environment,Value=QA Key=Application,Value=Wordpress"
     },
     "master": {
@@ -48,23 +44,23 @@
       "ec2SecurityGroups": "",
       "elbSecurityGroups": "",
       "iamInstanceProfile": "",
-      "ec2KeyName": "change-me",
-      "ec2KeyPath": "change-me",
+      "ec2KeyName": "",
+      "ec2KeyPath": "",
       "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
       "instanceType": "t2.micro",
-      "accessKeyId": "change-me",
-      "secretAccessKey": "change-me",
       "tags": "Key=Environment,Value=Live Key=Application,Value=Wordpress"
     },
-    "uploadS3Bucket": "change-me",
-    "appS3Bucket": "change-me",
+    "wordpressUploadS3Bucket": "required-change-me",
+    "appS3Bucket": "required-change-me",
+    "s3AccessKeyId": "required-change-me",
+    "s3SecretAccessKey": "required-change-me",
     "appS3Delete": 1,
     "appS3DeleteDaysOld": 7,
     "blueGreenDeployment": 0,
-    "sslCertificateId": "change-me"
+    "sslCertificateId": ""
   },
   "rds": {
-    "instanceName": "change-me",
+    "instanceName": "required-change-me",
     "instanceClass": "db.t2.micro",
     "dbSecurityGroups": "",
     "region": "us-east-1",
@@ -75,28 +71,28 @@
   },
   "wpEmailSmtp": {
     "dev": {
-      "fromEmail": "change-me",
-      "fromName": "change-me",
+      "fromEmail": "",
+      "fromName": "",
       "smtpHost": "email-smtp.us-east-1.amazonaws.com",
       "smtpPort": 587,
-      "smtpUsername": "change-me",
-      "smtpPassword": "change-me"
+      "smtpUsername": "",
+      "smtpPassword": ""
     },
     "qa": {
-      "fromEmail": "change-me",
-      "fromName": "change-me",
+      "fromEmail": "",
+      "fromName": "",
       "smtpHost": "email-smtp.us-east-1.amazonaws.com",
       "smtpPort": 587,
-      "smtpUsername": "change-me",
-      "smtpPassword": "change-me"
+      "smtpUsername": "",
+      "smtpPassword": ""
     },
     "master": {
-      "fromEmail": "change-me",
-      "fromName": "change-me",
+      "fromEmail": "",
+      "fromName": "",
       "smtpHost": "email-smtp.us-east-1.amazonaws.com",
       "smtpPort": 587,
-      "smtpUsername": "change-me",
-      "smtpPassword": "change-me"
+      "smtpUsername": "",
+      "smtpPassword": ""
     }
   },
   "php": {
@@ -131,64 +127,80 @@
   "wordpress": {
     "siteTitle": "MyWordpress",
     "tagline": "",
-    "apiKey": "change-me",
-    "loginUrl": "backend",
+    "apiKey": "",
+    "loginUrl": "",
     "recaptcha": {
-      "siteKey": "change-me",
-      "secretKey": "change-me"
+      "siteKey": "",
+      "secretKey": ""
     },
     "users": {
       "user1": {
-        "username": "change-me",
-        "password": "change-me",
-        "email": "change-me",
-        "role": "editor",
-        "userNicename": "change-me",
-        "displayName": "change-me"
+        "username": "",
+        "password": "",
+        "email": "",
+        "role": "adminstrator",
+        "userNicename": "",
+        "displayName": ""
       },
       "user2": {
-        "username": "change-me",
-        "password": "change-me",
-        "email": "change-me",
+        "username": "",
+        "password": "",
+        "email": "",
+        "role": "adminstrator",
+        "userNicename": "",
+        "displayName": ""
+      },
+      "user3": {
+        "username": "",
+        "password": "",
+        "email": "",
         "role": "editor",
-        "userNicename": "change-me",
-        "displayName": "change-me"
+        "userNicename": "",
+        "displayName": ""
+      },
+      "user4": {
+        "username": "",
+        "password": "",
+        "email": "",
+        "role": "author",
+        "userNicename": "",
+        "displayName": ""
       }
     },
     "dev": {
-      "adminUsername": "change-me",
-      "adminPassword": "change-me",
-      "adminDisplayName": "change-me",
-      "adminEmail": "change-me"
+      "adminUsername": "required-change-me",
+      "adminPassword": "required-change-me",
+      "adminDisplayName": "required-change-me",
+      "adminEmail": "required-change-me"
     },
     "qa": {
-      "adminUsername": "change-me",
-      "adminPassword": "change-me",
-      "adminDisplayName": "change-me",
-      "adminEmail": "change-me"
+      "adminUsername": "required-change-me",
+      "adminPassword": "required-change-me",
+      "adminDisplayName": "required-change-me",
+      "adminEmail": "required-change-me"
     },
     "master": {
-      "adminUsername": "change-me",
-      "adminPassword": "change-me",
-      "adminDisplayName": "change-me",
-      "adminEmail": "change-me"
+      "adminUsername": "required-change-me",
+      "adminPassword": "required-change-me",
+      "adminDisplayName": "required-change-me",
+      "adminEmail": "required-change-me"
     }
   },
   "basicAuth": {
     "dev": {
-      "enabled": 1,
-      "user": "change-me",
-      "password": "change-me"
+      "enabled": 0,
+      "user": "0",
+      "password": ""
     },
     "qa": {
-      "enabled": 1,
-      "user": "change-me",
-      "password": "change-me"
+      "enabled": 0,
+      "user": "",
+      "password": ""
     },
     "master": {
       "enabled": 0,
-      "user": "change-me",
-      "password": "change-me"
+      "user": "",
+      "password": ""
     }
   }
 }

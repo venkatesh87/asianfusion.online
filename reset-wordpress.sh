@@ -31,7 +31,7 @@ readonly WP_EMAIL_SMTP_USERNAME_CHAR_COUNT=${#WP_EMAIL_SMTP_USERNAME}
 readonly WP_EMAIL_SMTP_PASSWORD_CHAR_COUNT=${#WP_EMAIL_SMTP_PASSWORD}
 
 # Wordpress upload S3 bucket settings
-readonly UPLOAD_S3_BUCKET=$(jq -r ".aws.uploadS3Bucket" $APP_CONFIG_FILE)
+readonly UPLOAD_S3_BUCKET=$(jq -r ".aws.wordpressUploadS3Bucket" $APP_CONFIG_FILE)
 readonly UPLOAD_S3_BUCKET_PATH=${APP_NAME}/${APP_BRANCH}/wp-content/uploads
 
 readonly UPLOAD_S3_BUCKET_PATH_CHAR_COUNT=${#UPLOAD_S3_BUCKET_PATH}
@@ -71,17 +71,22 @@ no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABAS
 no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_ADMIN_EMAIL}' WHERE option_name = 'admin_email';"
 
 # Update WP Email Smtp plugin settings
-readonly WP_EMAIL_SMTP_OPTION_VALUE="a:10:{s:10:\"from_email\";s:${WP_EMAIL_SMTP_FROM_EMAIL_CHAR_COUNT}:\"${WP_EMAIL_SMTP_FROM_EMAIL}\";s:9:\"from_name\";s:${WP_EMAIL_SMTP_FROM_NAME_CHAR_COUNT}:\"${WP_EMAIL_SMTP_FROM_NAME}\";s:6:\"mailer\";s:4:\"smtp\";s:20:\"mail_set_return_path\";s:4:\"true\";s:9:\"smtp_host\";s:${WP_EMAIL_SMTP_HOST_CHAR_COUNT}:\"${WP_EMAIL_SMTP_HOST}\";s:9:\"smtp_port\";s:${WP_EMAIL_SMTP_PORT_CHAR_COUNT}:\"${WP_EMAIL_SMTP_PORT}\";s:15:\"smtp_encryption\";s:3:\"tls\";s:19:\"smtp_authentication\";s:4:\"true\";s:13:\"smtp_username\";s:${WP_EMAIL_SMTP_USERNAME_CHAR_COUNT}:\"${WP_EMAIL_SMTP_USERNAME}\";s:13:\"smtp_password\";s:${WP_EMAIL_SMTP_PASSWORD_CHAR_COUNT}:\"${WP_EMAIL_SMTP_PASSWORD}\";}"
 
-readonly HAS_WP_EMAIL_SMTP=$(no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'wp_email_smtp_option_name';")
+if [ "$WP_EMAIL_SMTP_FROM_EMAIL" != "" ] && [ "$WP_EMAIL_SMTP_FROM_NAME" != "" ] && [ "$WP_EMAIL_SMTP_HOST" != "" ] && [ "$WP_EMAIL_SMTP_PORT" != "" ] && [ "$WP_EMAIL_SMTP_USERNAME" != "" ] && [ "$WP_EMAIL_SMTP_PASSWORD" != "" ]; then
 
-if [ "$HAS_WP_EMAIL_SMTP" == 1 ]; then
+  readonly WP_EMAIL_SMTP_OPTION_VALUE="a:10:{s:10:\"from_email\";s:${WP_EMAIL_SMTP_FROM_EMAIL_CHAR_COUNT}:\"${WP_EMAIL_SMTP_FROM_EMAIL}\";s:9:\"from_name\";s:${WP_EMAIL_SMTP_FROM_NAME_CHAR_COUNT}:\"${WP_EMAIL_SMTP_FROM_NAME}\";s:6:\"mailer\";s:4:\"smtp\";s:20:\"mail_set_return_path\";s:4:\"true\";s:9:\"smtp_host\";s:${WP_EMAIL_SMTP_HOST_CHAR_COUNT}:\"${WP_EMAIL_SMTP_HOST}\";s:9:\"smtp_port\";s:${WP_EMAIL_SMTP_PORT_CHAR_COUNT}:\"${WP_EMAIL_SMTP_PORT}\";s:15:\"smtp_encryption\";s:3:\"tls\";s:19:\"smtp_authentication\";s:4:\"true\";s:13:\"smtp_username\";s:${WP_EMAIL_SMTP_USERNAME_CHAR_COUNT}:\"${WP_EMAIL_SMTP_USERNAME}\";s:13:\"smtp_password\";s:${WP_EMAIL_SMTP_PASSWORD_CHAR_COUNT}:\"${WP_EMAIL_SMTP_PASSWORD}\";}"
 
-  no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_EMAIL_SMTP_OPTION_VALUE}' WHERE option_name = 'wp_email_smtp_option_name';"
+  readonly HAS_WP_EMAIL_SMTP=$(no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'wp_email_smtp_option_name';")
 
-else
+  if [ "$HAS_WP_EMAIL_SMTP" == 1 ]; then
 
-  no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('wp_email_smtp_option_name', '${WP_EMAIL_SMTP_OPTION_VALUE}', 'yes');"
+    no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_EMAIL_SMTP_OPTION_VALUE}' WHERE option_name = 'wp_email_smtp_option_name';"
+
+  else
+
+    no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('wp_email_smtp_option_name', '${WP_EMAIL_SMTP_OPTION_VALUE}', 'yes');"
+
+  fi
 
 fi
 
@@ -160,7 +165,7 @@ for USER in $WP_USERS; do
 
   USERNAME=$(echo $USER | base64 --decode | jq -r ".username")
   
-  if [ "$USERNAME" != "change-me" ]; then
+  if [ "$USERNAME" != "" ]; then
 
     PASSWORD=$(echo $USER | base64 --decode | jq -r ".password")
     EMAIL=$(echo $USER | base64 --decode | jq -r ".email")

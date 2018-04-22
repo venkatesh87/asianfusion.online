@@ -4,10 +4,18 @@ source ./variables.sh
 
 readonly KEY_PATH=$(jq -r ".aws.${APP_BRANCH}.ec2KeyPath" ./app.json)
 
-readonly PUBLIC_IP=($(aws ec2 describe-instances \
-  --profile $AWS_PROFILE \
-  --filters "Name=tag:Name,Values=${APP_NAME}-${APP_BRANCH}" | jq -r ".Reservations[].Instances[].PublicIpAddress"))
+if [ "$KEY_PATH" != "" ]; then
 
-echo "Connecting to $PUBLIC_IP using key $KEY_PATH"
+  readonly PUBLIC_IP=($(aws ec2 describe-instances \
+    --profile $AWS_PROFILE \
+    --filters "Name=tag:Name,Values=${APP_NAME}-${APP_BRANCH}" | jq -r ".Reservations[].Instances[].PublicIpAddress"))
 
-ssh -i $KEY_PATH ec2-user@$PUBLIC_IP
+  echo "Connecting to $PUBLIC_IP using key $KEY_PATH"
+
+  ssh -i $KEY_PATH ec2-user@$PUBLIC_IP
+
+else
+
+  echo "Key path is not specified."
+
+fi
