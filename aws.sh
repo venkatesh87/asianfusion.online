@@ -358,10 +358,13 @@ fi
 
 # SSL certificate ID
 if [ "$SSL_CERTIFICATE_ID" == "" ]; then
+  # Disable SSL
   sed -i '' -e "s/aws:elb:listener:443:/#aws:elb:listener:443:/g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/SSLCertificateId:/#SSLCertificateId:/g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/ListenerProtocol: HTTPS/#ListenerProtocol: HTTPS/g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/InstancePort: 80/#InstancePort: 80/g" ${EBEXTENSIONS_DIR}/default.config
+  # Comment out SSL redirect
+  sed -i '' -e "44 {s/^/#/}" ${EBEXTENSIONS_DIR}/default.config
 else
   sed -i '' -e "s~SSLCertificateId:~SSLCertificateId: ${SSL_CERTIFICATE_ID}~g" ${EBEXTENSIONS_DIR}/default.config
 fi

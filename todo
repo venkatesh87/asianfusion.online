@@ -13,6 +13,7 @@ php myadmin not connection
 load db to local mysql
 datetime zone config
 add recaptcha to login form
+script to export wordpress zip
 
 reload env
 a log viewer
