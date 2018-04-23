@@ -8,4 +8,7 @@ git fetch upstream
 
 git merge upstream/${APP_BRANCH}
 
-echo "If merge is successful, please push"
+echo "============================================"
+echo "If merge is successful, please push."
+echo "And don't forget to sync other branches too."
+echo "============================================"
