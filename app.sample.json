@@ -128,7 +128,7 @@
     "siteTitle": "MyWordpress",
     "tagline": "",
     "apiKey": "",
-    "loginUrl": "",
+    "loginUrl": "backend",
     "recaptcha": {
       "siteKey": "",
       "secretKey": ""

@@ -1,9 +1,10 @@
+cristinajones wp-admin not working
 read me
 create ebs wait method
 report ebs health
 lower case log
 speedup docker - docker sync
-rds dbname 16 chars
+rds dbname/user less 16 chars
 when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
 config: when switching branch, change db credentials?
 
@@ -13,6 +14,7 @@ php myadmin not connection
 load db to local mysql
 datetime zone config
 add recaptcha to login form
+update siteurl and home in wp_options
 script to export wordpress zip
 
 reload env
