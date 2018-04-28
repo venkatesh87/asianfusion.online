@@ -56,7 +56,6 @@
     "s3SecretAccessKey": "required-change-me",
     "appS3Delete": 1,
     "appS3DeleteDaysOld": 7,
-    "blueGreenDeployment": 0,
     "sslCertificateId": ""
   },
   "rds": {

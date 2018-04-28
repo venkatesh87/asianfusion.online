@@ -208,8 +208,6 @@ readonly APP_S3_DELETE=$(jq -r ".aws.appS3Delete" $APP_CONFIG_FILE)
 readonly APP_S3_DELETE_DAYS_OLD=$(jq -r ".aws.appS3DeleteDaysOld" $APP_CONFIG_FILE)
 # SSL certificate ID
 readonly SSL_CERTIFICATE_ID=$(jq -r ".aws.sslCertificateId" $APP_CONFIG_FILE)
-# Blue green deployment
-readonly BLUE_GREEN_DEPLOYMENT=$(jq -r ".aws.blueGreenDeployment" $APP_CONFIG_FILE)
 # Basic auth enabled?
 readonly BASIC_AUTH_ENABLED=$(jq -r ".basicAuth.${APP_BRANCH}.enabled" $APP_CONFIG_FILE)
 # Basic auth user
@@ -287,24 +285,6 @@ if [ "${1}" == "terminate" ]; then
       no_output aws elasticbeanstalk terminate-environment \
         --profile $AWS_PROFILE \
         --environment-name $ENV_NAME
-     
-      # Delete the alternate environment
-      if [ "$APP_BRANCH" == "master" ] && [ "$BLUE_GREEN_DEPLOYMENT" -eq 1 ]; then
-        
-        readonly MASTER_ALT_ENV=${ENV_NAME}-alternate
-        MASTER_ALT_ENV_AVAILABLE=($(aws elasticbeanstalk check-dns-availability \
-          --profile $AWS_PROFILE \
-          --cname-prefix $MASTER_ALT_ENV | jq -r '.Available'))
-        MASTER_ALT_ENV_HEALTH=($(aws elasticbeanstalk describe-environments \
-          --profile $AWS_PROFILE \
-          --environment-names $MASTER_ALT_ENV | jq -r '.Environments[].Health'))
-  
-        if [ "$MASTER_ALT_ENV_AVAILABLE" == "false" ] && [ "$MASTER_ALT_ENV_HEALTH" == "Green" ]; then
-          no_output aws elasticbeanstalk terminate-environment \
-            --profile $AWS_PROFILE
-            --environment-name $MASTER_ALT_ENV
-        fi
-      fi
       end
     else
       echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
@@ -447,54 +427,7 @@ else
     # Update environment
     if [ "$ENV_HEALTH" == "Green" ]; then
 
-      # Deploying to production and environment exists:
-      # - We don't want to update exsting environment as it will create down time.
-      # - Instead we create an alternate environment and swap CNAME when it's ready.
-      # - This alternate environment will stay there for future use, don't delete.
-
-      if [ "$APP_BRANCH" == "master" ] && [ "$BLUE_GREEN_DEPLOYMENT" -eq 1 ]; then
-
-        echo "YOU'RE PUSHING TO PRODUCTION..."
-
-        readonly MASTER_ALT_ENV=${ENV_NAME}-alternate
-        readonly MASTER_ALT_ENV_AVAILABLE=($(aws elasticbeanstalk \
-          --profile $AWS_PROFILE \
-          check-dns-availability --cname-prefix $MASTER_ALT_ENV | jq -r '.Available'))
-
-        if [ "$MASTER_ALT_ENV_AVAILABLE" == "true" ]; then
-
-          echo "LET'S MAKE AN ALTERNATE ENVIRONMENT TO SWAP OVER TO AVOID DOWNTIME"
-          # Create an alternate master environment
-          create_environment $MASTER_ALT_ENV
-          swap_environment $MASTER_ALT_ENV $ENV_NAME
-
-        else
-
-          # If alternate environment has already been used as production,
-          # use the main environment for swapping
-          ENV_URL=($(aws elasticbeanstalk describe-environments \
-            --profile $AWS_PROFILE \
-            --environment-names $ENV_NAME | jq -r '.Environments[].CNAME'))
-
-          if [[ $ENV_URL == "${ENV_NAME}."* ]]; then
-            echo "UPDATING ALTERNATE ENVIRONMENT (${MASTER_ALT_ENV})"
-            update_environment $MASTER_ALT_ENV
-            swap_environment $MASTER_ALT_ENV $ENV_NAME
-          else
-            echo "UPDATING ALTERNATE ENVIRONMENT (${ENV_NAME})"
-            update_environment $ENV_NAME
-            swap_environment $ENV_NAME $MASTER_ALT_ENV
-          fi
-
-        fi
-
-      else
-
-        # Not production, just update
-        update_environment $ENV_NAME
-
-      fi
-
+      update_environment $ENV_NAME
       UPDATED=1
       echo "SUCCESSFULLY UPDATED ENVIRONMENT"
 
