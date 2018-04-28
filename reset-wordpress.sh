@@ -49,6 +49,12 @@ readonly WP_API_KEY=$(jq -r ".wordpress.apiKey" $APP_CONFIG_FILE)
 # WPS Hide Login
 readonly WP_LOGIN_URL=$(jq -r ".wordpress.loginUrl" $APP_CONFIG_FILE)
 
+# Enable emoji
+readonly WP_ENABLE_EMOJI=$(jq -r ".wordpress.enableEmoji" $APP_CONFIG_FILE)
+
+# Minify HTML
+readonly WP_MINIFY_HTML=$(jq -r ".wordpress.${APP_BRANCH}.minifyHtml" $APP_CONFIG_FILE)
+
 # Recaptcha
 readonly RECAPTCHA_SITE_KEY=$(jq -r ".wordpress.recaptcha.siteKey" $APP_CONFIG_FILE)
 readonly RECAPTCHA_SECRET_KEY=$(jq -r ".wordpress.recaptcha.secretKey" $APP_CONFIG_FILE)
@@ -141,6 +147,74 @@ if [ "$WP_LOGIN_URL" != "" ]; then
 
 fi
 
+# Update enable emoji setting
+
+if [ "$WP_ENABLE_EMOJI" != "" ]; then
+
+  readonly HAS_ENABLE_EMOJI=$(no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'enable_emoji';")
+
+  if [ "$HAS_ENABLE_EMOJI" == 1 ]; then
+
+    no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_ENABLE_EMOJI}' WHERE option_name = 'enable_emoji';"
+
+  else
+
+    no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('enable_emoji', '${WP_ENABLE_EMOJI}', 'yes');"
+
+  fi
+
+fi
+
+# Update minify HTML settings
+
+if [ "$WP_MINIFY_HTML" != "" ]; then
+
+  readonly HAS_MINIFY_HTML=$(no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'minify_html_active';")
+
+  if [ "$HAS_MINIFY_HTML" == 1 ]; then
+
+    if [ "$WP_MINIFY_HTML" == 1 ]; then
+    
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'yes' WHERE option_name = 'minify_html_active';"
+    
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'yes' WHERE option_name = 'minify_javascript';"
+    
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'yes' WHERE option_name = 'minify_html_comments';"
+
+    else
+
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'no' WHERE option_name = 'minify_html_active';"
+
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'no' WHERE option_name = 'minify_javascript';"
+    
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = 'no' WHERE option_name = 'minify_html_comments';"
+
+    fi
+
+  else
+
+    if [ "$WP_MINIFY_HTML" == 1 ]; then
+
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('minify_html_active', 'yes', 'yes');"
+
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('minify_javascript', 'yes', 'yes');"
+
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('minify_html_comments', 'yes', 'yes');"
+
+    else
+
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('minify_html_active', 'no', 'yes');"
+
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('minify_javascript', 'no', 'yes');"
+
+      no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('minify_html_comments', 'no', 'yes');"
+
+    fi
+
+  fi
+
+fi
+
 # Update Contact Form 7 reCAPTCHA
 
 if [ "$RECAPTCHA_SITE_KEY" != "" ] && [ "$RECAPTCHA_SECRET_KEY" != "" ]; then
@@ -185,7 +259,7 @@ done
 
 if [ "$ACTIVATE_PREINSTALLED_PLUGINS" == 1 ]; then
 
-  readonly WP_ACTIVATE_PLUGIN_VALUES="a:12:{i:0;s:19:\"akismet/akismet.php\";i:1;s:41:\"amazon-s3-and-cloudfront/wordpress-s3.php\";i:2;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:3;s:36:\"contact-form-7/wp-contact-form-7.php\";i:4;s:23:\"elementor/elementor.php\";i:5;s:21:\"flamingo/flamingo.php\";i:6;s:51:\"header-footer-elementor/header-footer-elementor.php\";i:7;s:21:\"megamenu/megamenu.php\";i:8;s:24:\"wordpress-seo/wp-seo.php\";i:9;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:10;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";i:11;s:33:\"wps-hide-login/wps-hide-login.php\";i:0;s:27:\"astra-sites/astra-sites.php\";i:2;s:43:\"google-analytics-dashboard-for-wp/gadwp.php\";}"
+  readonly WP_ACTIVATE_PLUGIN_VALUES="a:16:{i:0;s:19:\"akismet/akismet.php\";i:1;s:41:\"amazon-s3-and-cloudfront/wordpress-s3.php\";i:2;s:27:\"astra-sites/astra-sites.php\";i:3;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:4;s:36:\"contact-form-7/wp-contact-form-7.php\";i:5;s:23:\"elementor/elementor.php\";i:6;s:32:\"emoji-settings/emojisettings.php\";i:7;s:21:\"flamingo/flamingo.php\";i:8;s:43:\"google-analytics-dashboard-for-wp/gadwp.php\";i:9;s:51:\"header-footer-elementor/header-footer-elementor.php\";i:10;s:21:\"megamenu/megamenu.php\";i:11;s:34:\"minify-html-markup/minify-html.php\";i:12;s:24:\"wordpress-seo/wp-seo.php\";i:13;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:14;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";i:15;s:33:\"wps-hide-login/wps-hide-login.php\";}"
   
   no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_ACTIVATE_PLUGIN_VALUES}' WHERE option_name = 'active_plugins';"
 

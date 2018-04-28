@@ -17,8 +17,6 @@ add recaptcha to login form
 update siteurl and home in wp_options
 script to export wordpress zip
 
-disable emoji plugin
-compress/format html output
 security plugin disable wp-json etc
 
 reload env

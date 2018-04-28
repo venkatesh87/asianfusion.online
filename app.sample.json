@@ -128,6 +128,7 @@
     "tagline": "",
     "apiKey": "",
     "loginUrl": "backend",
+    "enableEmoji": 0,
     "recaptcha": {
       "siteKey": "",
       "secretKey": ""
@@ -167,18 +168,21 @@
       }
     },
     "dev": {
+      "minifyHtml": 0,
       "adminUsername": "required-change-me",
       "adminPassword": "required-change-me",
       "adminDisplayName": "required-change-me",
       "adminEmail": "required-change-me"
     },
     "qa": {
+      "minifyHtml": 1,
       "adminUsername": "required-change-me",
       "adminPassword": "required-change-me",
       "adminDisplayName": "required-change-me",
       "adminEmail": "required-change-me"
     },
     "master": {
+      "minifyHtml": 1,
       "adminUsername": "required-change-me",
       "adminPassword": "required-change-me",
       "adminDisplayName": "required-change-me",
@@ -188,7 +192,7 @@
   "basicAuth": {
     "dev": {
       "enabled": 0,
-      "user": "0",
+      "user": "",
       "password": ""
     },
     "qa": {
