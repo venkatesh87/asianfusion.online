@@ -185,7 +185,7 @@ done
 
 if [ "$ACTIVATE_PREINSTALLED_PLUGINS" == 1 ]; then
 
-  readonly WP_ACTIVATE_PLUGIN_VALUES="a:12:{i:0;s:19:\"akismet/akismet.php\";i:1;s:41:\"amazon-s3-and-cloudfront/wordpress-s3.php\";i:2;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:3;s:36:\"contact-form-7/wp-contact-form-7.php\";i:4;s:23:\"elementor/elementor.php\";i:5;s:21:\"flamingo/flamingo.php\";i:6;s:51:\"header-footer-elementor/header-footer-elementor.php\";i:7;s:21:\"megamenu/megamenu.php\";i:8;s:24:\"wordpress-seo/wp-seo.php\";i:9;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:10;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";i:11;s:33:\"wps-hide-login/wps-hide-login.php\";}"
+  readonly WP_ACTIVATE_PLUGIN_VALUES="a:12:{i:0;s:19:\"akismet/akismet.php\";i:1;s:41:\"amazon-s3-and-cloudfront/wordpress-s3.php\";i:2;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:3;s:36:\"contact-form-7/wp-contact-form-7.php\";i:4;s:23:\"elementor/elementor.php\";i:5;s:21:\"flamingo/flamingo.php\";i:6;s:51:\"header-footer-elementor/header-footer-elementor.php\";i:7;s:21:\"megamenu/megamenu.php\";i:8;s:24:\"wordpress-seo/wp-seo.php\";i:9;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:10;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";i:11;s:33:\"wps-hide-login/wps-hide-login.php\";i:0;s:27:\"astra-sites/astra-sites.php\";i:2;s:43:\"google-analytics-dashboard-for-wp/gadwp.php\";}"
   
   no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_ACTIVATE_PLUGIN_VALUES}' WHERE option_name = 'active_plugins';"
 
