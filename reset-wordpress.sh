@@ -3,11 +3,11 @@
 source ./variables.sh
 source ./functions.sh
 
-DB_HOST=$1
-DB_DATABASE=$2
-DB_USER=$3
-DB_PASSWORD=$4
-ACTIVATE_PREINSTALLED_PLUGINS=$5
+ACTIVATE_PREINSTALLED_PLUGINS=0
+
+if [[ $# -eq 1 ]] ; then
+  ACTIVATE_PREINSTALLED_PLUGINS=$1
+fi
 
 # Wordpress admin info
 readonly WP_ADMIN_USERNAME=$(jq -r ".wordpress.${APP_BRANCH}.adminUsername" $APP_CONFIG_FILE)
@@ -264,3 +264,5 @@ if [ "$ACTIVATE_PREINSTALLED_PLUGINS" == 1 ]; then
   no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_ACTIVATE_PLUGIN_VALUES}' WHERE option_name = 'active_plugins';"
 
 fi
+
+echo "Reset plugins and settings"

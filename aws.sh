@@ -229,13 +229,6 @@ readonly PHP_UPLOAD_MAX_FILESIZE=$(jq -r ".php.${APP_BRANCH}.uploadMaxFilesize" 
 # PHP POST MAX SIZE
 readonly PHP_POST_MAX_SIZE=$(jq -r ".php.${APP_BRANCH}.postMaxSize" $APP_CONFIG_FILE)
 
-
-# Db credentials
-readonly DB_HOST=$(jq -r ".${APP_BRANCH}.endpoint" $DB_CONFIG_FILE)
-readonly DB_DATABASE=$(jq -r ".${APP_BRANCH}.database" $DB_CONFIG_FILE)
-readonly DB_USER=$(jq -r ".${APP_BRANCH}.user" $DB_CONFIG_FILE)
-readonly DB_PASSWORD=$(jq -r ".${APP_BRANCH}.password" $DB_CONFIG_FILE)
-
 ######################
 # End configurations #
 ######################
@@ -370,7 +363,7 @@ cd - >/dev/null 2>&1
 echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
 
 # Reset wordpress
-./reset-wordpress.sh $DB_HOST $DB_DATABASE $DB_USER $DB_PASSWORD 1
+./reset-wordpress.sh
 
 #####################################################
 # END                                               #
