@@ -1,0 +1,32 @@
+#!/bin/sh
+
+source ./variables.sh
+
+# Exit on file checkout, more: https://stackoverflow.com/questions/1011557/is-there-a-way-to-trigger-a-hook-after-a-new-branch-has-been-checked-out-in-git
+if [ "$3" ] && [ "$3" == "0" ]; then
+  exit
+fi
+
+# This file will get copied to .git/hooks and will execute upon branch checkout
+
+# Get db params base on branch from db.json
+readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
+readonly AWS_ACCESS_KEY_ID=$(jq -r ".aws.${APP_BRANCH}.s3AccessKeyId" ./app.json) 
+readonly AWS_SECRET_ACCESS_KEY=$(jq -r ".aws.${APP_BRANCH}.s3SecretAccessKey" ./app.json) 
+readonly WP_CONFIG_FILE=./${PUBLIC_WEB_DIR}/wp-config.php
+readonly HOST=$(jq -r ".${APP_BRANCH}.endpoint" ./db.json)
+readonly DATABASE=$(jq -r ".${APP_BRANCH}.database" ./db.json)
+readonly USER=$(jq -r ".${APP_BRANCH}.user" ./db.json)
+readonly PASSWORD=$(jq -r ".${APP_BRANCH}.password" ./db.json)
+
+# Create wp-config.php
+cp ./${PUBLIC_WEB_DIR}/wp-config-default.php $WP_CONFIG_FILE
+
+# Update wp-config.php
+sed -i '' -e "s/define('DB_NAME', '.*');/define('DB_NAME', '$DATABASE');/g" $WP_CONFIG_FILE
+sed -i '' -e "s/define('DB_USER', '.*');/define('DB_USER', '$USER');/g" $WP_CONFIG_FILE
+# Password might contain slash, so use ~ as delimiter
+sed -i '' -e "s~define('DB_PASSWORD', '.*');~define('DB_PASSWORD', '$PASSWORD');~g" $WP_CONFIG_FILE
+sed -i '' -e "s/define('DB_HOST', '.*');/define('DB_HOST', '$HOST');/g" $WP_CONFIG_FILE
+sed -i '' -e "s/define('DBI_AWS_ACCESS_KEY_ID', '.*');/define('DBI_AWS_ACCESS_KEY_ID', '$AWS_ACCESS_KEY_ID');/g" $WP_CONFIG_FILE
+sed -i '' -e "s/define('DBI_AWS_SECRET_ACCESS_KEY', '.*');/define('DBI_AWS_SECRET_ACCESS_KEY', '$AWS_SECRET_ACCESS_KEY');/g" $WP_CONFIG_FILE

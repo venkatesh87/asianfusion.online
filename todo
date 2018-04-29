@@ -1,0 +1,30 @@
+cristinajones wp-admin not working
+read me
+create ebs wait method
+report ebs health
+lower case log
+speedup docker - docker sync
+rds dbname/user less 16 chars
+when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
+config: when switching branch, change db credentials?
+
+## if use local mysql for dev, change PHPMYADMIN_MYSQL_HOST/PORT to LOCAL_MYSQL container name/port
+userLocalMysqlForDev
+php myadmin not connection
+load db to local mysql
+datetime zone config
+add recaptcha to login form
+update siteurl and home in wp_options
+script to export wordpress zip
+
+security plugin disable wp-json etc
+
+reload env
+a log viewer
+
+bugs:
+- two master env which to ssh?
+- report to wordpress is_ssl() method @wordpress/wp-includes/load.php
+
+
+aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'

@@ -1,0 +1,209 @@
+{
+  "appName": "required-change-me",
+  "publicWebDir": "wordpress",
+  "connectLocalMysqlForDev": 1,
+  "docker": {
+    "wordpress": {
+      "name": "required-change-me",
+      "port": "8500"
+    },
+    "phpmyadmin": {
+      "port": "8501",
+      "connectLocalMysql": 1
+    },
+    "mysql": {
+      "port": "3307",
+      "rootPassword": "password"
+    }
+  },
+  "aws": {
+    "dev": {
+      "profile": "default",
+      "ec2SecurityGroups": "",
+      "elbSecurityGroups": "",
+      "iamInstanceProfile": "",
+      "ec2KeyName": "",
+      "ec2KeyPath": "",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
+      "instanceType": "t2.micro", 
+      "tags": "Key=Environment,Value=Development Key=Application,Value=Wordpress"
+    },
+    "qa": {
+      "profile": "default",
+      "ec2SecurityGroups": "",
+      "elbSecurityGroups": "",
+      "iamInstanceProfile": "",
+      "ec2KeyName": "",
+      "ec2KeyPath": "",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
+      "instanceType": "t2.micro",
+      "tags": "Key=Environment,Value=QA Key=Application,Value=Wordpress"
+    },
+    "master": {
+      "profile": "default",
+      "ec2SecurityGroups": "",
+      "elbSecurityGroups": "",
+      "iamInstanceProfile": "",
+      "ec2KeyName": "",
+      "ec2KeyPath": "",
+      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
+      "instanceType": "t2.micro",
+      "tags": "Key=Environment,Value=Live Key=Application,Value=Wordpress"
+    },
+    "wordpressUploadS3Bucket": "required-change-me",
+    "appS3Bucket": "required-change-me",
+    "s3AccessKeyId": "required-change-me",
+    "s3SecretAccessKey": "required-change-me",
+    "appS3Delete": 1,
+    "appS3DeleteDaysOld": 7,
+    "sslCertificateId": ""
+  },
+  "rds": {
+    "instanceName": "required-change-me",
+    "instanceClass": "db.t2.micro",
+    "dbSecurityGroups": "",
+    "region": "us-east-1",
+    "allocatedStorage": 20,
+    "storageType": "gp2",
+    "engine": "mysql",
+    "engineVersion": "5.6.37"
+  },
+  "wpEmailSmtp": {
+    "dev": {
+      "fromEmail": "",
+      "fromName": "",
+      "smtpHost": "email-smtp.us-east-1.amazonaws.com",
+      "smtpPort": 587,
+      "smtpUsername": "",
+      "smtpPassword": ""
+    },
+    "qa": {
+      "fromEmail": "",
+      "fromName": "",
+      "smtpHost": "email-smtp.us-east-1.amazonaws.com",
+      "smtpPort": 587,
+      "smtpUsername": "",
+      "smtpPassword": ""
+    },
+    "master": {
+      "fromEmail": "",
+      "fromName": "",
+      "smtpHost": "email-smtp.us-east-1.amazonaws.com",
+      "smtpPort": 587,
+      "smtpUsername": "",
+      "smtpPassword": ""
+    }
+  },
+  "php": {
+    "dev": {
+      "memoryLimit": "512M",
+      "outputCompression": "Off",
+      "allowUrlFopen": "Off",
+      "displayErrors": "On",
+      "maxExecutionTime": 60,
+      "uploadMaxFilesize": "20M",
+      "postMaxSize": "20M"
+    },
+    "qa": {
+      "memoryLimit": "512M",
+      "outputCompression": "On",
+      "allowUrlFopen": "Off",
+      "displayErrors": "Off",
+      "maxExecutionTime": 60,
+      "uploadMaxFilesize": "20M",
+      "postMaxSize": "20M"
+    },
+    "master": {
+      "memoryLimit": "512M",
+      "outputCompression": "On",
+      "allowUrlFopen": "Off",
+      "displayErrors": "Off",
+      "maxExecutionTime": 60,
+      "uploadMaxFilesize": "20M",
+      "postMaxSize": "20M"
+    }
+  },
+  "wordpress": {
+    "siteTitle": "MyWordpress",
+    "tagline": "",
+    "apiKey": "",
+    "loginUrl": "backend",
+    "enableEmoji": 0,
+    "recaptcha": {
+      "siteKey": "",
+      "secretKey": ""
+    },
+    "users": {
+      "user1": {
+        "username": "",
+        "password": "",
+        "email": "",
+        "role": "adminstrator",
+        "userNicename": "",
+        "displayName": ""
+      },
+      "user2": {
+        "username": "",
+        "password": "",
+        "email": "",
+        "role": "adminstrator",
+        "userNicename": "",
+        "displayName": ""
+      },
+      "user3": {
+        "username": "",
+        "password": "",
+        "email": "",
+        "role": "editor",
+        "userNicename": "",
+        "displayName": ""
+      },
+      "user4": {
+        "username": "",
+        "password": "",
+        "email": "",
+        "role": "author",
+        "userNicename": "",
+        "displayName": ""
+      }
+    },
+    "dev": {
+      "minifyHtml": 0,
+      "adminUsername": "required-change-me",
+      "adminPassword": "required-change-me",
+      "adminDisplayName": "required-change-me",
+      "adminEmail": "required-change-me"
+    },
+    "qa": {
+      "minifyHtml": 1,
+      "adminUsername": "required-change-me",
+      "adminPassword": "required-change-me",
+      "adminDisplayName": "required-change-me",
+      "adminEmail": "required-change-me"
+    },
+    "master": {
+      "minifyHtml": 1,
+      "adminUsername": "required-change-me",
+      "adminPassword": "required-change-me",
+      "adminDisplayName": "required-change-me",
+      "adminEmail": "required-change-me"
+    }
+  },
+  "basicAuth": {
+    "dev": {
+      "enabled": 0,
+      "user": "",
+      "password": ""
+    },
+    "qa": {
+      "enabled": 0,
+      "user": "",
+      "password": ""
+    },
+    "master": {
+      "enabled": 0,
+      "user": "",
+      "password": ""
+    }
+  }
+}
