@@ -351,6 +351,12 @@ sed -i '' -e "s/max_execution_time: 60/max_execution_time: $PHP_MAX_EXECUTION_TI
 sed -i '' -e "s/upload_max_filesize: 10M/upload_max_filesize: $PHP_UPLOAD_MAX_FILESIZE/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/post_max_size: 10M/post_max_size: $PHP_POST_MAX_SIZE/g" ${EBEXTENSIONS_DIR}/default.config
 
+# DATABASE SETTINGS
+sed -i '' -e "s/{HOST}/$DB_HOST/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/{DATABASE}/$DB_DATABASE/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/{USER}/$DB_USER/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/{PASSWORD}/$DB_PASSWORD/g" ${EBEXTENSIONS_DIR}/default.config
+
 # Get a list of untracked GIT files
 readonly UNTRACKED_GIT_FILES=$(git ls-files --others --exclude-standard)
 

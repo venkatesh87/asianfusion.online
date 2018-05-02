@@ -3,7 +3,7 @@ Contributors: megamenu
 Tags: menu, megamenu, mega menu, navigation, widget, dropdown menu, drag and drop, mobile, responsive, retina, theme editor, widget, shortcode, sidebar, icons, dashicons
 Requires at least: 3.8
 Tested up to: 4.9
-Stable tag: 2.4.1.4
+Stable tag: 2.4.1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -108,10 +108,21 @@ See https://www.megamenu.com for more screenshots
 
 == Changelog ==
 
+= 2.4.2 =
+
+* Improvement: Add Mobile Font (Hover) and Mobile Menu Item Background (Hover) options to theme editor
+* Fix: Add vendor prefixes to toggle block CSS to improve compatibility for old iPhones
+* Fix: Desktop menu visibility when Mobile Effect is set to slide and the browser is resized between desktop - mobile - desktop
+* Fix: Indent forth and fifth level menu items in grid layout sub menus
+* Fix: Remove webkit tap highlight color on mobile toggle bar
+* Improvement: Enable dynamic_sidebar_params filter when MEGAMENU_DYNAMIC_SIDEBAR_PARAMS constant is true
+* Improvement: CSS overrides/resets - word-wrap on menu item titles, transitions on anchors, visibility on h4 elements
+* Improvement: Use "max-mega-menu" class instead of "mega-menu" to avoid conflicts with themes that already use a "mega-menu" class
+
 = 2.4.1.5 =
 
 * Improvement: Detect Hummingbird as a caching plugin
-* Improvement: Accessbility - add aria-label attribute to links where "Hide text" has been enabled
+* Improvement: Accessibility - add aria-label attribute to links where "Hide text" has been enabled
 * Fix: Mobile toggle block logo width
 
 = 2.4.1.4 =

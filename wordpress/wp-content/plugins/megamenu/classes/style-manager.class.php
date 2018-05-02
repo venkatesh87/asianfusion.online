@@ -251,6 +251,9 @@ final class Mega_Menu_Style_Manager {
             'mobile_menu_item_link_font_size'           => 'menu_item_link_font_size',
             'mobile_menu_item_link_color'               => 'menu_item_link_color',
             'mobile_menu_item_link_text_align'          => 'menu_item_link_text_align',
+            'mobile_menu_item_link_color_hover'         => 'menu_item_link_color_hover',
+            'mobile_menu_item_background_hover_from'    => 'menu_item_background_hover_from',
+            'mobile_menu_item_background_hover_to'      => 'menu_item_background_hover_to',            
             'disable_mobile_toggle'                     => 'off',
             'custom_css'                                => '/** Push menu onto new line **/ 
 #{$wrap} { 
@@ -457,7 +460,7 @@ final class Mega_Menu_Style_Manager {
                 }
             }
 
-            $css = "/** " . date('l jS \of F Y h:i:s A') . " ({$scss_location}) **/\n\n" . $css;
+            $css = "/** " . date('l jS F Y H:i:s e') . " ({$scss_location}) **/\n\n" . $css;
 
             $css = apply_filters( "megamenu_compiled_css", $css );
 
@@ -552,7 +555,7 @@ final class Mega_Menu_Style_Manager {
          * When a user (or theme developer) creates their own copy of megamenu.scss it
          * _will_ become outdated as the plugin is updated and the menu HTML changes.
          *
-         * Instead of using a custom SCSS file, override only the absolutel minimum CSS in the
+         * Instead of using a custom SCSS file, override only the absolute minimum CSS in the
          * Menu Theme > Custom Styling section.
          */
         $scss  = file_get_contents( MEGAMENU_PATH . trailingslashit('css') . 'mixin.scss' );

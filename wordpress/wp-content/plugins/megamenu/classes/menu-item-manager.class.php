@@ -275,7 +275,7 @@ class Mega_Menu_Menu_Item_Manager {
 
         $return = "<div id='megamenu-grid' class='{$class}' style='display: {$display}'>";
 
-        if ( version_compare( '2.3.9', $css_version, '>' ) ) {
+        if ( $css_version && version_compare( $css_version, '2.3.9', '<=' ) ) {
             $link = "<a href='" . esc_attr( admin_url( 'admin.php?page=maxmegamenu_tools' ) ) . "'>" . __("Mega Menu") . " > " . __("Tools") . "</a>";
             $return .= "<div class='notice notice-success'><p>";
             $return .= sprintf( __("Your menu CSS needs to be updated first. Please go to %s and Clear the CSS Cache (you will only need to do this once).", "megamenu") , $link);
