@@ -150,5 +150,8 @@ sh ./load-db.sh db/wordpress.sql
 # Reset wordpress
 ./reset-wordpress.sh 1
 
+# Sync credential files
+./sync-creds-up.sh
+
 echo "Databases has been created. Wordpress SQL has been imported for dev database."
 echo "Check db.json for access info, please save this file."
