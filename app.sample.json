@@ -52,6 +52,7 @@
     },
     "wordpressUploadS3Bucket": "required-change-me",
     "appS3Bucket": "required-change-me",
+    "credsS3Bucket": "required-change-me",
     "s3AccessKeyId": "required-change-me",
     "s3SecretAccessKey": "required-change-me",
     "appS3Delete": 1,

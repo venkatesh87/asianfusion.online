@@ -19,7 +19,7 @@ script to export wordpress zip
 
 security plugin disable wp-json etc
 database backup cron(s3, mysql)
-sync app.json db.json
+screen shot tool
 
 reload env
 a log viewer
