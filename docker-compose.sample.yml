@@ -16,12 +16,12 @@ services:
     container_name: {WP_NAME}_mysql
     ports:
       - {LOCAL_MYSQL_PORT}:3306
+    expose:
+      - {LOCAL_MYSQL_PORT}
     environment:
-      LOCALHOST: mysql
-      MYSQL_DATABASE: {WP_NAME}
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: {LOCAL_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: {WP_NAME}_local
+      MYSQL_USER: {LOCAL_MYSQL_USERNAME}
+      MYSQL_PASSWORD: {LOCAL_MYSQL_PASSWORD}
     volumes:
       - ./mysql/logs:/var/log/mysql
     restart: always

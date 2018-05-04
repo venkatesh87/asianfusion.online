@@ -3083,6 +3083,11 @@ class Mega_Menu_Settings {
                         'mobile_menu' => array(
                             'title' => __( "Mobile Menu", "megamenu" ),
                             'settings' => array(
+                                'mobile_toggle_bar' => array(
+                                    'priority' => 5,
+                                    'title' => __( "Mobile Toggle Bar", "megamenu" ),
+                                    'description' => '',
+                                ),
                                 'toggle_bar_background' => array(
                                     'priority' => 20,
                                     'title' => __( "Toggle Bar Background", "megamenu" ),
@@ -3152,15 +3157,20 @@ class Mega_Menu_Settings {
                                     'title' => __( "The 'Disable Mobile Toggle Bar' option has been enabled. The following options are disabled as the mobile toggle bar will not be displayed.", "megamenu" ),
                                     'description' => '',
                                 ),
-                                'mobile_columns' => array(
-                                    'priority' => 30,
-                                    'title' => __( "Mega Menu Columns", "megamenu" ),
-                                    'description' => __( "Number of columns to display widgets/second level menu items in.", "megamenu" ),
+                                'mobile_top_level_menu_items' => array(
+                                    'priority' => 33,
+                                    'title' => __( "Top Level Menu Items", "megamenu" ),
+                                    'description' => '',
+                                ),
+                                'mobile_menu_item_height' => array(
+                                    'priority' => 34,
+                                    'title' => __( "Menu Item Height", "megamenu" ),
+                                    'description' => __( "Height of each top level item in the mobile menu.", "megamenu" ),
                                     'settings' => array(
                                         array(
                                             'title' => "",
-                                            'type' => 'mobile_columns',
-                                            'key' => 'mobile_columns'
+                                            'type' => 'freetext',
+                                            'key' => 'mobile_menu_item_height'
                                         )
                                     )
                                 ),
@@ -3186,15 +3196,25 @@ class Mega_Menu_Settings {
                                         )
                                     )
                                 ),
-                                'mobile_menu_item_height' => array(
-                                    'priority' => 40,
-                                    'title' => __( "Menu Item Height", "megamenu" ),
-                                    'description' => __( "Height of each top level item in the mobile menu.", "megamenu" ),
+                                'mobile_background_hover' => array(
+                                    'priority' => 36,
+                                    'title' => __( "Menu Item Background (Hover)", "megamenu" ),
+                                    'description' => __( "Set the background color for each top level item the mobile menu on hover.", "megamenu" ),
                                     'settings' => array(
                                         array(
-                                            'title' => "",
-                                            'type' => 'freetext',
-                                            'key' => 'mobile_menu_item_height'
+                                            'title' => __( "From", "megamenu" ),
+                                            'type' => 'color',
+                                            'key' => 'mobile_menu_item_background_hover_from'
+                                        ),
+                                        array(
+                                            'title' => __( "Copy", "megamenu" ),
+                                            'type' => 'copy_color',
+                                            'key' => 'copy_color'
+                                        ),
+                                        array(
+                                            'title' => __( "To", "megamenu" ),
+                                            'type' => 'color',
+                                            'key' => 'mobile_menu_item_background_hover_to'
                                         )
                                     )
                                 ),
@@ -3221,6 +3241,35 @@ class Mega_Menu_Settings {
                                         ),
                                     )
                                 ),
+                                'mobile_menu_item_font_hover' => array(
+                                    'priority' => 55,
+                                    'title' => __( "Font (Hover)", "megamenu" ),
+                                    'description' => __( "The font color to use for each top level menu item in the mobile menu on hover.", "megamenu" ),
+                                    'settings' => array(
+                                        array(
+                                            'title' => __( "Color", "megamenu" ),
+                                            'type' => 'color',
+                                            'key' => 'mobile_menu_item_link_color_hover'
+                                        )
+                                    )
+                                ),
+                                'mobile_mega_menus' => array(
+                                    'priority' => 60,
+                                    'title' => __( "Mega Menus", "megamenu" ),
+                                    'description' => '',
+                                ),
+                                'mobile_columns' => array(
+                                    'priority' => 65,
+                                    'title' => __( "Mega Menu Columns", "megamenu" ),
+                                    'description' => __( "Collapse mega menu content into this many columns on mobile.", "megamenu" ),
+                                    'settings' => array(
+                                        array(
+                                            'title' => "",
+                                            'type' => 'mobile_columns',
+                                            'key' => 'mobile_columns'
+                                        )
+                                    )
+                                )
                             )
                         ),
                         'custom_styling' => array(
@@ -3709,17 +3758,31 @@ class Mega_Menu_Settings {
         <textarea id='codemirror' name='settings[<?php echo $key ?>]'><?php echo stripslashes( $value ) ?></textarea>
 
         <p><b><?php _e("Custom Styling Tips", "megamenu"); ?></b></p>
+        <p><?php _e("You can enter standard CSS or <a href='https://sass-lang.com/guide' target='_blank'>SCSS</a> into the custom styling area. If using SCSS there are some variables and mixins you can use:"); ?></p>
         <ul class='custom_styling_tips'>
             <li><code>#{$wrap}</code> <?php _e("converts to the ID selector of the menu wrapper, e.g. div#mega-menu-wrap-primary", "megamenu"); ?></li>
             <li><code>#{$menu}</code> <?php _e("converts to the ID selector of the menu, e.g. ul#mega-menu-primary", "megamenu"); ?></li>
+            <li><code>@include mobile|desktop { .. }</code> <?php _e("wraps the CSS within a media query based on the configured Responsive Breakpoint (see example CSS)", "megamenu"); ?></li>
             <?php
-                $string = __("Using the %wrap% and %menu% variables makes your theme portable (allowing you to apply the same theme to multiple menu locations).", "megamenu");
+                $string = __("Using the %wrap% and %menu% variables makes your theme portable (allowing you to apply the same theme to multiple menu locations)", "megamenu");
                 $string = str_replace('%wrap%', '<code>#{$wrap}</code>', $string);
                 $string = str_replace('%menu%', '<code>#{$menu}</code>', $string);
             ?>
             <li><?php echo $string; ?></li>
             <li>Example CSS:</li>
-            <code>/** Add text shadow to top level menu items **/<br>#{$wrap} #{$menu} > li.mega-menu-item > a.mega-menu-link {<br />&nbsp;&nbsp;&nbsp;&nbsp;text-shadow: 1px 1px #000000;<br />}</code></li>
+            <code>/** Add text shadow to top level menu items on desktop AND mobile **/
+                <br />#{$wrap} #{$menu} > li.mega-menu-item > a.mega-menu-link {
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;text-shadow: 1px 1px #000000;
+                <br />}
+            </code>
+            <br /><br />
+            <code>/** Add text shadow to top level menu items on desktop only **/
+                <br />@include desktop {
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;#{$wrap} #{$menu} > li.mega-menu-item > a.mega-menu-link {
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-shadow: 1px 1px #000000;
+                <br />&nbsp;&nbsp;&nbsp;&nbsp;}
+                <br />}
+            </code></li>
         </ul>
 
         <?php

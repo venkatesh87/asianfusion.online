@@ -50,6 +50,7 @@
     vertical-align: baseline;
     visibility: inherit;
     width: auto;
+    word-wrap: break-word;
 
     &:before,
     &:after {
@@ -96,9 +97,11 @@
             .mega-description-group {
                 vertical-align: middle;
                 display: inline-block;
+                transition: none;
 
                 .mega-menu-title,
                 .mega-menu-description {
+                    transition: none;
                     line-height: 1.5;
                     display: block;
                 }
@@ -126,6 +129,7 @@
 
             > span.mega-title-below {
                 display: inline-block;
+                transition: none;
             }
         }
 
@@ -340,6 +344,11 @@
                 font-weight: $menu_item_link_weight_hover;
                 text-decoration: $menu_item_link_text_decoration_hover;
                 border-color: $menu_item_border_color_hover;
+
+                @include mobile {
+                    color: $mobile_menu_item_link_color_hover;
+                    @include background($mobile_menu_item_background_hover_from, $mobile_menu_item_background_hover_to);
+                }
             }
 
             @if $menu_item_highlight_current == 'on' {
@@ -353,6 +362,11 @@
                         font-weight: $menu_item_link_weight_hover;
                         text-decoration: $menu_item_link_text_decoration_hover;
                         border-color: $menu_item_border_color_hover;
+
+                        @include mobile {
+                            color: $mobile_menu_item_link_color_hover;
+                            @include background($mobile_menu_item_background_hover_from, $mobile_menu_item_background_hover_to);
+                        }
                     }
                 }
 
@@ -381,11 +395,7 @@
                 font-family: $menu_item_link_font;
                 font-size: $menu_item_link_font_size;
 
-                @include mobile {
-                    text-align: $mobile_menu_item_link_text_align;
-                    color: $mobile_menu_item_link_color;
-                    font-size: $mobile_menu_item_link_font_size;
-                }
+
             }
 
             // support for multi line links
@@ -413,12 +423,16 @@
                 }
 
                 > a.mega-menu-link {
-                    @include border-radius(0 0 0 0);
+                    @include border-radius(0);
                     border: 0;
                     margin: 0;
                     line-height: $mobile_menu_item_height;
                     height: $mobile_menu_item_height;
                     padding: 0 10px;
+                    background: transparent;
+                    text-align: $mobile_menu_item_link_text_align;
+                    color: $mobile_menu_item_link_color;
+                    font-size: $mobile_menu_item_link_font_size;
                 }
 
             }
@@ -529,11 +543,11 @@
 
                 li.mega-menu-item ul.mega-sub-menu {
                     margin-left: 10px;
-
-                    li.mega-menu-item ul.mega-sub-menu {
-                        margin-left: 20px;
-                    }
                 }
+            }
+
+            li.mega-menu-column > ul.mega-sub-menu ul.mega-sub-menu ul.mega-sub-menu {
+                margin-left: 10px;
             }
 
             > li.mega-menu-item,
@@ -563,6 +577,7 @@
                     padding: $panel_header_padding_top $panel_header_padding_right $panel_header_padding_bottom $panel_header_padding_left;
                     vertical-align: top;
                     display: block;
+                    visibility: inherit;
                     border-top: $panel_header_border_top solid $panel_header_border_color;
                     border-left: $panel_header_border_left solid $panel_header_border_color;
                     border-right: $panel_header_border_right solid $panel_header_border_color;
@@ -918,6 +933,7 @@
         -khtml-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
+        -webkit-tap-highlight-color: transparent;
         outline: none;
         white-space: nowrap;
 
@@ -926,14 +942,13 @@
             padding: 0;
         }
 
-        .mega-search-wrap {
-            align-self: center;
-        }
-
         @include mobile {
             @if $disable_mobile_toggle == on {
                 display: none;
             } @else {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: -webkit-flex;
                 display: flex;
             }
         }
@@ -941,12 +956,25 @@
         .mega-toggle-blocks-left,
         .mega-toggle-blocks-center,
         .mega-toggle-blocks-right {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
             display: flex;
+
+            -ms-flex-preferred-size: 33.33%;
+            -webkit-flex-basis: 33.33%;
             flex-basis: 33.33%;
         }
 
         .mega-toggle-blocks-left {
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
+            -webkit-flex: 1;
             flex: 1;
+
+            -webkit-box-pack: start;
+            -ms-flex-pack: start;
+            -webkit-justify-content: flex-start;
             justify-content: flex-start;
 
             .mega-toggle-block {
@@ -955,6 +983,9 @@
         }
 
         .mega-toggle-blocks-center {
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            -webkit-justify-content: center;
             justify-content: center;
 
             .mega-toggle-block {
@@ -964,7 +995,13 @@
         }
 
         .mega-toggle-blocks-right {
+            -webkit-box-flex: 1;
+            -ms-flex: 1;
+            -webkit-flex: 1;
             flex: 1;
+            -webkit-box-pack: end;
+            -ms-flex-pack: end;
+            -webkit-justify-content: flex-end;
             justify-content: flex-end;
 
             .mega-toggle-block {
@@ -973,8 +1010,18 @@
         }
 
         .mega-toggle-block {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
             display: flex;
             height: 100%;
+
+            -webkit-align-self: center;
+            -ms-flex-item-align: center;
+            align-self: center;
+            
+            -ms-flex-negative: 0;
+            -webkit-flex-shrink: 0;
             flex-shrink: 0;
         }
 

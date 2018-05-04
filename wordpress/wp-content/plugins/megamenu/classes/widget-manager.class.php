@@ -728,11 +728,19 @@ class Mega_Menu_Widget_Manager {
             (array) $wp_registered_widgets[$id]['params']
         );
 
+        $params[0]['id'] = 'mega-menu';
         $params[0]['before_title'] = apply_filters( "megamenu_before_widget_title", '<h4 class="mega-block-title">', $wp_registered_widgets[$id] );
         $params[0]['after_title'] = apply_filters( "megamenu_after_widget_title", '</h4>', $wp_registered_widgets[$id] );
         $params[0]['before_widget'] = apply_filters( "megamenu_before_widget", "", $wp_registered_widgets[$id] );
         $params[0]['after_widget'] = apply_filters( "megamenu_after_widget", "", $wp_registered_widgets[$id] );
+        
+        if ( defined("MEGAMENU_DYNAMIC_SIDEBAR_PARAMS") && MEGAMENU_DYNAMIC_SIDEBAR_PARAMS ) {
+            $params[0]['before_widget'] = apply_filters( "megamenu_before_widget", '<div id="" class="">', $wp_registered_widgets[$id] );
+            $params[0]['after_widget'] = apply_filters( "megamenu_after_widget", '</div>', $wp_registered_widgets[$id] );
 
+            $params = apply_filters('dynamic_sidebar_params', $params);
+        }
+        
         $callback = $wp_registered_widgets[$id]['callback'];
 
         if ( is_callable( $callback ) ) {

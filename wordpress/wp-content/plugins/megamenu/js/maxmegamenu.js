@@ -119,7 +119,9 @@
             if ( plugin.settings.effect == "slide" || plugin.isMobileView() && plugin.settings.effect_mobile == 'slide') {
                 var speed = plugin.isMobileView() ? plugin.settings.effect_speed_mobile : plugin.settings.effect_speed;
 
-                anchor.siblings(".mega-sub-menu").css("display", "none").animate({'height':'show', 'paddingTop':'show', 'paddingBottom':'show', 'minHeight':'show'}, speed);
+                anchor.siblings(".mega-sub-menu").css("display", "none").animate({'height':'show', 'paddingTop':'show', 'paddingBottom':'show', 'minHeight':'show'}, speed, function() {
+                    $(this).css("display", "");
+                });
             }
 
             anchor.parent().addClass("mega-toggle-on").triggerHandler("open_panel");
@@ -369,9 +371,7 @@
                 plugin.switchToDesktop();
             }
 
-            if ( plugin.isDesktopView() ) {
-                plugin.calculateDynamicSubmenuWidths($("li.mega-menu-megamenu.mega-toggle-on > a.mega-menu-link", $menu));
-            }
+            plugin.calculateDynamicSubmenuWidths($("li.mega-menu-megamenu.mega-toggle-on > a.mega-menu-link", $menu));
         };
 
         plugin.reverseRightAlignedItems = function() {
@@ -410,7 +410,13 @@
             $menu.siblings(".mega-menu-toggle").on("click", function(e) {
                 if ( $(e.target).is(".mega-menu-toggle-block, .mega-toggle-blocks-left, .mega-toggle-blocks-center, .mega-toggle-blocks-right, .mega-toggle-label, .mega-toggle-label span") ) {
                     if (plugin.settings.effect_mobile == 'slide') {
-                        $menu.slideToggle(plugin.settings.effect_speed_mobile);
+                        if ($(this).hasClass("mega-menu-open")) {
+                            $menu.animate({'height':'hide'}, plugin.settings.effect_speed_mobile, function() {
+                                $(this).css("display", "");
+                            });
+                        } else {
+                            $menu.animate({'height':'show'}, plugin.settings.effect_speed_mobile);
+                        }
                     }
                     $(this).toggleClass("mega-menu-open");
                 }
@@ -438,6 +444,6 @@
     };
 
     $(function() {
-        $(".mega-menu").maxmegamenu();
+        $('.max-mega-menu').maxmegamenu();
     });
 })(jQuery);
