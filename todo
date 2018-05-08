@@ -14,17 +14,13 @@ connectLocalMysqlForDev
   * script to migrate db from local to dev
   * when deploy to dev, switch db config from local to dev
 load db to local mysql
-patch config files
 
 datetime zone config
 add recaptcha to login form
-update siteurl and home in wp_options
 script to export wordpress zip
 
 security plugin disable wp-json etc
-screen shot tool
 
-reload env
 a log viewer
 
 bugs:

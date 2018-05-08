@@ -236,6 +236,23 @@ readonly PHP_POST_MAX_SIZE=$(jq -r ".php.${APP_BRANCH}.postMaxSize" $APP_CONFIG_
 # Whether or not anything has been updated
 UPDATED=0
 
+# Check if database exists
+if [ -f "$DB_CONFIG_FILE" ]; then
+
+  readonly CURRENT_DB=`no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "SHOW DATABASES" | grep "^$DB_DATABASE$"`
+  if [ "$CURRENT_DB" != "$DB_DATABASE" ]; then
+    echo "DATABASE $DB_DATABASE DOES NOT EXIST"
+    exit
+  else
+    echo Database connected: $CURRENT_DB
+  fi
+
+else
+
+  echo "Database is missing"
+  exit
+
+fi
 
 # Check if app exists
 readonly APP_EXISTS=($(aws elasticbeanstalk describe-application-versions \
@@ -292,6 +309,7 @@ fi
 #####################################################
 # BEGIN - BUILD YOUR WEB CONTENT HERE               #
 #####################################################
+echo STARTING...PLEASE WAIT
 
 touch ./${PUBLIC_WEB_DIR}/build.txt
 echo $BUILD_NUMBER >> ./${PUBLIC_WEB_DIR}/build.txt
