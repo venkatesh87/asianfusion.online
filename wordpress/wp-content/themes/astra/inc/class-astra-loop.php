@@ -51,6 +51,7 @@ if ( ! class_exists( 'Astra_Loop' ) ) :
 
 			// Template Parts.
 			add_action( 'astra_page_template_parts_content', array( $this, 'template_parts_page' ) );
+			add_action( 'astra_page_template_parts_content', array( $this, 'template_parts_comments' ), 15 );
 			add_action( 'astra_template_parts_content', array( $this, 'template_parts_post' ) );
 			add_action( 'astra_template_parts_content', array( $this, 'template_parts_search' ) );
 			add_action( 'astra_template_parts_content', array( $this, 'template_parts_default' ) );

@@ -973,8 +973,9 @@ var toggleClass = function ( el, className ) {
 	var SearchIcons = document.getElementsByClassName( 'astra-search-icon' );
 	for (var i = 0; i < SearchIcons.length; i++) {
 
-		SearchIcons[i].onclick = function() {
+		SearchIcons[i].onclick = function(event) {
 			if ( this.classList.contains( 'slide-search' ) ) {
+				event.preventDefault();
 				var sibling = this.parentNode.parentNode.querySelector( '.ast-search-menu-icon' );
 				if ( ! sibling.classList.contains( 'ast-dropdown-active' ) ) {
 					sibling.classList.add( 'ast-dropdown-active' );

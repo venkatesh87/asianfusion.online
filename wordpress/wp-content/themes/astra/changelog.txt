@@ -1,3 +1,8 @@
+v1.3.2
+- Fix: Duplicate content area when using Elementor Pro's single page template.
+- Fix: Search icon in primary menu causing page tu jump when clicked.
+- Fix: Comments box not visible on the pages.
+
 v1.3.1
 - New: New filter `astra_site_title_tag` to change the HTML tag of the site title.
 - Improvement: Improve RTL support for customizer controls.
