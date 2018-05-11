@@ -34,13 +34,13 @@ RUN PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/app.json) \
   && PHP_MAX_EXECUTION_TIME=$(jq -r ".php.dev.maxExecutionTime" /tmp/app.json) \
   && PHP_UPLOAD_MAX_FILESIZE=$(jq -r ".php.dev.uploadMaxFilesize" /tmp/app.json) \
   && PHP_POST_MAX_SIZE=$(jq -r ".php.dev.postMaxSize" /tmp/app.json) \
-  && sed -i -e "s/memory_limit = 128M/memory_limit = ${PHP_MEMORY_LIMIT}/g" /etc/php-7.1.ini \
-  && sed -i -e "s/zlib.output_compression = Off/zlib.output_compression = ${PHP_OUTPUT_COMPRESSION}/g" /etc/php-7.1.ini \
-  && sed -i -e "s/allow_url_fopen = On/allow_url_fopen = ${PHP_ALLOW_URL_FOPEN}/g" /etc/php-7.1.ini \
-  && sed -i -e "s/display_errors = Off/display_errors = ${PHP_DISPLAY_ERRORS}/g" /etc/php-7.1.ini \
-  && sed -i -e "s/max_execution_time = 30/max_execution_time = ${PHP_MAX_EXECUTION_TIME}/g" /etc/php-7.1.ini \
-  && sed -i -e "s/upload_max_filesize = 2M/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/g" /etc/php-7.1.ini \
-  && sed -i -e "s/post_max_size = 8M/post_max_size = ${PHP_POST_MAX_SIZE}/g" /etc/php-7.1.ini
+  && sed -i -e "s/memory_limit = .*/memory_limit = ${PHP_MEMORY_LIMIT}/g" /etc/php-7.1.ini \
+  && sed -i -e "s/zlib.output_compression = .*/zlib.output_compression = ${PHP_OUTPUT_COMPRESSION}/g" /etc/php-7.1.ini \
+  && sed -i -e "s/allow_url_fopen = .*/allow_url_fopen = ${PHP_ALLOW_URL_FOPEN}/g" /etc/php-7.1.ini \
+  && sed -i -e "s/display_errors = .*/display_errors = ${PHP_DISPLAY_ERRORS}/g" /etc/php-7.1.ini \
+  && sed -i -e "s/max_execution_time = .*/max_execution_time = ${PHP_MAX_EXECUTION_TIME}/g" /etc/php-7.1.ini \
+  && sed -i -e "s/upload_max_filesize = .*/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/g" /etc/php-7.1.ini \
+  && sed -i -e "s/post_max_size = .*/post_max_size = ${PHP_POST_MAX_SIZE}/g" /etc/php-7.1.ini
 
 # Done with app.json, remove
 RUN rm /tmp/app.json
