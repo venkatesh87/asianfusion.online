@@ -9,15 +9,32 @@ fi
 
 # This file will get copied to .git/hooks and will execute upon branch checkout
 
-# Get db params base on branch from db.json
+IS_AWS_DEPLOYMENT=0
+
+if [[ $# -eq 1 ]] ; then
+  IS_AWS_DEPLOYMENT=$1
+fi
+
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
-readonly AWS_ACCESS_KEY_ID=$(jq -r ".aws.${APP_BRANCH}.s3AccessKeyId" ./app.json) 
-readonly AWS_SECRET_ACCESS_KEY=$(jq -r ".aws.${APP_BRANCH}.s3SecretAccessKey" ./app.json) 
+readonly WP_NAME=$(jq -r ".docker.wordpress.name" ./app.json)
+readonly AWS_ACCESS_KEY_ID=$(jq -r ".aws.s3AccessKeyId" ./app.json) 
+readonly AWS_SECRET_ACCESS_KEY=$(jq -r ".aws.s3SecretAccessKey" ./app.json) 
+readonly CONNECT_LOCAL_MYSQL_FOR_DEV=$(jq -r ".connectLocalMysqlForDev" ./app.json)
+
+if [ "$APP_BRANCH" == "dev" ] && [ "$CONNECT_LOCAL_MYSQL_FOR_DEV" -eq 1 ] && [ "$IS_AWS_DEPLOYMENT" -eq 0 ]; then
+  #readonly PORT=$(jq -r ".docker.mysql.port" $APP_CONFIG_FILE)
+  readonly HOST=mysql
+  readonly DATABASE=${WP_NAME}_local
+  readonly USER=$(jq -r ".docker.mysql.username" $APP_CONFIG_FILE)
+  readonly PASSWORD=$(jq -r ".docker.mysql.password" $APP_CONFIG_FILE)
+else
+  readonly HOST=$(jq -r ".${APP_BRANCH}.endpoint" ./db.json)
+  readonly DATABASE=$(jq -r ".${APP_BRANCH}.database" ./db.json)
+  readonly USER=$(jq -r ".${APP_BRANCH}.user" ./db.json)
+  readonly PASSWORD=$(jq -r ".${APP_BRANCH}.password" ./db.json)
+fi
+
 readonly WP_CONFIG_FILE=./${PUBLIC_WEB_DIR}/wp-config.php
-readonly HOST=$(jq -r ".${APP_BRANCH}.endpoint" ./db.json)
-readonly DATABASE=$(jq -r ".${APP_BRANCH}.database" ./db.json)
-readonly USER=$(jq -r ".${APP_BRANCH}.user" ./db.json)
-readonly PASSWORD=$(jq -r ".${APP_BRANCH}.password" ./db.json)
 
 # Create wp-config.php
 cp ./${PUBLIC_WEB_DIR}/wp-config-default.php $WP_CONFIG_FILE

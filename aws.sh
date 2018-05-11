@@ -321,7 +321,7 @@ rm -f /tmp/$APP_FILE.zip
 echo ZIPPING UP WEB CONTENT IN $PUBLIC_WEB_DIR
 
 # Make sure wp-config.php is up to date                                         
-sh ./post-checkout
+sh ./post-checkout 1
 
 # Go into public web directory
 cd ./${PUBLIC_WEB_DIR}
@@ -468,6 +468,9 @@ if [ "$APP_S3_DELETE" -eq 1 ] && [ "$UPDATED" -eq 1 ]; then
 fi
 
 if [ "$UPDATED" -eq 1 ]; then
+
+  # Make sure wp-config.php is up to date
+  sh ./post-checkout
 
   # Get environment URL
   ENV_URL=($(aws elasticbeanstalk describe-environments \
