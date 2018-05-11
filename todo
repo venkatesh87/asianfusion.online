@@ -1,4 +1,3 @@
-cristinajones wp-admin not working
 read me
 create ebs wait method
 report ebs health
@@ -7,7 +6,6 @@ speedup docker - docker sync
 rds dbname/user less 16 chars
 when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
 config: when switching branch, change db credentials?
-
 * DEV branch only
 connectLocalMysqlForDev
   * actually connect mysql to local
@@ -18,13 +16,9 @@ load db to local mysql
 datetime zone config
 add recaptcha to login form
 script to export wordpress zip
-
 security plugin disable wp-json etc
-SMTP not working
-push to origin with affecting upstream
-reservation plugin for mybistron.net
-
 a log viewer
+cristinajones wp-admin not working
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php
