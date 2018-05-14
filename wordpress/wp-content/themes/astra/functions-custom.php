@@ -82,7 +82,7 @@ add_action( 'admin_menu', 'remove_menus' );
 // example custom dashboard widget
 function custom_dashboard_widget() {
   echo "<ul>";
-  echo "<li><strong>Site URL: " . WP_HOME . "</strong></li>";
+  echo "<li><strong>Site URL:</strong> " . WP_HOME . "</li>";
   echo "<li><strong>Database:</strong> " . DB_NAME . "</li>";
   echo "</ul>";
 }
