@@ -1,4 +1,4 @@
-/*! elementor - v2.0.11 - 09-05-2018 */
+/*! elementor - v2.0.12 - 15-05-2018 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 var TagPanelView = require( 'elementor-dynamic-tags/tag-panel-view' );
 
@@ -1695,7 +1695,7 @@ TemplateLibraryManager = function() {
 		self.requestLibraryData( {
 			onBeforeUpdate: layout.showLoadingView.bind( layout ),
 			onUpdate: function() {
-				var documentType = elementor.config.document.type,
+				var documentType = elementor.config.document.remote_type,
 					isBlockType = -1 !== config.categories.indexOf( documentType ),
 					oldStartIntent = Object.create( startIntent );
 
@@ -4125,6 +4125,8 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	 * Create a media modal select frame, and store it so the instance can be reused when needed.
 	 */
 	initFrame: function() {
+		// Set current doc id to attach uploaded images.
+		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
 				text: elementor.translate( 'insert_media' )
