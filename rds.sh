@@ -36,6 +36,13 @@ readonly DB_INSTANCE_CLASS=$(jq -r ".rds.instanceClass" $APP_CONFIG_FILE)
 readonly ENGINE=$(jq -r ".rds.engine" $APP_CONFIG_FILE)
 readonly ENGINE_VERSION=$(jq -r ".rds.engineVersion" $APP_CONFIG_FILE)
 
+readonly DB_INSTANCE_IDENTIFIER_LENGTH=${#DB_INSTANCE_IDENTIFIER}
+
+if [[ "$DB_INSTANCE_IDENTIFIER_LENGTH" -gt 11 ]]; then
+  echo "Please make RDS name less than 11 characters"
+  exit
+fi
+
 DB_ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
 
 if [ "$APP_BRANCH" != "dev" ]; then

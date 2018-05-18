@@ -17,10 +17,10 @@ readonly CONNECT_LOCAL_MYSQL_FOR_DEV=$(jq -r ".connectLocalMysqlForDev" ./app.js
 
 PHPMYADMIN_ARBITRARY=0
 PHPMYADMIN_MYSQL_PORT=3306
-# Point to MySQL in AWS
+# phpMyAdmin - Point to MySQL in AWS
 PHPMYADMIN_MYSQL_HOST=$(jq -r ".root.endpoint" ./db.json)
 
-# Point to MySQL on local
+# phpMyAdmin - Point to MySQL on local
 if [ "$CONNECT_LOCAL_MYSQL_FOR_DEV" -eq 1 ]; then
   # MySQL container name
   PHPMYADMIN_MYSQL_HOST=${WP_NAME}_mysql
@@ -43,15 +43,10 @@ if [ "${1}" == "build" ]; then
 
     docker-compose up -d --build
 
+    # Make sure wp-config.php is up to date                                         
+    sh ./post-checkout
+
 elif [ "${1}" == "remove" ]; then
-
-    #WP=$(docker ps -qf name="${WP_NAME}_wordpress")
-    #LOCAL_MYSQL=$(docker ps -qf name="${WP_NAME}_mysql")
-    #PHPMYADMIN=$(docker ps -qf name="${WP_NAME}_phpmyadmin")
-
-    #docker rm -f $WP
-    #docker rm -f $LOCAL_MYSQL
-    #docker rm -f $PHPMYADMIN
 
     docker rm -f ${WP_NAME}_wordpress
     docker rm -f ${WP_NAME}_mysql

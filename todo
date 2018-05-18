@@ -3,22 +3,14 @@ create ebs wait method
 report ebs health
 lower case log
 speedup docker - docker sync
-rds dbname/user less 16 chars
 when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
 config: when switching branch, change db credentials?
-* DEV branch only
-connectLocalMysqlForDev
-  * actually connect mysql to local
-  * script to migrate db from local to dev
-  * when deploy to dev, switch db config from local to dev
-load db to local mysql
 
 datetime zone config
 add recaptcha to login form
 script to export wordpress zip
 security plugin disable wp-json etc
 a log viewer
-cristinajones wp-admin not working
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php

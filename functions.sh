@@ -12,6 +12,6 @@ no_output() {
 
 # Get password
 get_password() {
-  password=$(openssl rand -base64 12)
+  password=$(openssl rand -base64 24)
   echo $password
 }
