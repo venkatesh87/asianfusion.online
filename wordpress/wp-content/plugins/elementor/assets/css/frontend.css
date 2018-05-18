@@ -1,4 +1,4 @@
-/*! elementor - v2.0.11 - 09-05-2018 */
+/*! elementor - v2.0.12 - 15-05-2018 */
 .dialog-widget-content {
   background-color: #fff;
   position: absolute;
@@ -28,7 +28,7 @@
     margin: auto;
     width: 375px; }
   .dialog-type-lightbox .dialog-message {
-    padding: 0 20px;
+    padding: 0 20px 20px;
     min-height: 50px; }
   .dialog-type-lightbox .dialog-widget-header, .dialog-type-lightbox .dialog-message {
     text-align: center; }
@@ -611,7 +611,7 @@
         -ms-flex-direction: column-reverse;
             flex-direction: column-reverse; } }
 
-.elementor-grid, .elementor-inline-items, ul.elementor-icon-list-items.elementor-inline-items {
+ul.elementor-icon-list-items.elementor-inline-items {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -619,8 +619,87 @@
   -webkit-flex-wrap: wrap;
       -ms-flex-wrap: wrap;
           flex-wrap: wrap; }
-  .elementor-grid .elementor-grid-item, .elementor-inline-items .elementor-grid-item, ul.elementor-icon-list-items.elementor-inline-items .elementor-grid-item {
+  ul.elementor-icon-list-items.elementor-inline-items .elementor-inline-item {
     word-break: break-word; }
+
+.elementor-grid {
+  display: grid; }
+  .elementor-grid .elementor-grid-item {
+    word-break: break-word; }
+  .elementor-grid-1 .elementor-grid {
+    grid-template-columns: repeat(1, 1fr); }
+  .elementor-grid-2 .elementor-grid {
+    grid-template-columns: repeat(2, 1fr); }
+  .elementor-grid-3 .elementor-grid {
+    grid-template-columns: repeat(3, 1fr); }
+  .elementor-grid-4 .elementor-grid {
+    grid-template-columns: repeat(4, 1fr); }
+  .elementor-grid-5 .elementor-grid {
+    grid-template-columns: repeat(5, 1fr); }
+  .elementor-grid-6 .elementor-grid {
+    grid-template-columns: repeat(6, 1fr); }
+  .elementor-grid-7 .elementor-grid {
+    grid-template-columns: repeat(7, 1fr); }
+  .elementor-grid-8 .elementor-grid {
+    grid-template-columns: repeat(8, 1fr); }
+  .elementor-grid-9 .elementor-grid {
+    grid-template-columns: repeat(9, 1fr); }
+  .elementor-grid-10 .elementor-grid {
+    grid-template-columns: repeat(10, 1fr); }
+  .elementor-grid-11 .elementor-grid {
+    grid-template-columns: repeat(11, 1fr); }
+  .elementor-grid-12 .elementor-grid {
+    grid-template-columns: repeat(12, 1fr); }
+  @media (max-width: 1024px) {
+    .elementor-grid-tablet-1 .elementor-grid {
+      grid-template-columns: repeat(1, 1fr); }
+    .elementor-grid-tablet-2 .elementor-grid {
+      grid-template-columns: repeat(2, 1fr); }
+    .elementor-grid-tablet-3 .elementor-grid {
+      grid-template-columns: repeat(3, 1fr); }
+    .elementor-grid-tablet-4 .elementor-grid {
+      grid-template-columns: repeat(4, 1fr); }
+    .elementor-grid-tablet-5 .elementor-grid {
+      grid-template-columns: repeat(5, 1fr); }
+    .elementor-grid-tablet-6 .elementor-grid {
+      grid-template-columns: repeat(6, 1fr); }
+    .elementor-grid-tablet-7 .elementor-grid {
+      grid-template-columns: repeat(7, 1fr); }
+    .elementor-grid-tablet-8 .elementor-grid {
+      grid-template-columns: repeat(8, 1fr); }
+    .elementor-grid-tablet-9 .elementor-grid {
+      grid-template-columns: repeat(9, 1fr); }
+    .elementor-grid-tablet-10 .elementor-grid {
+      grid-template-columns: repeat(10, 1fr); }
+    .elementor-grid-tablet-11 .elementor-grid {
+      grid-template-columns: repeat(11, 1fr); }
+    .elementor-grid-tablet-12 .elementor-grid {
+      grid-template-columns: repeat(12, 1fr); } }
+  @media (max-width: 767px) {
+    .elementor-grid-mobile-1 .elementor-grid {
+      grid-template-columns: repeat(1, 1fr); }
+    .elementor-grid-mobile-2 .elementor-grid {
+      grid-template-columns: repeat(2, 1fr); }
+    .elementor-grid-mobile-3 .elementor-grid {
+      grid-template-columns: repeat(3, 1fr); }
+    .elementor-grid-mobile-4 .elementor-grid {
+      grid-template-columns: repeat(4, 1fr); }
+    .elementor-grid-mobile-5 .elementor-grid {
+      grid-template-columns: repeat(5, 1fr); }
+    .elementor-grid-mobile-6 .elementor-grid {
+      grid-template-columns: repeat(6, 1fr); }
+    .elementor-grid-mobile-7 .elementor-grid {
+      grid-template-columns: repeat(7, 1fr); }
+    .elementor-grid-mobile-8 .elementor-grid {
+      grid-template-columns: repeat(8, 1fr); }
+    .elementor-grid-mobile-9 .elementor-grid {
+      grid-template-columns: repeat(9, 1fr); }
+    .elementor-grid-mobile-10 .elementor-grid {
+      grid-template-columns: repeat(10, 1fr); }
+    .elementor-grid-mobile-11 .elementor-grid {
+      grid-template-columns: repeat(11, 1fr); }
+    .elementor-grid-mobile-12 .elementor-grid {
+      grid-template-columns: repeat(12, 1fr); } }
 
 .elementor-screen-only,
 .screen-reader-text,
@@ -1293,6 +1372,10 @@
       right: auto;
       position: relative;
       height: 100%;
+      top: 50%;
+      -webkit-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+              transform: translateY(-50%);
       border-top: 0;
       border-bottom: 0;
       border-right: 0;

@@ -15,7 +15,7 @@ git merge upstream/${APP_BRANCH}
 git remote remove upstream
 
 # Reset
-git push --set-upstream origin dev
+git push --set-upstream origin $APP_BRANCH
 
 echo "============================================"
 echo "If merge is successful, please push."

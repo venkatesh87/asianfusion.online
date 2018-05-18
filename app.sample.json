@@ -1,10 +1,10 @@
 {
-  "appName": "required-change-me",
+  "appName": "change-me",
   "publicWebDir": "wordpress",
-  "connectLocalMysqlForDev": 1,
+  "connectLocalMysqlForDev": 0,
   "docker": {
     "wordpress": {
-      "name": "required-change-me",
+      "name": "change-me",
       "port": "8500"
     },
     "phpmyadmin": {
@@ -18,7 +18,7 @@
   },
   "aws": {
     "dev": {
-      "profile": "default",
+      "profile": "change-me",
       "ec2SecurityGroups": "",
       "elbSecurityGroups": "",
       "iamInstanceProfile": "",
@@ -29,7 +29,7 @@
       "tags": "Key=Environment,Value=Development Key=Application,Value=Wordpress"
     },
     "qa": {
-      "profile": "default",
+      "profile": "change-me",
       "ec2SecurityGroups": "",
       "elbSecurityGroups": "",
       "iamInstanceProfile": "",
@@ -40,7 +40,7 @@
       "tags": "Key=Environment,Value=QA Key=Application,Value=Wordpress"
     },
     "master": {
-      "profile": "default",
+      "profile": "change-me",
       "ec2SecurityGroups": "",
       "elbSecurityGroups": "",
       "iamInstanceProfile": "",
@@ -50,17 +50,17 @@
       "instanceType": "t2.micro",
       "tags": "Key=Environment,Value=Live Key=Application,Value=Wordpress"
     },
-    "wordpressUploadS3Bucket": "required-change-me",
-    "appS3Bucket": "required-change-me",
-    "credsS3Bucket": "required-change-me",
-    "s3AccessKeyId": "required-change-me",
-    "s3SecretAccessKey": "required-change-me",
+    "wordpressUploadS3Bucket": "change-me",
+    "appS3Bucket": "change-me",
+    "credsS3Bucket": "change-me",
+    "s3AccessKeyId": "change-me",
+    "s3SecretAccessKey": "change-me",
     "appS3Delete": 1,
     "appS3DeleteDaysOld": 7,
     "sslCertificateId": ""
   },
   "rds": {
-    "instanceName": "required-change-me",
+    "instanceName": "change-me",
     "instanceClass": "db.t2.micro",
     "dbSecurityGroups": "",
     "region": "us-east-1",
@@ -170,24 +170,24 @@
     },
     "dev": {
       "minifyHtml": 0,
-      "adminUsername": "required-change-me",
-      "adminPassword": "required-change-me",
-      "adminDisplayName": "required-change-me",
-      "adminEmail": "required-change-me"
+      "adminUsername": "change-me",
+      "adminPassword": "change-me",
+      "adminDisplayName": "change-me",
+      "adminEmail": "change-me"
     },
     "qa": {
       "minifyHtml": 1,
-      "adminUsername": "required-change-me",
-      "adminPassword": "required-change-me",
-      "adminDisplayName": "required-change-me",
-      "adminEmail": "required-change-me"
+      "adminUsername": "change-me",
+      "adminPassword": "change-me",
+      "adminDisplayName": "change-me",
+      "adminEmail": "change-me"
     },
     "master": {
       "minifyHtml": 1,
-      "adminUsername": "required-change-me",
-      "adminPassword": "required-change-me",
-      "adminDisplayName": "required-change-me",
-      "adminEmail": "required-change-me"
+      "adminUsername": "change-me",
+      "adminPassword": "change-me",
+      "adminDisplayName": "change-me",
+      "adminEmail": "change-me"
     }
   },
   "basicAuth": {
