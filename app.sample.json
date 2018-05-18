@@ -125,7 +125,7 @@
     }
   },
   "wordpress": {
-    "siteTitle": "MyWordpress",
+    "siteTitle": "change-me",
     "tagline": "",
     "apiKey": "",
     "loginUrl": "backend",
