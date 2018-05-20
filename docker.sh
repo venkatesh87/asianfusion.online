@@ -46,6 +46,9 @@ if [ "${1}" == "build" ]; then
     # Make sure wp-config.php is up to date                                         
     sh ./post-checkout
 
+    # Reset wordpress
+    ./reset-wordpress.sh
+
     # Open in browser
     open http://localhost:$WP_PORT
 
