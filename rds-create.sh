@@ -12,8 +12,6 @@ readonly DB_LIVE=${DB_INSTANCE_IDENTIFIER}_live
 readonly DB_LIVE_USER=${DB_INSTANCE_IDENTIFIER}_live
 readonly DB_LIVE_PASSWORD=$(get_password)
 
-echo "Db instance created"
-
 # Dev database and user
 no_pw_warning mysql -h$DB_ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE DATABASE  $DB_DEV;"
 no_pw_warning mysql -h$DB_ENDPOINT -u$MASTER_USERNAME -p$MASTER_USER_PASSWORD -e "CREATE USER '$DB_DEV_USER'@'%' IDENTIFIED BY '$DB_DEV_PASSWORD';"
