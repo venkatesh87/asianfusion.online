@@ -24,7 +24,7 @@
       "iamInstanceProfile": "",
       "ec2KeyName": "",
       "ec2KeyPath": "",
-      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
+      "stack": "64bit Amazon Linux 2018.03 v2.7.0 running PHP 7.1",
       "instanceType": "t2.micro", 
       "tags": "Key=Environment,Value=Development Key=Application,Value=Wordpress"
     },
@@ -35,7 +35,7 @@
       "iamInstanceProfile": "",
       "ec2KeyName": "",
       "ec2KeyPath": "",
-      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
+      "stack": "64bit Amazon Linux 2018.03 v2.7.0 running PHP 7.1",
       "instanceType": "t2.micro",
       "tags": "Key=Environment,Value=QA Key=Application,Value=Wordpress"
     },
@@ -46,7 +46,7 @@
       "iamInstanceProfile": "",
       "ec2KeyName": "",
       "ec2KeyPath": "",
-      "stack": "64bit Amazon Linux 2017.09 v2.6.6 running PHP 7.1",
+      "stack": "64bit Amazon Linux 2018.03 v2.7.0 running PHP 7.1",
       "instanceType": "t2.micro",
       "tags": "Key=Environment,Value=Live Key=Application,Value=Wordpress"
     },
@@ -125,7 +125,7 @@
     }
   },
   "wordpress": {
-    "siteTitle": "MyWordpress",
+    "siteTitle": "change-me",
     "tagline": "",
     "apiKey": "",
     "loginUrl": "backend",
