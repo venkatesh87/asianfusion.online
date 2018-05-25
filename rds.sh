@@ -74,4 +74,6 @@ wait-for-status $DB_INSTANCE_IDENTIFIER available
 
 DB_ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
 
+echo "Db instance created"
+
 source ./rds-create.sh
