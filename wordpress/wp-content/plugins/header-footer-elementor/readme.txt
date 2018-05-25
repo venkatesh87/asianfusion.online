@@ -4,8 +4,8 @@ Tags: elementor, header footer builder, header, footer, page builder, template b
 Donate link: https://www.paypal.me/BrainstormForce
 Requires at least: 4.4
 Requires PHP: 5.4
-Tested up to: 4.9.4
-Stable tag: 1.0.12
+Tested up to: 4.9.6
+Stable tag: 1.0.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,9 +30,9 @@ The plugin only works with limited number of themes as of now, here is the list 
 
 1. <a href="https://wpastra.com/?utm_source=wp-repo&utm_campaign=header-footer-elementor&utm_medium=description&bsf=162">Astra</a> - The Fastest, Most Lightweight &amp; Customizable WordPress Theme.
 2. GeneratePress Theme.
-3. Genesis Theme.
-4. OceanWP Theme.
-5. Beaver Builder theme.
+3. OceanWP Theme.
+4. Genesis Theme.
+5. Phlox Theme.
 
 If you are a theme developer <a href="https://github.com/Nikschavan/header-footer-elementor/wiki/Adding-Header-Footer-Elementor-support-for-your-theme">here</a> is a quick tutorial on how you can add support for the Header Footer Elementor from your theme.
 
@@ -89,6 +89,12 @@ If the above is nnot possible, You can also add support for the plugin from your
 2. After the template is ready, assign it to be a header or footer replacement.
 
 == Changelog ==
+
+= 1.0.14 =
+- Fix: Fixes possible PHP notices/Errors due to WP_Query being called early for all the supported themes.
+
+= 1.0.13 =
+- Fix: PHP Notices and errors due to WP_Query being called early when some plugins use filters inside WP_Query.
 
 = 1.0.12 = 
 - Fix: Compatibility with Elementor 2.0 changed canvas template path.

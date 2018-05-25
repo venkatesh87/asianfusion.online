@@ -141,6 +141,12 @@ if ( ! class_exists( 'Astra_Elementor_Pro' ) ) :
 		 * @return void
 		 */
 		function override_meta() {
+
+			// don't override meta for `elementor_library` post type.
+			if ( 'elementor_library' == get_post_type() ) {
+				return;
+			}
+
 			// Override post meta for single pages.
 			$documents_single = Module::instance()->get_conditions_manager()->get_documents_for_location( 'single' );
 			if ( $documents_single ) {

@@ -83,7 +83,8 @@ add_action( 'admin_menu', 'remove_menus' );
 function custom_dashboard_widget() {
   echo "<ul>";
   echo "<li><strong>Site URL:</strong> " . WP_HOME . "</li>";
-  echo "<li><strong>Database:</strong> " . DB_NAME . "</li>";
+  echo "<li><strong>Database Host:</strong> " . DB_HOST . "</li>";
+  echo "<li><strong>Database Name:</strong> " . DB_NAME . "</li>";
   echo "</ul>";
 }
 

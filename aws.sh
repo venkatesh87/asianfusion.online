@@ -386,9 +386,6 @@ cd - >/dev/null 2>&1
 
 echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
 
-# Reset wordpress
-./reset-wordpress.sh
-
 #####################################################
 # END                                               #
 #####################################################
@@ -471,6 +468,9 @@ if [ "$UPDATED" -eq 1 ]; then
 
   # Make sure wp-config.php is up to date
   sh ./post-checkout
+
+  # Reset wordpress
+  ./reset-wordpress.sh
 
   # Get environment URL
   ENV_URL=($(aws elasticbeanstalk describe-environments \
