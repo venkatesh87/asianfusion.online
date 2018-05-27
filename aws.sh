@@ -182,6 +182,8 @@ readonly BUILD_NUMBER=$(date '+%Y%m%d-%H%M%S')
 readonly APP_FILE_VERSIONED=${APP_FILE}-${BUILD_NUMBER}
 # Public web directory
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
+# Plugin directory
+readonly PLUGIN_DIR=./${PUBLIC_WEB_DIR}/wp-content/plugins
 # Platform stack
 readonly STACK=$(jq -r ".aws.${APP_BRANCH}.stack" $APP_CONFIG_FILE)
 # EC2 instance type
@@ -196,6 +198,10 @@ readonly IAM_INSTANCE_PROFILE=$(jq -r ".aws.${APP_BRANCH}.iamInstanceProfile" $A
 readonly ENVIRONMENT_TAGS=$(jq -r ".aws.${APP_BRANCH}.tags" $APP_CONFIG_FILE)
 # EC2 key pair name
 readonly EC2_KEY_NAME=$(jq -r ".aws.${APP_BRANCH}.ec2KeyName" $APP_CONFIG_FILE)
+# Pro plugins S3 bucket
+readonly PLUGIN_S3_BUCKET=$(jq -r ".aws.pluginS3Bucket" $APP_CONFIG_FILE)
+# Pro plugins to download from S3
+readonly PLUGINS_DOWNLOAD_FROM_S3=$(jq -r ".wordpress.pluginsDownloadFromS3" $APP_CONFIG_FILE)
 # Application S3 bucket
 readonly APP_S3_BUCKET=$(jq -r ".aws.appS3Bucket" $APP_CONFIG_FILE)
 # Application S3 directory
@@ -311,9 +317,6 @@ fi
 #####################################################
 echo STARTING...PLEASE WAIT
 
-touch ./${PUBLIC_WEB_DIR}/build.txt
-echo $BUILD_NUMBER >> ./${PUBLIC_WEB_DIR}/build.txt
-
 # Remove previous build
 rm -f /tmp/$APP_FILE.zip
 
@@ -375,10 +378,21 @@ sed -i '' -e "s/{DATABASE}/$DB_DATABASE/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/{USER}/$DB_USER/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/{PASSWORD}/$DB_PASSWORD/g" ${EBEXTENSIONS_DIR}/default.config
 
-# Get a list of untracked GIT files
-readonly UNTRACKED_GIT_FILES=$(git ls-files --others --exclude-standard)
+# Build exclude string pattern
+EXCLUDE_STR="wp-config.php\|ebextensions"
 
-# Exclude some files
+if [ "$PLUGINS_DOWNLOAD_FROM_S3" != "" ]; then
+  for PLUGIN_INFO in ${PLUGINS_DOWNLOAD_FROM_S3//,/ }
+  do
+    PLUGIN_NAME=`echo $PLUGIN_INFO | cut -d \: -f 1`
+    EXCLUDE_STR+="\|${PLUGIN_NAME}"
+  done
+fi
+
+# Get a list of untracked/ignored git files with exclusions
+UNTRACKED_GIT_FILES=$(git ls-files --others | grep -v $EXCLUDE_STR)
+
+# Zip everything, excluding some files
 zip -qr /tmp/$APP_FILE.zip . -x "*.git*" "*/\.DS_Store" $UNTRACKED_GIT_FILES
 
 # Go back

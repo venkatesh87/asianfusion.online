@@ -81,6 +81,9 @@ sh ./load-db.sh db/wordpress.sql
 # Reset wordpress
 ./reset-wordpress.sh 1
 
+# Install pro plugins
+./install-pro-plugins.sh
+
 # Sync credential files
 ./sync-creds-up.sh
 

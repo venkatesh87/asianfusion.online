@@ -13,8 +13,6 @@ security plugin disable wp-json etc
 a log viewer
 push up image from s3
 
-remove mega menu
-remove elementor header/footer
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php
