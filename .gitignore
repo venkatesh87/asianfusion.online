@@ -6,7 +6,6 @@ docker-compose.yml
 
 wordpress/wp-config.php
 wordpress/.ebextensions/default.config
-wordpress/build.txt
 wordpress/wp-content/uploads
 
 mysql/data/*
