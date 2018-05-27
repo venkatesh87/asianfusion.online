@@ -15,6 +15,9 @@ S3
   * Create bucket
   s3://[BUCKET-NAME]/[APP-NAME]/[APP-BRANCH]/[APP-FILE-VERSIONED].zip
 
+// S3 offload setu        include _sticky-ctap
+  https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
+
 Route53
   * Create a new Zone
   * Update NS records

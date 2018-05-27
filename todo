@@ -11,8 +11,11 @@ add recaptcha to login form
 script to export wordpress zip
 security plugin disable wp-json etc
 a log viewer
+push up image from s3
+
+remove mega menu
+remove elementor header/footer
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php
 
-aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
