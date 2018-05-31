@@ -21,19 +21,27 @@ if [ "$PLUGINS_DOWNLOAD_FROM_S3" != "" ]; then
       echo Downloading ${PLUGIN_FILE}...
       
       # Download from S3
-      aws s3 cp --profile $AWS_PROFILE s3://${PLUGIN_S3_BUCKET}/${PLUGIN} $TMP
+      aws s3 cp --profile $AWS_PROFILE s3://${PLUGIN_S3_BUCKET}/${PLUGIN_FILE} $TMP
 
-      # Remove current installation of the plugin
-      THIS_PLUGIN=${PLUGIN_DIR}/${PLUGIN_NAME}
-      rm -rf $THIS_PLUGIN
+      if [ -f ${TMP}/${PLUGIN_FILE} ]; then
 
-      # Unzip now
-      unzip -q ${TMP}/$PLUGIN_FILE -d $PLUGIN_DIR
+        # Remove current installation of the plugin
+        THIS_PLUGIN=${PLUGIN_DIR}/${PLUGIN_NAME}
+        rm -rf $THIS_PLUGIN
 
-      # Create .gitignore
-      echo "**/**" >> ${THIS_PLUGIN}/.gitignore
+        # Unzip now
+        unzip -q ${TMP}/${PLUGIN_FILE} -d $PLUGIN_DIR
 
-      echo Installed $THIS_PLUGIN
+        # Create .gitignore
+        echo "**/**" >> ${THIS_PLUGIN}/.gitignore
+
+        echo Installed $THIS_PLUGIN
+      
+      else
+
+        echo Plugin not downloaded
+
+      fi
     fi
   done
 fi
