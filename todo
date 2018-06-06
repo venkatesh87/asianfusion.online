@@ -8,7 +8,6 @@ config: when switching branch, change db credentials?
 
 datetime zone config
 add recaptcha to login form
-script to export wordpress zip
 push up image from s3
 
 What to do in: ebextensions.sample.config

@@ -86,40 +86,6 @@ function update_environment() {
     --version-label "$APP_FILE_VERSIONED"
 }
 
-function swap_environment() {
-  readonly ENV_TO_WAIT=$1
-  readonly ENV_TO_SWAP=$2
-
-  # Wait for it to complete
-  try=30
-  i="0"
-
-  while [ $i -lt $try ]; do
-    echo "WAIT FOR ALTERNATE ENVIRONMENT TO BE READY, DON'T QUIT"
-    # Give it some time
-    sleep 10
-    ((i++))
-
-    ENV_TO_WAIT_HEALTH=($(aws elasticbeanstalk describe-environments \
-      --profile $AWS_PROFILE \
-      --environment-names $ENV_TO_WAIT | jq -r '.Environments[].Health'))
-
-    if [ "$ENV_TO_WAIT_HEALTH" == "Green" ]; then
-      no_output aws elasticbeanstalk swap-environment-cnames \
-        --profile $AWS_PROFILE \
-        --source-environment-name $ENV_TO_SWAP \
-        --destination-environment-name $ENV_TO_WAIT
-
-      echo "SUCCESSFULLY SWAPPED ENVIRONMENTS"
-      break
-    fi
-
-    if [ $i -eq $(( $try - 1 )) ]; then
-      echo "UNABLE TO SWAPPED ENVIRONMENT"
-    fi
-  done
-}
-
 #
 # End functions
 #
