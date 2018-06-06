@@ -22,6 +22,8 @@ readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
 # Pro plugins to download from S3
 readonly PLUGINS_DOWNLOAD_FROM_S3=$(jq -r ".wordpress.pluginsDownloadFromS3" ./app.json)
 
+echo Building application locally at: ${EXPORT_PATH}/${APP_FILE}.zip
+
 cd $PUBLIC_WEB_DIR
 
 # Build exclude string pattern to exclude wp-config.php and .ebextensions/* from git untracked files
@@ -41,8 +43,6 @@ UNTRACKED_GIT_FILES=$(git ls-files --others | grep -v $EXCLUDE_STR)
 
 # Zip everything, excluding some files
 zip -qr ${EXPORT_PATH}/${APP_FILE}.zip . -x "*.git*" "*/\.DS_Store" $UNTRACKED_GIT_FILES
-
-echo Built app locally here: ${EXPORT_PATH}/${APP_FILE}.zip
 
 # Go back
 cd - >/dev/null 2>&1
