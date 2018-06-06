@@ -8,10 +8,16 @@ config: when switching branch, change db credentials?
 
 datetime zone config
 add recaptcha to login form
-script to export wordpress zip
-security plugin disable wp-json etc
-a log viewer
 push up image from s3
+
+What to do in: ebextensions.sample.config
+"/etc/php.d/wordpress.ini":
+      mode: "000644"
+      owner: root
+      group: root
+      content: |
+        upload_max_filesize = 10M
+        post_max_size = 10M
 
 
 bugs:
