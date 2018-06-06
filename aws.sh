@@ -172,6 +172,8 @@ fi
 # Start configurations #
 ########################
 
+# Temporary path
+readonly TMP=/tmp
 # Application file name
 readonly APP_FILE=${APP_NAME}-${APP_BRANCH}
 # Environment name (AWS Elastic Beanstalk CNAME)
@@ -198,10 +200,6 @@ readonly IAM_INSTANCE_PROFILE=$(jq -r ".aws.${APP_BRANCH}.iamInstanceProfile" $A
 readonly ENVIRONMENT_TAGS=$(jq -r ".aws.${APP_BRANCH}.tags" $APP_CONFIG_FILE)
 # EC2 key pair name
 readonly EC2_KEY_NAME=$(jq -r ".aws.${APP_BRANCH}.ec2KeyName" $APP_CONFIG_FILE)
-# Pro plugins S3 bucket
-readonly PLUGIN_S3_BUCKET=$(jq -r ".aws.pluginS3Bucket" $APP_CONFIG_FILE)
-# Pro plugins to download from S3
-readonly PLUGINS_DOWNLOAD_FROM_S3=$(jq -r ".wordpress.pluginsDownloadFromS3" $APP_CONFIG_FILE)
 # Application S3 bucket
 readonly APP_S3_BUCKET=$(jq -r ".aws.appS3Bucket" $APP_CONFIG_FILE)
 # Application S3 directory
@@ -312,13 +310,11 @@ if [ "${1}" == "terminate" ]; then
   fi
 fi
 
-#####################################################
-# BEGIN - BUILD YOUR WEB CONTENT HERE               #
-#####################################################
+# Start building web content here
 echo STARTING...PLEASE WAIT
 
 # Remove previous build
-rm -f /tmp/$APP_FILE.zip
+rm -f ${TMP}/$APP_FILE.zip
 
 # Zip up web content
 echo ZIPPING UP WEB CONTENT IN $PUBLIC_WEB_DIR
@@ -372,44 +368,26 @@ sed -i '' -e "s/max_execution_time: 60/max_execution_time: $PHP_MAX_EXECUTION_TI
 sed -i '' -e "s/upload_max_filesize: 10M/upload_max_filesize: $PHP_UPLOAD_MAX_FILESIZE/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/post_max_size: 10M/post_max_size: $PHP_POST_MAX_SIZE/g" ${EBEXTENSIONS_DIR}/default.config
 
-# DATABASE SETTINGS
+# Database settings
 sed -i '' -e "s/{HOST}/$DB_HOST/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/{DATABASE}/$DB_DATABASE/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/{USER}/$DB_USER/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/{PASSWORD}/$DB_PASSWORD/g" ${EBEXTENSIONS_DIR}/default.config
 
-# Build exclude string pattern
-EXCLUDE_STR="wp-config.php\|ebextensions"
-
-if [ "$PLUGINS_DOWNLOAD_FROM_S3" != "" ]; then
-  for PLUGIN_INFO in ${PLUGINS_DOWNLOAD_FROM_S3//,/ }
-  do
-    PLUGIN_NAME=`echo $PLUGIN_INFO | cut -d \: -f 1`
-    EXCLUDE_STR+="\|${PLUGIN_NAME}"
-  done
-fi
-
-# Get a list of untracked/ignored git files with exclusions
-UNTRACKED_GIT_FILES=$(git ls-files --others | grep -v $EXCLUDE_STR)
-
-# Zip everything, excluding some files
-zip -qr /tmp/$APP_FILE.zip . -x "*.git*" "*/\.DS_Store" $UNTRACKED_GIT_FILES
-
 # Go back
 cd - >/dev/null 2>&1
 
-echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
+# Export Wordpress as .zip to temporary directory
+sh ./export.sh $TMP
 
-#####################################################
-# END                                               #
-#####################################################
+# End building web content
 
 # Send app to S3
 echo "SENDING APP TO S3: s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}"
 aws s3 cp --quiet --profile $AWS_PROFILE \
-  /tmp/${APP_FILE}.zip s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}
+  ${TMP}/${APP_FILE}.zip s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}
 
-echo "DEPLOYING..."
+echo Deploying...
 
 # App doesn't exists
 if [ "$APP_EXISTS" == "" ]; then
