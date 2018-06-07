@@ -24,4 +24,5 @@ if [ -f "$DB_CONFIG_FILE" ]; then
   readonly DB_DATABASE=$(jq -r ".${APP_BRANCH}.database" $DB_CONFIG_FILE)
   readonly DB_USER=$(jq -r ".${APP_BRANCH}.user" $DB_CONFIG_FILE)
   readonly DB_PASSWORD=$(jq -r ".${APP_BRANCH}.password" $DB_CONFIG_FILE)
+  readonly DB_PORT=$(jq -r ".${APP_BRANCH}.port" $DB_CONFIG_FILE)
 fi
