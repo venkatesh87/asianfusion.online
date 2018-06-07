@@ -14,9 +14,10 @@ readonly HOST=$(jq -r ".${APP_BRANCH}.endpoint" ./db.json)
 readonly DATABASE=$(jq -r ".${APP_BRANCH}.database" ./db.json)
 readonly USER=$(jq -r ".${APP_BRANCH}.user" ./db.json)
 readonly PASSWORD=$(jq -r ".${APP_BRANCH}.password" ./db.json)
+readonly PORT=$(jq -r ".${APP_BRANCH}.port" ./db.json)
 
-echo Please wait...
+echo Loading SQL file $SQL_FILE to $HOST...
 
-no_pw_warning mysql -h$HOST -u$USER -p$PASSWORD $DATABASE < "$SQL_FILE"
+no_pw_warning mysql -h$HOST -u$USER -p$PASSWORD -P$PORT $DATABASE < "$SQL_FILE"
 
-echo SQL file loaded
+echo Loaded

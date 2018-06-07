@@ -21,7 +21,7 @@ services:
     expose:
       - {LOCAL_MYSQL_PORT}
     environment:
-      MYSQL_DATABASE: {WP_NAME}_local
+      MYSQL_DATABASE: {LOCAL_MYSQL_DATABASE}_local
       MYSQL_USER: {LOCAL_MYSQL_USERNAME}
       MYSQL_PASSWORD: {LOCAL_MYSQL_PASSWORD}
     volumes:
