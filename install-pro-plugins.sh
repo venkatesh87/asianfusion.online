@@ -10,8 +10,6 @@ readonly PLUGIN_DIR=./${PUBLIC_WEB_DIR}/wp-content/plugins
 readonly PLUGIN_S3_BUCKET=$(jq -r ".aws.pluginS3Bucket" $APP_CONFIG_FILE)
 readonly PLUGINS_DOWNLOAD_FROM_S3=$(jq -r ".wordpress.pluginsDownloadFromS3" $APP_CONFIG_FILE)
 
-readonly TMP=/tmp
-
 if [ "$PLUGINS_DOWNLOAD_FROM_S3" != "" ]; then
   for PLUGIN_INFO in ${PLUGINS_DOWNLOAD_FROM_S3//,/ }
   do

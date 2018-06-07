@@ -17,8 +17,4 @@ git remote remove upstream
 # Reset
 git push --set-upstream origin $APP_BRANCH
 
-echo "============================================"
-echo "If merge is successful, please push."
-echo "If there is conflict, resolve, commit and push."
-echo "And don't forget to sync other branches too."
-echo "============================================"
+echo Sync fork done
