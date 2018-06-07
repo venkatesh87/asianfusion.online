@@ -9,6 +9,7 @@ fi
 readonly WP_DIR=$(jq -r ".publicWebDir" ./app.json)
 readonly WP_NAME=$(jq -r ".docker.wordpress.name" ./app.json)
 readonly WP_PORT=$(jq -r ".docker.wordpress.port" ./app.json)
+readonly LOCAL_MYSQL_DATABASE=$(jq -r ".rds.instanceName" ./app.json)
 readonly LOCAL_MYSQL_USERNAME=$(jq -r ".docker.mysql.username" ./app.json)
 readonly LOCAL_MYSQL_PASSWORD=$(jq -r ".docker.mysql.password" ./app.json)
 readonly LOCAL_MYSQL_PORT=$(jq -r ".docker.mysql.port" ./app.json)
@@ -31,6 +32,7 @@ cp docker-compose.sample.yml docker-compose.yml
 sed -i '' -e "s/{WP_NAME}/${WP_NAME}/g" ./docker-compose.yml
 sed -i '' -e "s/{WP_DIR}/${WP_DIR}/g" ./docker-compose.yml
 sed -i '' -e "s/{WP_PORT}/${WP_PORT}/g" ./docker-compose.yml
+sed -i '' -e "s/{LOCAL_MYSQL_DATABASE}/${LOCAL_MYSQL_DATABASE}/g" ./docker-compose.yml
 sed -i '' -e "s/{LOCAL_MYSQL_USERNAME}/${LOCAL_MYSQL_USERNAME}/g" ./docker-compose.yml
 sed -i '' -e "s/{LOCAL_MYSQL_PASSWORD}/${LOCAL_MYSQL_PASSWORD}/g" ./docker-compose.yml
 sed -i '' -e "s/{LOCAL_MYSQL_PORT}/${LOCAL_MYSQL_PORT}/g" ./docker-compose.yml

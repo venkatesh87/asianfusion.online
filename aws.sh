@@ -15,6 +15,7 @@ function begin() {
    / /\ \ \/  \/ / \___ \  | |  | |  __| |  ___/| |   | |  | |\   /
   / ____ \  /\  /  ____) | | |__| | |____| |    | |___| |__| | | |
  /_/    \_\/  \/  |_____/  |_____/|______|_|    |______\____/  |_|
+                                                               v 0.1
   "
 }
 
@@ -142,8 +143,6 @@ fi
 # Start configurations #
 ########################
 
-# Temporary path
-readonly TMP=/tmp
 # Application file name
 readonly APP_FILE=${APP_NAME}-${APP_BRANCH}
 # Environment name (AWS Elastic Beanstalk CNAME)
