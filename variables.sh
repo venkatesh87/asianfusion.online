@@ -15,6 +15,9 @@ readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" $APP_CONFIG_FILE)
 # Application name
 readonly APP_NAME=$(jq -r ".appName" $APP_CONFIG_FILE)
 
+# Temporary path
+readonly TMP=/tmp
+
 # Db credentials
 if [ -f "$DB_CONFIG_FILE" ]; then
   readonly DB_HOST=$(jq -r ".${APP_BRANCH}.endpoint" $DB_CONFIG_FILE)

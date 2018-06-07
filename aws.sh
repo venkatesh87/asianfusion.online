@@ -8,10 +8,15 @@ source ./functions.sh
 #
 
 function begin() {
-  echo
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo "+                           AWS DEPLOYMENT                              +"
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echo "
+      __          _______   _____  ______ _____  _      ______     __
+     /\ \        / / ____| |  __ \|  ____|  __ \| |    / __ \ \   / /
+    /  \ \  /\  / / (___   | |  | | |__  | |__) | |   | |  | \ \_/ /
+   / /\ \ \/  \/ / \___ \  | |  | |  __| |  ___/| |   | |  | |\   /
+  / ____ \  /\  /  ____) | | |__| | |____| |    | |___| |__| | | |
+ /_/    \_\/  \/  |_____/  |_____/|______|_|    |______\____/  |_|
+                                                               v 0.1
+  "
 }
 
 function end() {
@@ -86,40 +91,6 @@ function update_environment() {
     --version-label "$APP_FILE_VERSIONED"
 }
 
-function swap_environment() {
-  readonly ENV_TO_WAIT=$1
-  readonly ENV_TO_SWAP=$2
-
-  # Wait for it to complete
-  try=30
-  i="0"
-
-  while [ $i -lt $try ]; do
-    echo "WAIT FOR ALTERNATE ENVIRONMENT TO BE READY, DON'T QUIT"
-    # Give it some time
-    sleep 10
-    ((i++))
-
-    ENV_TO_WAIT_HEALTH=($(aws elasticbeanstalk describe-environments \
-      --profile $AWS_PROFILE \
-      --environment-names $ENV_TO_WAIT | jq -r '.Environments[].Health'))
-
-    if [ "$ENV_TO_WAIT_HEALTH" == "Green" ]; then
-      no_output aws elasticbeanstalk swap-environment-cnames \
-        --profile $AWS_PROFILE \
-        --source-environment-name $ENV_TO_SWAP \
-        --destination-environment-name $ENV_TO_WAIT
-
-      echo "SUCCESSFULLY SWAPPED ENVIRONMENTS"
-      break
-    fi
-
-    if [ $i -eq $(( $try - 1 )) ]; then
-      echo "UNABLE TO SWAPPED ENVIRONMENT"
-    fi
-  done
-}
-
 #
 # End functions
 #
@@ -182,6 +153,8 @@ readonly BUILD_NUMBER=$(date '+%Y%m%d-%H%M%S')
 readonly APP_FILE_VERSIONED=${APP_FILE}-${BUILD_NUMBER}
 # Public web directory
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
+# Plugin directory
+readonly PLUGIN_DIR=./${PUBLIC_WEB_DIR}/wp-content/plugins
 # Platform stack
 readonly STACK=$(jq -r ".aws.${APP_BRANCH}.stack" $APP_CONFIG_FILE)
 # EC2 instance type
@@ -241,7 +214,7 @@ if [ -f "$DB_CONFIG_FILE" ]; then
 
   readonly CURRENT_DB=`no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "SHOW DATABASES" | grep "^$DB_DATABASE$"`
   if [ "$CURRENT_DB" != "$DB_DATABASE" ]; then
-    echo "DATABASE $DB_DATABASE DOES NOT EXIST"
+    echo Database $DB_DATABASE does not exist
     exit
   else
     echo Database connected: $CURRENT_DB
@@ -249,7 +222,7 @@ if [ -f "$DB_CONFIG_FILE" ]; then
 
 else
 
-  echo "Database is missing"
+  echo Database is missing
   exit
 
 fi
@@ -272,14 +245,14 @@ readonly ENV_HEALTH=($(aws elasticbeanstalk describe-environments \
 # Terminate
 if [ "${1}" == "terminate" ]; then
   if [ "$APP_EXISTS" == "" ]; then
-    echo "APPLICATION DOESN'T EXIST"
+    echo Application does not exist
     end
   fi
 
   # Terminate application
   if [ "${2}" == "app" ]; then
-    
-    echo "APPLICATION AND ALL IT'S RUNNING ENVIRONMENTS ARE TERMINATING..."
+   
+    echo Application and all its running environments are terminating...
     no_output aws elasticbeanstalk delete-application \
       --profile $AWS_PROFILE \
       --application-name $APP_NAME \
@@ -290,35 +263,27 @@ if [ "${1}" == "terminate" ]; then
     
     # Terminate environment
     if [ "$ENV_HEALTH" == "Green" ]; then
-      
-      echo "EVIRONMENT IS TERMINATING..."
+    
+      echo Environment is terminating...
       no_output aws elasticbeanstalk terminate-environment \
         --profile $AWS_PROFILE \
         --environment-name $ENV_NAME
       end
     else
-      echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
+      echo Environment is not ready, try again later
       end
     fi
   else
-    echo "ENVIRONMENT NOT FOUND"
+    echo Environment not found
     end
   fi
 fi
 
-#####################################################
-# BEGIN - BUILD YOUR WEB CONTENT HERE               #
-#####################################################
-echo STARTING...PLEASE WAIT
-
-touch ./${PUBLIC_WEB_DIR}/build.txt
-echo $BUILD_NUMBER >> ./${PUBLIC_WEB_DIR}/build.txt
+# Start building web content here
+echo Starting...please wait
 
 # Remove previous build
-rm -f /tmp/$APP_FILE.zip
-
-# Zip up web content
-echo ZIPPING UP WEB CONTENT IN $PUBLIC_WEB_DIR
+rm -f ${TMP}/$APP_FILE.zip
 
 # Make sure wp-config.php is up to date                                         
 sh ./post-checkout 1
@@ -335,7 +300,6 @@ cp ../ebextensions.sample.config ${EBEXTENSIONS_DIR}/default.config
 
 # Basic auth
 if [ "$BASIC_AUTH_ENABLED" -eq 1 ] && [ "$BASIC_AUTH_USER" != "" ] && [ "$BASIC_AUTH_PASSWORD" != "" ]; then
-  echo "ENABLING BASIC AUTH"
   # Search, replace and uncomment these lines
   readonly HTPASSWD=$(htpasswd -nb $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD)
   sed -i '' -e "s~#user:password~${HTPASSWD}~g" ${EBEXTENSIONS_DIR}/default.config
@@ -369,33 +333,26 @@ sed -i '' -e "s/max_execution_time: 60/max_execution_time: $PHP_MAX_EXECUTION_TI
 sed -i '' -e "s/upload_max_filesize: 10M/upload_max_filesize: $PHP_UPLOAD_MAX_FILESIZE/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/post_max_size: 10M/post_max_size: $PHP_POST_MAX_SIZE/g" ${EBEXTENSIONS_DIR}/default.config
 
-# DATABASE SETTINGS
+# Database settings
 sed -i '' -e "s/{HOST}/$DB_HOST/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/{DATABASE}/$DB_DATABASE/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/{USER}/$DB_USER/g" ${EBEXTENSIONS_DIR}/default.config
 sed -i '' -e "s/{PASSWORD}/$DB_PASSWORD/g" ${EBEXTENSIONS_DIR}/default.config
 
-# Get a list of untracked GIT files
-readonly UNTRACKED_GIT_FILES=$(git ls-files --others --exclude-standard)
-
-# Exclude some files
-zip -qr /tmp/$APP_FILE.zip . -x "*.git*" "*/\.DS_Store" $UNTRACKED_GIT_FILES
-
 # Go back
 cd - >/dev/null 2>&1
 
-echo "BUILT APP LOCALLY ON /tmp/${APP_FILE}.zip"
+# Export Wordpress as .zip to temporary directory
+sh ./export.sh $TMP
 
-#####################################################
-# END                                               #
-#####################################################
+# End building web content
 
 # Send app to S3
-echo "SENDING APP TO S3: s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}"
+echo Sending application to S3: s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}
 aws s3 cp --quiet --profile $AWS_PROFILE \
-  /tmp/${APP_FILE}.zip s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}
+  ${TMP}/${APP_FILE}.zip s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}
 
-echo "DEPLOYING..."
+echo Deploying...
 
 # App doesn't exists
 if [ "$APP_EXISTS" == "" ]; then
@@ -411,12 +368,12 @@ if [ "$APP_EXISTS" == "" ]; then
     create_environment $ENV_NAME
 
     UPDATED=1
-    echo "SUCCESSFULLY CREATED APPLICATION AND ENVIRONMENT"
+    echo Successfully created application and environment
 
   else
 
     # Can't create
-    echo "ENVIRONMENT NAME $APP_NAME IS NOT AVAILABLE"
+    echo Environment name $APP_NAME is not available
     # Clean up
     aws s3 --profile $AWS_PROFILE \
       rm s3://${APP_S3_BUCKET}/$APP_S3_BUCKET_FILE
@@ -434,7 +391,7 @@ else
     create_environment $ENV_NAME
 
     UPDATED=1
-    echo "SUCCESSFULLY CREATED ENVIRONMENT"
+    echo Successfully created environment
 
   else
 
@@ -443,11 +400,11 @@ else
 
       update_environment $ENV_NAME
       UPDATED=1
-      echo "SUCCESSFULLY UPDATED ENVIRONMENT"
+      echo Successfully updated environment
 
     else
 
-      echo "ENVIRONMENT IS NOT READY, TRY AGAIN LATER"
+      echo Environment is not ready, try again later
       # Clean up
       aws s3 --profile $AWS_PROFILE \
         rm s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_FILE}
@@ -460,7 +417,7 @@ fi
 
 # Clean up old app files
 if [ "$APP_S3_DELETE" -eq 1 ] && [ "$UPDATED" -eq 1 ]; then
-  echo "TRY TO DELETE OLD S3 FILES(${APP_S3_DELETE_DAYS_OLD} days old) at s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_PATH}"
+  echo "Deleting old S3 files (${APP_S3_DELETE_DAYS_OLD} days old) at s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_PATH}"
   ./delete-s3.sh "s3://${APP_S3_BUCKET}/${APP_S3_BUCKET_PATH}" "${APP_S3_DELETE_DAYS_OLD} days"
 fi
 
@@ -476,8 +433,8 @@ if [ "$UPDATED" -eq 1 ]; then
   ENV_URL=($(aws elasticbeanstalk describe-environments \
     --profile $AWS_PROFILE \
     --environment-names $ENV_NAME | jq -r '.Environments[].CNAME'))
-  echo "LATEST BUILD NUMBER IS: ${BUILD_NUMBER}"
-  echo "ENVIRONMENT WILL BE SHORTLY AT: http://${ENV_URL}"
+  echo Latest build number is: ${BUILD_NUMBER}
+  echo Environment will be ready shortly at: http://${ENV_URL}
 fi
 
 end

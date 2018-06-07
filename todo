@@ -1,18 +1,22 @@
 read me
 create ebs wait method
 report ebs health
-lower case log
 speedup docker - docker sync
 when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
-config: when switching branch, change db credentials?
 
 datetime zone config
-add recaptcha to login form
-script to export wordpress zip
-security plugin disable wp-json etc
-a log viewer
+add recaptcha to login form/or fail login ban plugin
+
+What to do in: ebextensions.sample.config
+"/etc/php.d/wordpress.ini":
+      mode: "000644"
+      owner: root
+      group: root
+      content: |
+        upload_max_filesize = 10M
+        post_max_size = 10M
+
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php
 
-aws ec2 describe-instances --query 'Reservations[*].Instances[*].[InstanceId,Tags[?Key==`Name`].Value]'
