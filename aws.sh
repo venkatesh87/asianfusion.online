@@ -143,8 +143,6 @@ fi
 # Start configurations #
 ########################
 
-# Temporary path
-readonly TMP=/tmp
 # Application file name
 readonly APP_FILE=${APP_NAME}-${APP_BRANCH}
 # Environment name (AWS Elastic Beanstalk CNAME)

@@ -4,8 +4,6 @@ report ebs health
 speedup docker - docker sync
 when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
 
-refactor these files: push-db-from-local-to-dev.sh etc
-
 datetime zone config
 add recaptcha to login form/or fail login ban plugin
 
