@@ -8,6 +8,8 @@ source ./functions.sh
 #
 
 function begin() {
+  # http://patorjk.com/software/taag/#p=display&f=Big&t=AWS%20DEPLOY
+  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "
       __          _______   _____  ______ _____  _      ______     __
      /\ \        / / ____| |  __ \|  ____|  __ \| |    / __ \ \   / /
@@ -17,6 +19,7 @@ function begin() {
  /_/    \_\/  \/  |_____/  |_____/|______|_|    |______\____/  |_|
                                                                v 0.1
   "
+  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 }
 
 function end() {
@@ -325,19 +328,20 @@ else
 fi
 
 # PHP SETTINGS
-sed -i '' -e "s/memory_limit: 128M/memory_limit: $PHP_MEMORY_LIMIT/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/zlib.output_compression: \"Off\"/zlib.output_compression: \"$PHP_OUTPUT_COMPRESSION\"/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/allow_url_fopen: \"On\"/allow_url_fopen: \"$PHP_ALLOW_URL_FOPEN\"/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/display_errors: \"Off\"/display_errors: \"$PHP_DISPLAY_ERRORS\"/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/max_execution_time: 60/max_execution_time: $PHP_MAX_EXECUTION_TIME/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/upload_max_filesize: 10M/upload_max_filesize: $PHP_UPLOAD_MAX_FILESIZE/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/post_max_size: 10M/post_max_size: $PHP_POST_MAX_SIZE/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/memory_limit = .*/memory_limit = $PHP_MEMORY_LIMIT/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/zlib.output_compression = .*/zlib.output_compression = $PHP_OUTPUT_COMPRESSION/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/allow_url_fopen = .*/allow_url_fopen = $PHP_ALLOW_URL_FOPEN/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/display_errors = .*/display_errors = $PHP_DISPLAY_ERRORS/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/max_execution_time = .*/max_execution_time = $PHP_MAX_EXECUTION_TIME/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/upload_max_filesize = .*/upload_max_filesize = $PHP_UPLOAD_MAX_FILESIZE/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/post_max_size = .*/post_max_size = $PHP_POST_MAX_SIZE/g" ${EBEXTENSIONS_DIR}/default.config
 
 # Database settings
-sed -i '' -e "s/{HOST}/$DB_HOST/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/{DATABASE}/$DB_DATABASE/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/{USER}/$DB_USER/g" ${EBEXTENSIONS_DIR}/default.config
-sed -i '' -e "s/{PASSWORD}/$DB_PASSWORD/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/{DB_HOST}/$DB_HOST/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/{DB_DATABASE}/$DB_DATABASE/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/{DB_USER}/$DB_USER/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/{DB_PASSWORD}/$DB_PASSWORD/g" ${EBEXTENSIONS_DIR}/default.config
+sed -i '' -e "s/{DB_PORT}/$DB_PORT/g" ${EBEXTENSIONS_DIR}/default.config
 
 # Go back
 cd - >/dev/null 2>&1
