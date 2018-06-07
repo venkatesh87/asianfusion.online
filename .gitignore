@@ -1,13 +1,12 @@
 .DS_Store
-*.pem
-db.json
-app.json
-docker-compose.yml
+/*.pem
+/db.json
+/app.json
+/docker-compose.yml
 
-wordpress/wp-config.php
-wordpress/.ebextensions/default.config
-wordpress/build.txt
-wordpress/wp-content/uploads
+/wordpress/wp-config.php
+/wordpress/.ebextensions/default.config
+/wordpress/wp-content/uploads
 
-mysql/data/*
-mysq/logs/*
+/mysql/data/*
+/mysq/logs/*

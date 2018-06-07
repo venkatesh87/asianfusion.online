@@ -11,7 +11,7 @@ function wait-for-status {
   while [[ "$status" != "$target_status" ]]; do
     status=($(aws rds describe-db-instances \
       --db-instance-identifier $instance --profile $AWS_PROFILE | jq -r '.DBInstances[].DBInstanceStatus'))
-    echo "Please wait...db is $status"
+    echo Please wait...db is $status
     sleep 10
   done
 }
@@ -39,23 +39,23 @@ readonly ENGINE_VERSION=$(jq -r ".rds.engineVersion" $APP_CONFIG_FILE)
 readonly DB_INSTANCE_IDENTIFIER_LENGTH=${#DB_INSTANCE_IDENTIFIER}
 
 if [[ "$DB_INSTANCE_IDENTIFIER_LENGTH" -gt 11 ]]; then
-  echo "Please make RDS name less than 11 characters"
+  echo Please make RDS name less than 11 characters
   exit
 fi
 
-DB_ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
+RDS_ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
 
 if [ "$APP_BRANCH" != "dev" ]; then
   echo "You're not on dev branch"
   exit
 fi
 
-if [ $DB_ENDPOINT ]; then
-  echo "Db instance already exists"
+if [ $RDS_ENDPOINT ]; then
+  echo Db instance already exists
   exit
 fi
 
-echo "Creating new db instance: $DB_INSTANCE_IDENTIFIER"
+echo Creating new db instance: $DB_INSTANCE_IDENTIFIER
 
 aws rds create-db-instance \
   --profile $AWS_PROFILE \
@@ -72,6 +72,8 @@ aws rds create-db-instance \
 
 wait-for-status $DB_INSTANCE_IDENTIFIER available
 
-DB_ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
+RDS_ENDPOINT=$(get-endpoint $DB_INSTANCE_IDENTIFIER)
+
+echo Db instance created
 
 source ./rds-create.sh

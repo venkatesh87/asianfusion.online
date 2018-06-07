@@ -53,6 +53,7 @@
     "wordpressUploadS3Bucket": "change-me",
     "appS3Bucket": "change-me",
     "credsS3Bucket": "change-me",
+    "pluginS3Bucket": "change-me",
     "s3AccessKeyId": "change-me",
     "s3SecretAccessKey": "change-me",
     "appS3Delete": 1,
@@ -127,6 +128,7 @@
   "wordpress": {
     "siteTitle": "change-me",
     "tagline": "",
+    "pluginsDownloadFromS3": "",
     "apiKey": "",
     "loginUrl": "backend",
     "enableEmoji": 0,

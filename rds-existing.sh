@@ -12,7 +12,7 @@ source ./functions.sh
 # App config file
 readonly DB_INSTANCE_IDENTIFIER=$(jq -r ".rds.instanceName" $APP_CONFIG_FILE)
 readonly DB_INSTANCE_IDENTIFIER_LENGTH=${#DB_INSTANCE_IDENTIFIER}
-readonly DB_ENDPOINT=$1
+readonly RDS_ENDPOINT=$1
 readonly MASTER_USERNAME=$2
 readonly MASTER_USER_PASSWORD=$3
 
