@@ -29,7 +29,7 @@ This repository has 3 branches:
 * **qa** - used for review
 * **master** (refer to as live) - used for production
 
-Once all branches are deployed, you will have 3 enviornments running in AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided in [Domain and SSL Management](#domain-and-ssl-management) so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, push databases and images to production are simplifed and automated.
+Once all branches are deployed, you will have 3 enviornments running in AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided in [Domain and SSL Management](#domain-and-ssl-management) so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, migrating databases and images to production are simplifed and automated.
 
 There are many more features you can get from this project:
 - Host WordPress upload files in AWS S3
