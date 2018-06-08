@@ -1,7 +1,7 @@
 ## Introduction
 This repository contains
 * bash scripts to automate AWS deployment
-* WordPress base installation and plugins files
+* WordPress base installation and plugin files
 
 ## Installations
 
@@ -102,7 +102,7 @@ Create user with S3 programtic access only, get Access key ID and Secret access 
 
 Add User -> Programmtic access -> Attach existing policies directly -> AmazonS3FullAccess -> Get Access Key ID/Screct access key
 
-`
+```
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -122,7 +122,7 @@ Add User -> Programmtic access -> Attach existing policies directly -> AmazonS3F
         }
     ]
 }
-`
+```
 https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
 
 ### app.json
