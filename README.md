@@ -231,7 +231,7 @@ Terminate the ElasticBeanstalk environment of current branch.
 
 Terminate the application and all of its environments (all branches).
 
-`./delete-s3.sh [s3-bucket] [how-many-days-old]`
+**`./delete-s3.sh [s3-bucket] [how-many-days-old]`**
 
 *Example:* `./delete-s3.sh "s3://mys3bucket/apps/my-app/master" "7 days"`
 
@@ -304,11 +304,14 @@ Shortcut for `push-db.sh qa live`
 
 **`sync-images-from-dev-to-live.sh`**
 
-## Third Party Integrations
+**`install-pro-plugins`**
 
-### recaptcha
-https://www.google.com/recaptcha
- * Add your domain and `localhost`
+Download paid plugins from S3 and install them.
+
+If `pluginsDownloadFromS3` in `app.json` has been changed, you need to run it manually to reinstall.
+
+## Environment Migration
+Push db first then image
  
 ## Maintenance
 
@@ -328,14 +331,30 @@ The clean database will not have any plugins activated. The admin login for this
 
 The parameter value `1` will activate all the base plugins.
 
+### EBS Instance Upgrade
+
+Whenever you update one the following ElasticBeanstalk configurations, you will need to terminate the environment and re-deploy.
+* `ec2SecurityGroups`
+* `elbSecurityGroups`
+* `iamInstanceProfile`
+* `ec2KeyName`
+* `stack`
+* `instanceType`
+* `tags`
+* `sslCertificateId`
+
 ### Local Database
 If `connectLocalMysqlForDev` is `true` and you're in `dev` branch,  you will be connected to MySQL running in the Docker container. 
 
 Raw data is saved under `./mysql`. Docker operations (build and remove) will not affect the data.
 
-Domain Management
-====================
+## Third Party Integrations
 
+### recaptcha
+https://www.google.com/recaptcha
+ * Add your domain and `localhost`
+
+## Domain Management
 Route 53 -> Create Hosted Zone(public hosted zone)
 By default, a hosted zone gets 4 AWS NS(Nameserver) records
 
@@ -409,28 +428,6 @@ AWS Profile
 IAM -> Users -> Security credentials -> Create access key
 (~/.aws/credentials)
 
-aws configure list
-set AWS_PROFILE=default
-
-* When switching instanceType, please terminate the EBS instance and re-deploy
-  * After deployment:
-    admin/whatever set in the app.json
-
-
-
-
-
-
-
-
-Notes about Mysql data mount for local dev
-In case connectLocalMysqlDev changed run post-checkout.sh to refresh
-
-Push db first then image
-
-Mysql admin connection difference between local dev and others
-
-install-pro-plugins need to run manually
 
 ## Tested Platforms
 
