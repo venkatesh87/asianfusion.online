@@ -1,19 +1,36 @@
 ```
 {
+  
+  // A short application name
   "appName": "change-me",
+  
+  // Directory where WordPress source code is
   "publicWebDir": "wordpress",
+  
+  // Whether or not the dev branch should connect to local MySQL
   "connectLocalMysqlForDev": 0,
+  
+  // Docker configurations
   "docker": {
     "wordpress": {
+      // WordPress container name
       "name": "change-me",
+      
+      // WordPress container port, this should be unique
       "port": "8500"
     },
     "phpmyadmin": {
+      // phpMyAdmin container port, this should be unique
       "port": "8501"
     },
     "mysql": {
+      // MySQL container port, this should be unique
       "port": "3307",
+      
+      // MySQL root user name
       "username": "admin",
+      
+      // MySQL root password
       "password": "password"
     }
   },
