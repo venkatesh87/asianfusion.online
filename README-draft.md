@@ -1,4 +1,6 @@
 ## Introduction
+I created this project with the goals of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup and is not intented for developers who has no knowledge of Bash programming and AWS.
+
 This repository contains
 * bash scripts to automate AWS deployment and management
 * WordPress base installation and plugin files
