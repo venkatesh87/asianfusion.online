@@ -154,16 +154,21 @@ You first create an user without any permission. Go to that user, under Permissi
 
 More detailed instructions can be found: https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
 
-## Script Usages
+## Instructions and Script Usages
 
-### app.json
+### Application Configuration
 
 `cp app.sample.json app.json`
 
 See app.json configuration details here
 https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
 
-### ./rds.sh
+`app.json` is ignored by `.gitignore`
+
+### Create New RDS Instance and Databases
+
+`./rds.sh`
+
 Create a new database in RDS. It will create 6 databases. Let's say your application name is `awesomewp`, following database will be created:
 * awesomewp_dev
 * awesomewp_dev_backup*
@@ -178,118 +183,129 @@ This script can only be run from the `dev` branch where is your logical starting
 
 This process usually takes 5 to 10 minutes, so be patient. Once database is complete, you can continue with Docker setup below.
 
-### ./rds-existing.sh
+A `db.json` will be created in project root directory. This file is ignored by `.gitignore`.
 
-### ./docker.sh
+### Create Databases on Existing RDS Instance
 
-#### ./docker.sh build
+Similar to above, but without creating a new RDS instance. It creates databases on an existing RDS instance.
+
+`./rds-existing.sh [database-endpoint] [root-username] [root-password]`
+
+### Docker Operations
+
+`./docker.sh build`
 Build/rebuild all docker containers.
 
-#### ./docker.sh remove
+`./docker.sh remove`
 Remove al docker containers.
 
-#### ./docker.sh ssh
+`./docker.sh ssh`
+SSH into WordPress Docker container
 
-#### ./docker.sh ssh-phpmyadmin
+`./docker.sh ssh-phpmyadmin`
+SSH into phpMyAdmin Docker container
 
-#### ./docker.sh ssh-mysql
+`./docker.sh ssh-mysql`
+SSH into MySQL console
 
-### ./aws.sh
+### Deployment Operations
 
-#### ./aws.sh deploy
-This command deploys current branch to a Elastic Beanstalk environment.
+`./aws.sh deploy`
+Deploy current branch to ElasticBeanstalk environment.
 
 If application doesn't exists, it creates the application. If environment doesn't exist, it creates the environment. If environment exists, it updates the environment.
 
-#### ./aws.sh terminate
-This command terminates the environment of current branch.
+`./aws.sh terminate`
+Terminate the ElasticBeanstalk environment of current branch.
 
-#### ./aws.sh terminate app
-This command terminates the application and also terminates all of its environments.
+`./aws.sh terminate app`
+Terminate the application and all of its environments (all branches).
 
-### ./delete-s3.sh
+`./delete-s3.sh [s3-bucket] [how-many-days-old]`
 *Example:* `./delete-s3.sh "s3://mys3bucket/apps/my-app/master" "7 days"`
 
-### ./mysql-local.sh
-Connect to MySQL running in Docker container. Raw MySQL data is saved in `mysql/`.
+### MISC Scripts
 
-### ./mysql-remote.sh
-Connect to RDS MySQL console. Database connected is the what the current branch is using.
+`./mysql-local.sh`
+Connect to MySQL running in the Docker container.
 
-### ./ebs-ssh
-SSH into current branch's environment console.
+`./mysql-remote.sh`
+Connect to RDS MySQL console.
 
-### dump-db.sh [branch]
+`./ebs-ssh`
+SSH into current branch's EBS server console.
+
+`dump-db.sh [branch]`
 Dump database into a SQL file under project root directory. If `branch` parameter is not specified, current branch's database will be dumped.
 
-### export.sh [export-path]
+`export.sh [export-path]`
 Export all WordPress content into a ZIP file. Database export is not included.
 
-### open.sh
+`open.sh`
 Open WordPress site in the default browser.
 
-### open-phpmyadmin.sh
+`open-phpmyadmin.sh`
 Open phpMyAdmin in the default browser.
 
 If `connectLocalMysqlForDev` is `true`, you can login using the configured username and password.
 If `connectLocalMysqlForDev` is `false`, you can login using database credentials found in `db.json`
 
-### ./list-stacks.sh
+`./list-stacks.sh`
 This returns a list of most current stacks available in AWS.
 
-### ./list-mysql.sh
+`./list-mysql.sh`
 This returns a list of most curent MySQL versions available in AWS.
 
-### push-db.sh [origin-branch] [destination-branch]
+`push-db.sh [origin-branch] [destination-branch]`
 Push datbase from `origin-branch` to `destination-branch`
 
-### push-db-from-local-to-dev.sh
+`push-db-from-local-to-dev.sh`
 Shortcut for `push-db.sh local dev`
 
-### push-db-from-dev-to-local.sh
+`push-db-from-dev-to-local.sh`
 Shortcut for `push-db.sh dev local`
 
-### push-db-from-dev-to-qa.sh
+`push-db-from-dev-to-qa.sh`
 Shortcut for `push-db.sh dev qa`
 
-### push-db-from-dev-to-live.sh
+`push-db-from-dev-to-live.sh`
 Shortcut for `push-db.sh dev live`
 
-### push-db-from-qa-to-live.sh
+`push-db-from-qa-to-live.sh`
 Shortcut for `push-db.sh qa live`
 
-### sync-images.sh
+`sync-images.sh`
 
-### sync-images-from-dev-to-live.sh
+`sync-images-from-dev-to-live.sh`
 
+## Third Party Integrations
 
 ### recaptcha
 https://www.google.com/recaptcha
  * Add your domain and `localhost`
  
+## Maintenance
 
 ### Database Re-initialization
 
-Database will be installed upon the execution of `rd.sh` or `rds-existing.sh`. You can reinstall database if you need to.
+Database is installed upon the execution of `rd.sh` or `rds-existing.sh`. You can reinstall database if you need to.
 
-To install clean database
+**To install clean database**
 
 `./load-db.sh db/wordpress.sql`
 
 The clean database will not have any plugins activated. The admin login for this installation is "admin/password".
 
-To initialize application configurations
+**To initialize application configurations**
 
 `./reset-wordpress.sh 1`
 
 The parameter value `1` will activate all the base plugins.
 
+### Local Database
+If `connectLocalMysqlForDev` is `true` and you're in `dev` branch,  you will be connected to MySQL running in the Docker container. 
 
-SSH access
-=========
-Don't specify ec2 key name and path if you don't want SSH access. EBS will create the default
-security group with port 22 open if ec2 key name is specified.
-
+Raw data is saved under `./mysql`. Docker operations (build and remove) will not affect the data.
 
 Domain Management
 ====================
