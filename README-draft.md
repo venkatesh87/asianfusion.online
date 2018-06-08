@@ -1,4 +1,9 @@
-## Prerequisites
+## Introduction
+This repository contains
+* bash scripts to automate AWS deployment
+* WordPress base installation and plugins files
+
+## Installations
 
 ### awscli
 
@@ -11,6 +16,7 @@
 For installation instructions, go to http://docs.aws.amazon.com/cli/latest/userguide/installing.html.
 
 #### Configure awscli
+If this is your first time configuring awscli
 ```
 $ aws configure
 AWS Access Key ID [None]: [YOUR ACCESS KEY ID]
@@ -18,14 +24,41 @@ AWS Secret Access Key [None]: [YOUR SECRET ACCESS KEY]
 Default region name [None]: us-east-1
 Default output format [None]: json
 ```
+This will create a default profile. AWS configuration will be saved to files below:
+
+~/.aws/config 
+```
+[default]
+region = us-east-1
+output = json
+```
+~/.aws/credentials 
+```
+[default]
+aws_access_key_id = [YOUR ACCESS KEY ID]
+aws_secret_access_key = [YOUR SECRET ACCESS KEY]
+```
+
+If you're configuring a new profile
+`aws configure --profile your-new-profile`
+
+~/.aws/config 
+```
+[default]
+region = us-east-1
+output = json
+
+[profile your-new-profile]
+region = us-east-1
+output = json
+```
+
+Re-configure AWS profile
+`aws configure --profile your-profile`
+
+For AWS name profile: https://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html
 
 For configuration instructions, go to http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html.
-
-##### Configure AWS - specific user
-aws configure --profile your-user
-
-##### View all profiles
-cat ~/.aws/credentials
 
 ### jq
 jq is used to parse JSON data in bash.
