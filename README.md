@@ -38,14 +38,13 @@ There are many more features you can get from this project:
 - Clean dashboard
 - [Astra theme](https://wpastra.com/)
 - [Elementor](https://elementor.com/)
-- Base plugins:
+- A few base plugins:
   - [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/)
   - [Akismet Anti-spam](https://wordpress.org/plugins/akismet/)
   - [Contact Form 7](https://wordpress.org/plugins/contact-form-7/)
   - [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
   - [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/)
   - [WP Offload S3 Lite](https://wordpress.org/plugins/amazon-s3-and-cloudfront/)
-  - and many more...
 
 ## Installation
 
