@@ -174,12 +174,16 @@ https://www.google.com/recaptcha
 Database will be installed upon the execution of `rd.sh` or `rds-existing.sh`. You can reinstall database if you need to.
 
 To install clean database
+
 `./load-db.sh db/wordpress.sql`
+
 The clean database will not have any plugins activated. The admin login for this installation is "admin/password".
 
 To initialize application configurations
+
 `./reset-wordpress.sh 1`
-The parameter `1` will activate all the base plugins.
+
+The parameter value `1` will activate all the base plugins.
 
 
 SSH access
