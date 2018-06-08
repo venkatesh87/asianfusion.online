@@ -89,7 +89,7 @@ gdate is an GNU verion of `date` for macOS
 
 https://dev.mysql.com/downloads/shell/
 
-### Create S3 buckets
+## Create S3 buckets
 
 Run `aws s3api create-bucket --bucket your-bucket --profile your-profile --region us-east-1`
 
