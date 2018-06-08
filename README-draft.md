@@ -101,13 +101,13 @@ Bucket for application files
 #### Application Credential Bucket
 Bucket for app.json and db.json
 
-#### Wordpress Upload Bucket
+#### WordPress Upload Bucket
 Bucket for WordPress uploads
 
-#### Wordpress Plugin Bucket
+#### WordPress Plugin Bucket
 Bucket for WordPress paid plugins
 
-#### Create S3 User Wordpress Upload
+#### Create S3 User WordPress Upload
 Create user with S3 programtic access only, get Access key ID and Secret access key for Wordpress S3 upload plugin
 
 Add User -> Programmtic access -> Attach existing policies directly -> AmazonS3FullAccess -> Get Access Key ID/Screct access key
