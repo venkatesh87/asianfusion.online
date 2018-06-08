@@ -198,12 +198,12 @@ https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
 `./rds.sh`
 
 Create a new database in RDS. It will create 6 databases. Let's say your application name is `awesomewp`, following database will be created:
-* awesomewp_dev
-* awesomewp_dev_backup*
-* awesomewp_qa
-* awesomewp_qa_backup*
-* awesomewp_live
-* awesomewp_live_backup*
+- awesomewp_dev
+- awesomewp_dev_backup*
+- awesomewp_qa
+- awesomewp_qa_backup*
+- awesomewp_live
+- awesomewp_live_backup*
 
 * *The backup database will be created after the enviornment is deployed. An `hourly` CRON will be generated to backup the database.*
 
