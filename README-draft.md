@@ -25,7 +25,7 @@ Once fully deployed, you will have 3 enviornments running in AWS ElasticBeanstal
 For installation instructions, go to http://docs.aws.amazon.com/cli/latest/userguide/installing.html.
 
 #### Configure awscli
-If this is your first time configuring awscli
+If this is your first time configuring awscli:
 ```
 $ aws configure
 AWS Access Key ID [None]: [YOUR ACCESS KEY ID]
@@ -48,7 +48,8 @@ aws_access_key_id = [YOUR ACCESS KEY ID]
 aws_secret_access_key = [YOUR SECRET ACCESS KEY]
 ```
 
-If you're configuring a new profile
+If you're configuring a new profile:
+
 `aws configure --profile your-new-profile`
 
 ~/.aws/config 
@@ -63,6 +64,7 @@ output = json
 ```
 
 Re-configure AWS profile
+
 `aws configure --profile your-profile`
 
 For AWS name profile: https://docs.aws.amazon.com/cli/latest/userguide/cli-multiple-profiles.html
