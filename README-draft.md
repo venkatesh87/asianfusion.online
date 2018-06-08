@@ -3,7 +3,7 @@ I created this project with the goals of easing my life around WordPress builds,
 
 This repository contains
 * bash scripts to automate AWS deployment and management
-* WordPress base installation and plugin files
+* WordPress base installation and plugins
 
 This repository has 3 branches:
 * dev - used for development
