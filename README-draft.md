@@ -67,6 +67,8 @@ Bucket for Wordpress paid plugins
 #### Create S3 User Wordpress Upload
 Create user with S3 programtic access only, get Access key ID and Secret access key for Wordpress S3 upload plugin
 
+Add User -> Programmtic access -> Attach existing policies directly -> AmazonS3FullAccess -> Get Access Key ID/Screct access key
+
 `
 {
     "Version": "2012-10-17",
@@ -88,6 +90,7 @@ Create user with S3 programtic access only, get Access key ID and Secret access 
     ]
 }
 `
+https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
 
 ### app.json
 
@@ -120,7 +123,13 @@ This return a list of most current stacks available in AWS.
 
 
 
+recaptcha
+ * Add your domain and localhost
 
+SSH access
+=========
+Don't specify ec2 key name and path if you don't want SSH access. EBS will create the default
+security group with port 22 open if ec2 key name is specified.
 
 
 Domain Management
@@ -163,6 +172,55 @@ SES
     * This will create additional CNAME records in route53 for domain verification
    * This domain will goes into "pending verification" status 
   * SMTP Settings -> Create My SMTP Credentials -> It basically creates an AWS user with SMTP permissions -> Copy SMTP username and password
+
+
+
+AWS
+======
+
+Network & Security -> Security Groups
+  * EBS create security groups automatically by default port 80, 442
+  * If key pair is specified, port 22 will be open in the security group
+
+Network & Security -> Key Pairs
+  * Create new Key Pair
+  * Save it and chmod it to 600
+
+Route53
+  * Create a new Zone
+  * Update NS records
+  * Point your domain DNS to Amazon DNS(update NS records)
+
+Certificate Manager
+  * Add domain names: www.domain.com, domain.com, *.domain.com
+   * Select DNS validation. Under each domain, do Create record in Route 53.
+    This will create additional CNAME records in route53 for validation
+
+SES
+  * Email Addresses -> Verify a New Email Address
+  * Domains -> Verify a New Domain (Generate DKIM settings)
+    * This will create additional CNAME records in route53 for domain verification
+  * SMTP Settings -> Create My SMTP Credentials
+
+
+AWS Profile
+===========
+IAM -> Users -> Security credentials -> Create access key
+(~/.aws/credentials)
+
+aws configure list
+set AWS_PROFILE=default
+
+* When switching instanceType, please terminate the EBS instance and re-deploy
+  * After deployment:
+    admin/whatever set in the app.json
+
+
+
+
+
+
+
 
 Notes about Mysql data mount for local dev
 In case connectLocalMysqlDev changed run post-checkout.sh to refresh
