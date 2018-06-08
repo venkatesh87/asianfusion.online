@@ -50,13 +50,13 @@ Default output format [None]: json
 ```
 This will create a default profile. AWS configuration will be saved to files below:
 
-~/.aws/config 
+**~/.aws/config**
 ```
 [default]
 region = us-east-1
 output = json
 ```
-~/.aws/credentials 
+**~/.aws/credentials**
 ```
 [default]
 aws_access_key_id = [YOUR ACCESS KEY ID]
@@ -67,7 +67,7 @@ aws_secret_access_key = [YOUR SECRET ACCESS KEY]
 
 `aws configure --profile your-new-profile`
 
-~/.aws/config 
+**~/.aws/config**
 ```
 [default]
 region = us-east-1
