@@ -6,15 +6,15 @@
 3. [AWS Setup](#aws-setup)
    - [Create S3 Buckets](#create-s3-buckets)
 4. [Instructions and Script Usages](#instructions-and-script-usages)
-   - [Application Configurations](#application-configurations]
+   - [Application Configurations](#application-configurations)
    - [Database Setup](#database-setup)
    - [Docker Operations](#docker-operations)
    - [Depolyment Operations](#deployment-operations)
  5. [MISC Scripts](#misc-scripts)
  6. [Environment Migration](#environment-migration)
  7. [Maintenance](#maintenance)
- 8. [Third Party Integrations](#third-party-integration)
- 9. [Domain/SSL Management](#domain-ssl-management)
+ 8. [Third Party Integrations](#third-party-integrations)
+ 9. [Domain and SSL Management](#domain-and-ssl-management)
  
 
 ## Introduction
