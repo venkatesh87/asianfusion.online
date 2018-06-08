@@ -196,84 +196,108 @@ Similar to above, but without creating a new RDS instance. It creates databases 
 ### Docker Operations
 
 `./docker.sh build`
+
 Build/rebuild all docker containers.
 
 `./docker.sh remove`
+
 Remove al docker containers.
 
 `./docker.sh ssh`
+
 SSH into WordPress Docker container
 
 `./docker.sh ssh-phpmyadmin`
+
 SSH into phpMyAdmin Docker container
 
 `./docker.sh ssh-mysql`
+
 SSH into MySQL console
 
 ### Deployment Operations
 
 `./aws.sh deploy`
+
 Deploy current branch to ElasticBeanstalk environment.
 
 If application doesn't exists, it creates the application. If environment doesn't exist, it creates the environment. If environment exists, it updates the environment.
 
 `./aws.sh terminate`
+
 Terminate the ElasticBeanstalk environment of current branch.
 
 `./aws.sh terminate app`
+
 Terminate the application and all of its environments (all branches).
 
 `./delete-s3.sh [s3-bucket] [how-many-days-old]`
+
 *Example:* `./delete-s3.sh "s3://mys3bucket/apps/my-app/master" "7 days"`
 
 ### MISC Scripts
 
 `./mysql-local.sh`
+
 Connect to MySQL running in the Docker container.
 
 `./mysql-remote.sh`
+
 Connect to RDS MySQL console.
 
 `./ebs-ssh`
+
 SSH into current branch's EBS server console.
 
 `dump-db.sh [branch]`
+
 Dump database into a SQL file under project root directory. If `branch` parameter is not specified, current branch's database will be dumped.
 
 `export.sh [export-path]`
+
 Export all WordPress content into a ZIP file. Database export is not included.
 
 `open.sh`
+
 Open WordPress site in the default browser.
 
 `open-phpmyadmin.sh`
+
 Open phpMyAdmin in the default browser.
 
 If `connectLocalMysqlForDev` is `true`, you can login using the configured username and password.
 If `connectLocalMysqlForDev` is `false`, you can login using database credentials found in `db.json`
 
 `./list-stacks.sh`
+
 This returns a list of most current stacks available in AWS.
 
 `./list-mysql.sh`
+
 This returns a list of most curent MySQL versions available in AWS.
 
 `push-db.sh [origin-branch] [destination-branch]`
+
 Push datbase from `origin-branch` to `destination-branch`
 
 `push-db-from-local-to-dev.sh`
+
 Shortcut for `push-db.sh local dev`
 
 `push-db-from-dev-to-local.sh`
+
 Shortcut for `push-db.sh dev local`
 
 `push-db-from-dev-to-qa.sh`
+
 Shortcut for `push-db.sh dev qa`
 
 `push-db-from-dev-to-live.sh`
+
 Shortcut for `push-db.sh dev live`
 
 `push-db-from-qa-to-live.sh`
+
 Shortcut for `push-db.sh qa live`
 
 `sync-images.sh`
