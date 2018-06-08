@@ -34,6 +34,7 @@ Once all branches are deployed, you will have 3 enviornments running in AWS Elas
 There are many more features you can get from this project:
 - Host WordPress upload files in AWS S3
 - Secure WordPress backend login, e.g. `/hidden-login` instead of `/wp-admin`
+- Basic authentication and SSL for environments
 - Clean dashboard
 - [Astra theme](https://wpastra.com/)
 - [Elementor](https://elementor.com/)
