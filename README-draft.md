@@ -10,7 +10,7 @@ This repository has 3 branches:
 * qa - used for review
 * master (refer to as live) - used for production
 
-Once fully deployed, you will be 3 enviornments running AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided so that you can map the domain names these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, lots of the tedious tasks, such as creating databases, push databases and images to production are simplifed and automated.
+Once fully deployed, you will have 3 enviornments running AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided so that you can map the domain names these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, lots of the tedious tasks, such as creating databases, push databases and images to production are simplifed and automated.
 
 ## Installations
 
