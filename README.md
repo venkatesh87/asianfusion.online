@@ -255,7 +255,7 @@ Terminate the ElasticBeanstalk environment of current branch.
 
 **`./aws.sh terminate app`**
 
-Terminate the application and all of its environments (all branches).
+Terminate the application and all of its ElasticBeanstalk environments (all branches).
 
 **`./delete-s3.sh [s3-bucket] [how-many-days-old]`**
 
