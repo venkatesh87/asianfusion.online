@@ -146,20 +146,35 @@ Search for `change-me`, they are the values you most likely need to change.
     }
   },
   "wordpress": {
+    // WordPress site title. This will update the database on every deployment
     "siteTitle": "change-me",
+    
+    // WordPress site tag line. This will update the database on every deployment
     "tagline": "",
+    
+    // Premium plugins to download from S3. eg: "elementor-pro:elementor-pro-2.0.9.zip,more-plugin:more-plugin.zip".
+    // Format: WordPress plugn directory name:File name on S3
+    // Plugins defined here won't get commited and but will get pushed to ElasticBeanstalk
+    // Plugins will download and install on every deployment
     "pluginsDownloadFromS3": "",
+    
+    // https://akismet.com/ - Akismet API key, sign up and add site
     "apiKey": "",
+    
+    // The URL to relace /wp-admin with. This uses the WPS Hide plugin
     "loginUrl": "backend",
     
     // Whether or not Emoji should be enabled
     "enableEmoji": 0,
     
-    // https://www.google.com/recaptcha, signup and add domain(don't forget `localhost`)
+    // https://www.google.com/recaptcha, sign up and add domain(don't forget `localhost`)
     "recaptcha": {
       "siteKey": "",
       "secretKey": ""
     },
+    // Predefined WordPress users, add as many users as you want
+    // Valid roles are: adminstrator, author, editor, subscriber, contributor
+    // If Yoast SEO is installed, these roles are also available: wpseo_editor, wpseo_manager
     "users": {
       "user1": {
         "username": "",
