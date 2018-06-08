@@ -151,7 +151,11 @@ Search for `change-me`, they are the values you most likely need to change.
     "pluginsDownloadFromS3": "",
     "apiKey": "",
     "loginUrl": "backend",
+    
+    // Whether or not Emoji should be enabled
     "enableEmoji": 0,
+    
+    // https://www.google.com/recaptcha, signup and add domain(don't forget `localhost`)
     "recaptcha": {
       "siteKey": "",
       "secretKey": ""
