@@ -6,9 +6,9 @@ This repository contains:
 * WordPress base installation and plugins
 
 This repository has 3 branches:
-* dev - used for development
-* qa - used for review
-* master (refer to as live) - used for production
+* **dev** - used for development
+* **qa** - used for review
+* **master** (refer to as live) - used for production
 
 Once all branches are deployed, you will have 3 enviornments running in AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, push databases and images to production are simplifed and automated.
 
@@ -40,7 +40,7 @@ There are many more features you can get from this project:
 For installation instructions, go to http://docs.aws.amazon.com/cli/latest/userguide/installing.html.
 
 #### Configure awscli
-If this is your first time configuring awscli:
+**If this is your first time configuring awscli:**
 ```
 $ aws configure
 AWS Access Key ID [None]: [YOUR ACCESS KEY ID]
@@ -63,7 +63,7 @@ aws_access_key_id = [YOUR ACCESS KEY ID]
 aws_secret_access_key = [YOUR SECRET ACCESS KEY]
 ```
 
-If you're configuring a new profile:
+**If you're configuring a new profile:**
 
 `aws configure --profile your-new-profile`
 
@@ -78,7 +78,7 @@ region = us-east-1
 output = json
 ```
 
-Re-configure AWS profile
+**Re-configure AWS profile**
 
 `aws configure --profile your-profile`
 
