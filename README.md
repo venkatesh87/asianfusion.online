@@ -15,6 +15,9 @@
  7. [Maintenance](#maintenance)
  8. [Third Party Integrations](#third-party-integrations)
  9. [Domain and SSL Management](#domain-and-ssl-management)
+ 10. [Forking](#forking)
+ 11. [Tested Platforms](#tested-platforms)
+ 12. [Licensing](#licensing)
  
 
 ## Introduction
@@ -451,11 +454,13 @@ AWS Profile
 IAM -> Users -> Security credentials -> Create access key
 (~/.aws/credentials)
 
+## Forking
+
 
 ## Tested Platforms
 
 * Ubuntu 16 LTS
 * macOS High Serria
 
-## License
+## Licensing
 MIT - See included LICENSE.md
