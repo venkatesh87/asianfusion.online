@@ -36,8 +36,8 @@ There are many features you can benefit from using this project:
 - Simple application and datagbase configurations
 - Host WordPress upload files in AWS S3
 - Secure WordPress backend login, e.g. `/hidden-login` instead of `/wp-admin`
-- Basic authentication and SSL for environments
-- Clean dashboard
+- Basic authentication and SSL for all environments
+- Clean WordPress dashboard
 - [Astra theme](https://wpastra.com/)
 - [Elementor](https://elementor.com/)
 - A few base plugins:
