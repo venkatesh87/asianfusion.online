@@ -12,6 +12,21 @@ This repository has 3 branches:
 
 Once fully deployed, you will have 3 enviornments running in AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, push databases and images to production are simplifed and automated.
 
+There are many more features you can get from this project:
+* Host WordPress upload files in AWS S3
+* Secure WordPress backend login, e.g. `/hidden-login` instead of `/wp-admin`
+* Clean dashboard
+* [Astra theme](https://wpastra.com/)
+* [Elementor](https://elementor.com/)
+* Base plugins:
+** [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/)
+** [Akismet Anti-spam](https://wordpress.org/plugins/akismet/)
+** [Contact Form 7](https://wordpress.org/plugins/contact-form-7/)
+** [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
+** [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/)
+** [WP Offload S3 Lite](https://wordpress.org/plugins/amazon-s3-and-cloudfront/)
+** and many more...
+
 ## Installation
 
 ### awscli
