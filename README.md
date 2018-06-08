@@ -3,6 +3,8 @@
 ## Table of Content
 1. [Introduction](#introduction)
 2. [Installation](#installation)
+3. [AWS Setup](#aws-setup)
+-- [Create S3 Buckets](#create-s3-buckets)
 
 ## Introduction
 I created this project with the goals of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup and is not intented for developers who has no knowledge of [Bash programming](https://en.wikibooks.org/wiki/Bash_Shell_Scripting) and [AWS](https://aws.amazon.com/).
@@ -110,7 +112,9 @@ gdate is an GNU verion of `date` for macOS
 
 https://dev.mysql.com/downloads/shell/
 
-## Create S3 buckets
+## AWS Setup
+
+### Create S3 buckets
 
 Run `aws s3api create-bucket --bucket your-bucket --profile your-profile --region us-east-1`
 
