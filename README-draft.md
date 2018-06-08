@@ -107,10 +107,13 @@ Bucket for WordPress uploads
 #### WordPress Plugin Bucket
 Bucket for WordPress paid plugins
 
-#### Create S3 User WordPress Upload
-Create user with S3 programtic access only, get Access key ID and Secret access key for Wordpress S3 upload plugin
+#### Create S3 User for Offload S3 Plugin
 
-Add User -> Programmtic access -> Attach existing policies directly -> AmazonS3FullAccess -> Get Access Key ID/Screct access key
+Create a user with S3 programtic access only, get Access key ID and Secret access key for Wordpress S3 upload plugin.
+
+IAM -> Users -> Add User -> Programatic access -> Attach existing policies directly -> Review -> Get Access Key ID/Screct access key
+
+You first create an user without any permission. Go to that user, under Permissions tab -> Add inline policy -> JSON tab, copy and paste the policy below with your own bucket name -> Save.
 
 ```
 {
@@ -133,7 +136,10 @@ Add User -> Programmtic access -> Attach existing policies directly -> AmazonS3F
     ]
 }
 ```
-https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
+
+More detailed instructions can be found: https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
+
+## Script Usages
 
 ### app.json
 
@@ -141,8 +147,6 @@ https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
 
 See app.json configuration details here
 https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
-
-## Script Usages
 
 ### ./rds.sh
 Create a new database in RDS. It will create 6 databases. Let's say your application name is `awesomewp`, following database will be created:
