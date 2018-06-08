@@ -1,3 +1,4 @@
+```
 {
   "appName": "change-me",
   "publicWebDir": "wordpress",
@@ -210,3 +211,4 @@
     }
   }
 }
+```
