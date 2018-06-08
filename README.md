@@ -4,7 +4,18 @@
 1. [Introduction](#introduction)
 2. [Installation](#installation)
 3. [AWS Setup](#aws-setup)
--- [Create S3 Buckets](#create-s3-buckets)
+   - [Create S3 Buckets](#create-s3-buckets)
+4. [Instructions and Script Usages](#instructions-and-script-usages)
+   - [Application Configurations](#application-configurations]
+   - [Database Setup](#database-setup)
+   - [Docker Operations](#docker-operations)
+   - [Depolyment Operations](#deployment-operations)
+ 5. [MISC Scripts](#misc-scripts)
+ 6. [Environment Migration](#environment-migration)
+ 7. [Maintenance](#maintenance)
+ 8. [Third Party Integrations](#third-party-integration)
+ 9. [Domain/SSL Management](#domain-ssl-management)
+ 
 
 ## Introduction
 I created this project with the goals of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup and is not intented for developers who has no knowledge of [Bash programming](https://en.wikibooks.org/wiki/Bash_Shell_Scripting) and [AWS](https://aws.amazon.com/).
@@ -166,7 +177,7 @@ More detailed instructions can be found: https://deliciousbrains.com/wp-offload-
 
 ## Instructions and Script Usages
 
-### Application Configuration
+### Application Configurations
 
 `cp app.sample.json app.json`
 
@@ -175,7 +186,9 @@ https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
 
 `app.json` is ignored by `.gitignore`
 
-### Create New RDS Instance and Databases
+### Database Setup
+
+#### Create New RDS Instance and Databases
 
 `./rds.sh`
 
@@ -195,7 +208,7 @@ This process usually takes 5 to 10 minutes, so be patient. Once database is comp
 
 A `db.json` will be created in project root directory. This file is ignored by `.gitignore`.
 
-### Create Databases on Existing RDS Instance
+#### Create Databases on Existing RDS Instance
 
 Similar to above, but without creating a new RDS instance. It creates databases on an existing RDS instance.
 
@@ -362,7 +375,7 @@ Raw data is saved under `./mysql`. Docker operations (build and remove) will not
 https://www.google.com/recaptcha
  * Add your domain and `localhost`
 
-## Domain Management
+## Domain/SSL Management
 Route 53 -> Create Hosted Zone(public hosted zone)
 By default, a hosted zone gets 4 AWS NS(Nameserver) records
 
