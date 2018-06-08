@@ -179,7 +179,7 @@ Create a new database in RDS. It will create 6 databases. Let's say your applica
 * awesomewp_live
 * awesomewp_live_backup*
 
-*The backup database will be created after the enviornment is deployed. An `hourly` CRON will be generated to backup the database.
+* *The backup database will be created after the enviornment is deployed. An `hourly` CRON will be generated to backup the database.*
 
 This script can only be run from the `dev` branch where is your logical starting point for a new project. It will configure WordPress (`./post-checkout`), load a clean WordPress database (`./load-db.sh db/wordpress.sql`), configure and activate all the base plugins (`./reset-wordpress 1`), install paid plugins (`./install-pro-plugins.sh`) and push up configuration files to S3 for storeage (`./sync-creds-up.sh`).
 
