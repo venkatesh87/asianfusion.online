@@ -1,7 +1,7 @@
 ## Introduction
 I created this project with the goals of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup and is not intented for developers who has no knowledge of [Bash programming](https://en.wikibooks.org/wiki/Bash_Shell_Scripting) and [AWS](https://aws.amazon.com/).
 
-This repository contains
+This repository contains:
 * bash scripts to automate AWS deployment and management
 * WordPress base installation and plugins
 
@@ -10,8 +10,7 @@ This repository has 3 branches:
 * qa - used for review
 * master (refer to as live) - used for production
 
-Once fully deployed, you will be 3 enviornments running AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided so that you can map the domain names these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, lots of the tedious tasks, such as creating databases, push databases and images to production are simplifed and automated. 
-
+Once fully deployed, you will be 3 enviornments running AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided so that you can map the domain names these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, lots of the tedious tasks, such as creating databases, push databases and images to production are simplifed and automated.
 
 ## Installations
 
@@ -141,9 +140,38 @@ https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
 See app.json configuration details here
 https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
 
-## Usage
+## Script Usages
 
 ### ./rds.sh
+Create a new database in RDS. It will create 6 databases. Let's say your application name is `awesomewp`, following database will be created:
+* awesomewp_dev
+* awesomewp_dev_backup*
+* awesomewp_qa
+* awesomewp_qa_backup*
+* awesomewp_live
+* awesomewp_live_backup*
+
+*The backup database will be created after the enviornment is deployed. An `hourly` CRON will be generated to backup the database.
+
+This script can only be run from the `dev` branch where is your logical starting point for a new project. It will configure WordPress (`./post-checkout`), load a clean WordPress database (`./load-db.sh db/wordpress.sql`), configure and activate all the base plugins (`./reset-wordpress 1`), install paid plugins (`./install-pro-plugins.sh`) and push up configuration files to S3 for storeage (`./sync-creds-up.sh`).
+
+This process usually takes 5 to 10 minutes, so be patient. Once database is complete, you can continue with Docker setup below.
+
+### ./rds-existing.sh
+
+### ./docker.sh
+
+#### ./docker.sh build
+Build/rebuild all docker containers.
+
+#### ./docker.sh remove
+Remove al docker containers.
+
+#### ./docker.sh ssh
+
+#### ./docker.sh ssh-phpmyadmin
+
+#### ./docker.sh ssh-mysql
 
 ### ./aws.sh
 
@@ -169,20 +197,6 @@ Connect to RDS MySQL console. Database connected is the what the current branch 
 
 ### ./ebs-ssh
 SSH into current branch's environment console.
-
-### ./docker.sh
-
-#### ./docker.sh build
-Build/rebuild all docker containers.
-
-#### ./docker.sh remove
-Remove al docker containers.
-
-#### ./docker.sh ssh
-
-#### ./docker.sh ssh-phpmyadmin
-
-#### ./docker.sh ssh-mysql
 
 ### dump-db.sh [branch]
 Dump database into a SQL file under project root directory. If `branch` parameter is not specified, current branch's database will be dumped.
