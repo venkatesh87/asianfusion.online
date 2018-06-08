@@ -1,7 +1,12 @@
 ## Introduction
 This repository contains
-* bash scripts to automate AWS deployment
+* bash scripts to automate AWS deployment and management
 * WordPress base installation and plugin files
+
+This repository has 3 branches:
+* dev - used for development
+* qa - used for review
+* master (refer to as live) - used for production
 
 ## Installations
 
