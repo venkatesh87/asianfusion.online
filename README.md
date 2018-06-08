@@ -38,8 +38,8 @@ There are many features you can benefit from using this project:
 - Secure WordPress backend login, e.g. `/hidden-login` instead of `/wp-admin`
 - Basic authentication and SSL for all environments
 - Clean WordPress dashboard
-- [Astra theme](https://wpastra.com/)
-- [Elementor](https://elementor.com/)
+- Clean [Astra theme](https://wpastra.com/)
+- [Elementor](https://elementor.com/) site builder
 - A few base plugins:
   - [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/)
   - [Akismet Anti-spam](https://wordpress.org/plugins/akismet/)
