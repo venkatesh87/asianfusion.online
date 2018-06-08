@@ -87,8 +87,7 @@ https://dev.mysql.com/downloads/shell/
 
 ### Create S3 buckets
 
-Command:
-`aws s3api create-bucket --bucket your-bucket --profile your-profile --region us-east-1`
+Run `aws s3api create-bucket --bucket your-bucket --profile your-profile --region us-east-1`
 
 You can also create buckets using S3 console.
 
@@ -99,10 +98,10 @@ Bucket for application files
 Bucket for app.json and db.json
 
 #### Wordpress Upload Bucket
-Bucket for Wordpress uploads
+Bucket for WordPress uploads
 
 #### Wordpress Plugin Bucket
-Bucket for Wordpress paid plugins
+Bucket for WordPress paid plugins
 
 #### Create S3 User Wordpress Upload
 Create user with S3 programtic access only, get Access key ID and Secret access key for Wordpress S3 upload plugin
@@ -159,9 +158,71 @@ This command terminates the application and also terminates all of its environme
 ### ./delete-s3.sh
 *Example:* `./delete-s3.sh "s3://mys3bucket/apps/my-app/master" "7 days"`
 
-### ./list-stacks.sh
-This return a list of most current stacks available in AWS.
+### ./mysql-local.sh
+Connect to MySQL running in Docker container. Raw MySQL data is saved in `mysql/`.
 
+### ./mysql-remote.sh
+Connect to RDS MySQL console. Database connected is the what the current branch is using.
+
+### ./ebs-ssh
+SSH into current branch's environment console.
+
+### ./docker.sh
+
+#### ./docker.sh build
+Build/rebuild all docker containers.
+
+#### ./docker.sh remove
+Remove al docker containers.
+
+#### ./docker.sh ssh
+
+#### ./docker.sh ssh-phpmyadmin
+
+#### ./docker.sh ssh-mysql
+
+### dump-db.sh [branch]
+Dump database into a SQL file under project root directory. If `branch` parameter is not specified, current branch's database will be dumped.
+
+### export.sh [export-path]
+Export all WordPress content into a ZIP file. Database export is not included.
+
+### open.sh
+Open WordPress site in the default browser.
+
+### open-phpmyadmin.sh
+Open phpMyAdmin in the default browser.
+
+If `connectLocalMysqlForDev` is `true`, you can login using the configured username and password.
+If `connectLocalMysqlForDev` is `false`, you can login using database credentials found in `db.json`
+
+### ./list-stacks.sh
+This returns a list of most current stacks available in AWS.
+
+### ./list-mysql.sh
+This returns a list of most curent MySQL versions available in AWS.
+
+### push-db.sh [origin-branch] [destination-branch]
+Push datbase from `origin-branch` to `destination-branch`
+
+### push-db-from-local-to-dev.sh
+Shortcut for `push-db.sh local dev`
+
+### push-db-from-dev-to-local.sh
+Shortcut for `push-db.sh dev local`
+
+### push-db-from-dev-to-qa.sh
+Shortcut for `push-db.sh dev qa`
+
+### push-db-from-dev-to-live.sh
+Shortcut for `push-db.sh dev live`
+
+### push-db-from-qa-to-live.sh
+Shortcut for `push-db.sh qa live`
+
+### sync-images.sh
+
+### sync-images-from-dev-to-live.sh
 
 
 ### recaptcha
