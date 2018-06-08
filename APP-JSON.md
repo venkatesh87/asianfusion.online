@@ -54,7 +54,9 @@ Search for `change-me`, they are the values you most likely need to change.
       //
       "iamInstanceProfile": "",
       
-      // The name of the EC2 key to SSH into ElastiBeanstalk
+      // The name of the EC2 key to SSH into ElasticBeanstalk
+      // Generally you won't need SSH access for QA and Master branches,
+      // but there is a chance you need it for dev for debugging purpose.
       "ec2KeyName": "",
       
       // The path of the key file (.pem file)
