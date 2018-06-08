@@ -1,5 +1,22 @@
 # DRAFT
 
+## Table of Content
+1. [Introduction](#introduction)
+2. [Installation](#installation)
+3. [AWS Setup](#aws-setup)
+   - [Create S3 Buckets](#create-s3-buckets)
+4. [Instructions and Script Usages](#instructions-and-script-usages)
+   - [Application Configurations](#application-configurations)
+   - [Database Setup](#database-setup)
+   - [Docker Operations](#docker-operations)
+   - [Depolyment Operations](#deployment-operations)
+ 5. [MISC Scripts](#misc-scripts)
+ 6. [Environment Migration](#environment-migration)
+ 7. [Maintenance](#maintenance)
+ 8. [Third Party Integrations](#third-party-integrations)
+ 9. [Domain and SSL Management](#domain-and-ssl-management)
+ 
+
 ## Introduction
 I created this project with the goals of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup and is not intented for developers who has no knowledge of [Bash programming](https://en.wikibooks.org/wiki/Bash_Shell_Scripting) and [AWS](https://aws.amazon.com/).
 
@@ -106,7 +123,9 @@ gdate is an GNU verion of `date` for macOS
 
 https://dev.mysql.com/downloads/shell/
 
-## Create S3 buckets
+## AWS Setup
+
+### Create S3 buckets
 
 Run `aws s3api create-bucket --bucket your-bucket --profile your-profile --region us-east-1`
 
@@ -158,7 +177,7 @@ More detailed instructions can be found: https://deliciousbrains.com/wp-offload-
 
 ## Instructions and Script Usages
 
-### Application Configuration
+### Application Configurations
 
 `cp app.sample.json app.json`
 
@@ -167,7 +186,9 @@ https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
 
 `app.json` is ignored by `.gitignore`
 
-### Create New RDS Instance and Databases
+### Database Setup
+
+#### Create New RDS Instance and Databases
 
 `./rds.sh`
 
@@ -179,7 +200,7 @@ Create a new database in RDS. It will create 6 databases. Let's say your applica
 * awesomewp_live
 * awesomewp_live_backup*
 
-*The backup database will be created after the enviornment is deployed. An `hourly` CRON will be generated to backup the database.
+* *The backup database will be created after the enviornment is deployed. An `hourly` CRON will be generated to backup the database.*
 
 This script can only be run from the `dev` branch where is your logical starting point for a new project. It will configure WordPress (`./post-checkout`), load a clean WordPress database (`./load-db.sh db/wordpress.sql`), configure and activate all the base plugins (`./reset-wordpress 1`), install paid plugins (`./install-pro-plugins.sh`) and push up configuration files to S3 for storeage (`./sync-creds-up.sh`).
 
@@ -187,7 +208,7 @@ This process usually takes 5 to 10 minutes, so be patient. Once database is comp
 
 A `db.json` will be created in project root directory. This file is ignored by `.gitignore`.
 
-### Create Databases on Existing RDS Instance
+#### Create Databases on Existing RDS Instance
 
 Similar to above, but without creating a new RDS instance. It creates databases on an existing RDS instance.
 
@@ -195,96 +216,123 @@ Similar to above, but without creating a new RDS instance. It creates databases 
 
 ### Docker Operations
 
-`./docker.sh build`
+**`./docker.sh build`**
+
 Build/rebuild all docker containers.
 
-`./docker.sh remove`
+**`./docker.sh remove`**
+
 Remove al docker containers.
 
-`./docker.sh ssh`
+**`./docker.sh ssh`**
+
 SSH into WordPress Docker container
 
-`./docker.sh ssh-phpmyadmin`
+**`./docker.sh ssh-phpmyadmin`**
+
 SSH into phpMyAdmin Docker container
 
-`./docker.sh ssh-mysql`
+**`./docker.sh ssh-mysql`**
+
 SSH into MySQL console
 
 ### Deployment Operations
 
-`./aws.sh deploy`
+**`./aws.sh deploy`**
+
 Deploy current branch to ElasticBeanstalk environment.
 
 If application doesn't exists, it creates the application. If environment doesn't exist, it creates the environment. If environment exists, it updates the environment.
 
-`./aws.sh terminate`
+**`./aws.sh terminate`**
+
 Terminate the ElasticBeanstalk environment of current branch.
 
-`./aws.sh terminate app`
+**`./aws.sh terminate app`**
+
 Terminate the application and all of its environments (all branches).
 
-`./delete-s3.sh [s3-bucket] [how-many-days-old]`
+**`./delete-s3.sh [s3-bucket] [how-many-days-old]`**
+
 *Example:* `./delete-s3.sh "s3://mys3bucket/apps/my-app/master" "7 days"`
 
 ### MISC Scripts
 
-`./mysql-local.sh`
+**`./mysql-local.sh`**
+
 Connect to MySQL running in the Docker container.
 
-`./mysql-remote.sh`
+**`./mysql-remote.sh`**
+
 Connect to RDS MySQL console.
 
-`./ebs-ssh`
+**`./ebs-ssh`**
+
 SSH into current branch's EBS server console.
 
-`dump-db.sh [branch]`
+**`dump-db.sh [branch]`**
+
 Dump database into a SQL file under project root directory. If `branch` parameter is not specified, current branch's database will be dumped.
 
-`export.sh [export-path]`
+**`export.sh [export-path]`**
+
 Export all WordPress content into a ZIP file. Database export is not included.
 
-`open.sh`
+**`open.sh`**
+
 Open WordPress site in the default browser.
 
-`open-phpmyadmin.sh`
+**`open-phpmyadmin.sh`**
+
 Open phpMyAdmin in the default browser.
 
 If `connectLocalMysqlForDev` is `true`, you can login using the configured username and password.
 If `connectLocalMysqlForDev` is `false`, you can login using database credentials found in `db.json`
 
-`./list-stacks.sh`
+**`./list-stacks.sh`**
+
 This returns a list of most current stacks available in AWS.
 
-`./list-mysql.sh`
+**`./list-mysql.sh`**
+
 This returns a list of most curent MySQL versions available in AWS.
 
-`push-db.sh [origin-branch] [destination-branch]`
+**`push-db.sh [origin-branch] [destination-branch]`**
+
 Push datbase from `origin-branch` to `destination-branch`
 
-`push-db-from-local-to-dev.sh`
+**`push-db-from-local-to-dev.sh`**
+
 Shortcut for `push-db.sh local dev`
 
-`push-db-from-dev-to-local.sh`
+**`push-db-from-dev-to-local.sh`**
+
 Shortcut for `push-db.sh dev local`
 
-`push-db-from-dev-to-qa.sh`
+**`push-db-from-dev-to-qa.sh`**
+
 Shortcut for `push-db.sh dev qa`
 
-`push-db-from-dev-to-live.sh`
+**`push-db-from-dev-to-live.sh`**
+
 Shortcut for `push-db.sh dev live`
 
-`push-db-from-qa-to-live.sh`
+**`push-db-from-qa-to-live.sh`**
+
 Shortcut for `push-db.sh qa live`
 
-`sync-images.sh`
+**`sync-images.sh`**
 
-`sync-images-from-dev-to-live.sh`
+**`sync-images-from-dev-to-live.sh`**
 
-## Third Party Integrations
+**`install-pro-plugins`**
 
-### recaptcha
-https://www.google.com/recaptcha
- * Add your domain and `localhost`
+Download paid plugins from S3 and install them.
+
+If `pluginsDownloadFromS3` in `app.json` has been changed, you need to run it manually to reinstall.
+
+## Environment Migration
+Push db first then image
  
 ## Maintenance
 
@@ -304,14 +352,30 @@ The clean database will not have any plugins activated. The admin login for this
 
 The parameter value `1` will activate all the base plugins.
 
+### EBS Instance Upgrade
+
+Whenever you update one the following ElasticBeanstalk configurations, you will need to terminate the environment and re-deploy.
+* `ec2SecurityGroups`
+* `elbSecurityGroups`
+* `iamInstanceProfile`
+* `ec2KeyName`
+* `stack`
+* `instanceType`
+* `tags`
+* `sslCertificateId`
+
 ### Local Database
 If `connectLocalMysqlForDev` is `true` and you're in `dev` branch,  you will be connected to MySQL running in the Docker container. 
 
 Raw data is saved under `./mysql`. Docker operations (build and remove) will not affect the data.
 
-Domain Management
-====================
+## Third Party Integrations
 
+### recaptcha
+https://www.google.com/recaptcha
+ * Add your domain and `localhost`
+
+## Domain/SSL Management
 Route 53 -> Create Hosted Zone(public hosted zone)
 By default, a hosted zone gets 4 AWS NS(Nameserver) records
 
@@ -385,28 +449,6 @@ AWS Profile
 IAM -> Users -> Security credentials -> Create access key
 (~/.aws/credentials)
 
-aws configure list
-set AWS_PROFILE=default
-
-* When switching instanceType, please terminate the EBS instance and re-deploy
-  * After deployment:
-    admin/whatever set in the app.json
-
-
-
-
-
-
-
-
-Notes about Mysql data mount for local dev
-In case connectLocalMysqlDev changed run post-checkout.sh to refresh
-
-Push db first then image
-
-Mysql admin connection difference between local dev and others
-
-install-pro-plugins need to run manually
 
 ## Tested Platforms
 
