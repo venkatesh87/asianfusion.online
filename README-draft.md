@@ -130,6 +130,7 @@ https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
 `cp app.sample.json app.json`
 
 See app.json configuration details here
+https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
 
 ## Usage
 
@@ -156,8 +157,9 @@ This return a list of most current stacks available in AWS.
 
 
 
-recaptcha
- * Add your domain and localhost
+### recaptcha
+https://www.google.com/recaptcha
+ * Add your domain and `localhost`
 
 SSH access
 =========
