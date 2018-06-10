@@ -369,10 +369,12 @@ Whenever you update one the following ElasticBeanstalk configurations, you will 
 * `tags`
 * `sslCertificateId`
 
+Do `./aws.sh terminate`, wait for it to complete, then `./aws.sh deploy`
+
 ### Local Database
 If `connectLocalMysqlForDev` is `true` and you're in `dev` branch,  you will be connected to MySQL running in the Docker container. 
 
-Raw data is saved under `./mysql`. Docker operations (build and remove) will not affect the data.
+Raw data is saved under `./mysql`. Docker operations (`./docker.sh build` and `./docker.sh remove`) will not affect the data.
 
 ## Third Party Integrations
 
