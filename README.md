@@ -15,36 +15,41 @@
  7. [Maintenance](#maintenance)
  8. [Third Party Integrations](#third-party-integrations)
  9. [Domain and SSL Management](#domain-and-ssl-management)
+ 10. [Forking](#forking)
+ 11. [Tested Platforms](#tested-platforms)
+ 12. [Licensing](#licensing)
  
 
 ## Introduction
-I created this project with the goals of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup and is not intented for developers who has no knowledge of [Bash programming](https://en.wikibooks.org/wiki/Bash_Shell_Scripting) and [AWS](https://aws.amazon.com/).
+I created this project with the goal of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup and is not intented for developers who has no knowledge of [Bash programming](https://en.wikibooks.org/wiki/Bash_Shell_Scripting) and [AWS](https://aws.amazon.com/), and obviously you need to know [WordPress](https://wordpress.org/).
 
 This repository contains:
 * bash scripts to automate AWS deployment and management
 * WordPress base installation and plugins
 
 This repository has 3 branches:
-* **dev** - used for development
-* **qa** - used for review
-* **master** (refer to as live) - used for production
+* dev - used for development
+* qa - used for review
+* master (refer to as live) - used for production
 
-Once all branches are deployed, you will have 3 enviornments running in AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, push databases and images to production are simplifed and automated.
+Once all branches are deployed, you will have 3 enviornments running in AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided in [Domain and SSL Management](#domain-and-ssl-management) so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, migrating databases and images to production are simplifed and automated.
 
-There are many more features you can get from this project:
+There are many features you can benefit from using this project:
+- One command deployment to AWS, no CI tool needed
+- Simple application and datagbase configurations
 - Host WordPress upload files in AWS S3
 - Secure WordPress backend login, e.g. `/hidden-login` instead of `/wp-admin`
-- Clean dashboard
-- [Astra theme](https://wpastra.com/)
-- [Elementor](https://elementor.com/)
-- Base plugins:
+- Basic authentication and SSL for all environments
+- Clean WordPress dashboard
+- Clean [Astra theme](https://wpastra.com/)
+- [Elementor](https://elementor.com/) site builder
+- A few base plugins:
   - [Advanced Custom Fields](https://wordpress.org/plugins/advanced-custom-fields/)
   - [Akismet Anti-spam](https://wordpress.org/plugins/akismet/)
   - [Contact Form 7](https://wordpress.org/plugins/contact-form-7/)
   - [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
   - [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/)
   - [WP Offload S3 Lite](https://wordpress.org/plugins/amazon-s3-and-cloudfront/)
-  - and many more...
 
 ## Installation
 
@@ -193,14 +198,14 @@ https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
 `./rds.sh`
 
 Create a new database in RDS. It will create 6 databases. Let's say your application name is `awesomewp`, following database will be created:
-* awesomewp_dev
-* awesomewp_dev_backup*
-* awesomewp_qa
-* awesomewp_qa_backup*
-* awesomewp_live
-* awesomewp_live_backup*
+- awesomewp_dev
+- awesomewp_dev_backup*
+- awesomewp_qa
+- awesomewp_qa_backup*
+- awesomewp_live
+- awesomewp_live_backup*
 
-* *The backup database will be created after the enviornment is deployed. An `hourly` CRON will be generated to backup the database.*
+*The backup database will be created after the enviornment is deployed. An `hourly` CRON will be generated to backup the database.*
 
 This script can only be run from the `dev` branch where is your logical starting point for a new project. It will configure WordPress (`./post-checkout`), load a clean WordPress database (`./load-db.sh db/wordpress.sql`), configure and activate all the base plugins (`./reset-wordpress 1`), install paid plugins (`./install-pro-plugins.sh`) and push up configuration files to S3 for storeage (`./sync-creds-up.sh`).
 
@@ -250,7 +255,7 @@ Terminate the ElasticBeanstalk environment of current branch.
 
 **`./aws.sh terminate app`**
 
-Terminate the application and all of its environments (all branches).
+Terminate the application and all of its ElasticBeanstalk environments (all branches).
 
 **`./delete-s3.sh [s3-bucket] [how-many-days-old]`**
 
@@ -364,10 +369,12 @@ Whenever you update one the following ElasticBeanstalk configurations, you will 
 * `tags`
 * `sslCertificateId`
 
+Do `./aws.sh terminate`, wait for it to complete, then `./aws.sh deploy`
+
 ### Local Database
 If `connectLocalMysqlForDev` is `true` and you're in `dev` branch,  you will be connected to MySQL running in the Docker container. 
 
-Raw data is saved under `./mysql`. Docker operations (build and remove) will not affect the data.
+Raw data is saved under `./mysql`. Docker operations (`./docker.sh build` and `./docker.sh remove`) will not affect the data.
 
 ## Third Party Integrations
 
@@ -449,11 +456,13 @@ AWS Profile
 IAM -> Users -> Security credentials -> Create access key
 (~/.aws/credentials)
 
+## Forking
+
 
 ## Tested Platforms
 
 * Ubuntu 16 LTS
 * macOS High Serria
 
-## License
+## Licensing
 MIT - See included LICENSE.md
