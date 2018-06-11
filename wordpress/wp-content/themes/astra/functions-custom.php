@@ -85,6 +85,16 @@ function custom_dashboard_widget() {
   echo "<li><strong>Site URL:</strong> " . WP_HOME . "</li>";
   echo "<li><strong>Database Host:</strong> " . DB_HOST . "</li>";
   echo "<li><strong>Database Name:</strong> " . DB_NAME . "</li>";
+  echo "<li><strong>PHP Settings:</strong></li>";
+  echo "<ul>";
+  echo "<li><strong>memory_limit:</strong> " . ini_get('memory_limit') . "</li>";
+  echo "<li><strong>max_execution_time:</strong> " . ini_get('max_execution_time') . "</li>";
+  echo "<li><strong>upload_max_filesize:</strong> " . ini_get('upload_max_filesize') . "</li>";
+  echo "<li><strong>post_max_size:</strong> " . ini_get('post_max_size') . "</li>";
+  echo "<li><strong>zlib.output_compression:</strong> " . (ini_get('zlib.output_compression') ? 'On' : 'Off') . "</li>";
+  echo "<li><strong>allow_url_fopen:</strong> " . (ini_get('allow_url_fopen') ? 'On' : 'Off') . "</li>";
+  echo "<li><strong>display_errors:</strong> " . (ini_get('display_errors') ? 'On' : 'Off') . "</li>";
+  echo "</ul>";
   echo "</ul>";
 }
 
