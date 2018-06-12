@@ -29,21 +29,28 @@ readonly EXPORT_DEFINER=terminal
 
 readonly BISTROSOL_DB_NAME=bistrosolutions
 readonly BISTROSOL_DB_DATABASE=${BISTROSOL_DB_NAME}_${APP_BRANCH}
+readonly DB_JSON_FILE=${BISTROSOL_DB_NAME}-${APP_BRANCH}.json
 
 # SSL
 readonly BISTROSOL_DB_USER=${BISTROSOL_DB_NAME}_${APP_BRANCH}_replication
-readonly BISTROSOL_DB_PASSWORD=$(get_password)
+BISTROSOL_DB_PASSWORD=$(get_password)
+# Reusing password
+if [ -e $DB_JSON_FILE ]; then
+  BISTROSOL_DB_PASSWORD=$(jq -r ".${BISTROSOL_DB_USER}.password" $DB_JSON_FILE)
+fi
 
 # Non-SSL
 readonly BISTROSOL_DB_USER2=${BISTROSOL_DB_NAME}_${APP_BRANCH}_web
-readonly BISTROSOL_DB_PASSWORD2=$(get_password)
+BISTROSOL_DB_PASSWORD2=$(get_password)
+# Reusing password
+if [ -e $DB_JSON_FILE ]; then
+  BISTROSOL_DB_PASSWORD2=$(jq -r ".${BISTROSOL_DB_USER2}.password" $DB_JSON_FILE)
+fi
 
 readonly ROOT_DB_HOST=$(jq -r ".root.endpoint" ./db.json)
 readonly ROOT_DB_USER=$(jq -r ".root.user" ./db.json)
 readonly ROOT_DB_PASSWORD=$(jq -r ".root.password" ./db.json)
 readonly ROOT_DB_PORT=$(jq -r ".root.port" ./db.json)
-
-readonly DB_JSON_FILE=${BISTROSOL_DB_NAME}-${APP_BRANCH}.json
 
 # Drop database
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
