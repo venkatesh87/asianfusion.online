@@ -6,8 +6,8 @@
 #
 # This script does following:
 # 1. Create database `bistrosolutions_{branch}`
-# 2. Create user `bistrosolutions_replication_{branch}`
-# 3. Create user `bistrosolutions_web_{branch}`
+# 2. Create user `bistrosolutions_{branch}_replication`
+# 3. Create user `bistrosolutions_{branch}_web`
 # 4. Download latest database SQL from S3
 # 5. Search replace on SQL using `sed` (replace database name and remove DEFINER)
 # 6. Load database
@@ -31,11 +31,11 @@ readonly BISTROSOL_DB_NAME=bistrosolutions
 readonly BISTROSOL_DB_DATABASE=${BISTROSOL_DB_NAME}_${APP_BRANCH}
 
 # SSL
-readonly BISTROSOL_DB_USER=${BISTROSOL_DB_NAME}_replication_${APP_BRANCH}
+readonly BISTROSOL_DB_USER=${BISTROSOL_DB_NAME}_${APP_BRANCH}_replication
 readonly BISTROSOL_DB_PASSWORD=$(get_password)
 
 # Non-SSL
-readonly BISTROSOL_DB_USER2=${BISTROSOL_DB_NAME}_web_${APP_BRANCH}
+readonly BISTROSOL_DB_USER2=${BISTROSOL_DB_NAME}_${APP_BRANCH}_web
 readonly BISTROSOL_DB_PASSWORD2=$(get_password)
 
 readonly ROOT_DB_HOST=$(jq -r ".root.endpoint" ./db.json)
