@@ -65,6 +65,11 @@ no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
   -e "ALTER USER '$BISTROSOL_DB_USER'@'%' IDENTIFIED BY '$BISTROSOL_DB_PASSWORD' REQUIRE SSL;"
 
+# Grant privileges to user 1
+no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
+  -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
+  -e "GRANT ALL PRIVILEGES ON $BISTROSOL_DB_DATABASE.* TO '$BISTROSOL_DB_USER'@'%';"
+
 # Create user 2
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
@@ -75,10 +80,10 @@ no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
   -e "ALTER USER '$BISTROSOL_DB_USER2'@'%' IDENTIFIED BY '$BISTROSOL_DB_PASSWORD2';"
 
-# Grant privileges
+# Grant privileges to user 2
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
-  -e "GRANT ALL PRIVILEGES ON $BISTROSOL_DB_DATABASE.* TO '$BISTROSOL_DB_USER'@'%';"
+  -e "GRANT ALL PRIVILEGES ON $BISTROSOL_DB_DATABASE.* TO '$BISTROSOL_DB_USER2'@'%';"
 
 # Flush privileges
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
