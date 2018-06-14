@@ -153,7 +153,7 @@ Bucket for WordPress paid plugins. See `pluginS3Bucket` config in `app.json`
 
 #### Create S3 User for Offload S3 Plugin
 
-Create a user with S3 programtic access only, get Access key ID and Secret access key for Wordpress S3 upload plugin.
+Create an user with S3 programtic access only, get Access key ID and Secret access key for Wordpress S3 upload plugin.
 
 IAM -> Users -> Add User -> Programatic access -> Attach existing policies directly -> Review -> Get Access Key ID/Screct access key
 
