@@ -414,7 +414,7 @@ https://www.google.com/recaptcha
 1. Go to **Route 53** -> **Create Hosted Zone** (public hosted zone). By default, a hosted zone gets 4 AWS NS(Nameserver) records.
    Examples: ns-459.awsdns-57.com, ns-1696.awsdns-20.co.uk, ns-598.awsdns-10.net, ns-1194.awsdns-21.org
 2. Go to your domain name provider account, remove all existing NS records, add 4 AWS NS records
-3. [Check DNS propagation](#https://dnschecker.org/), it should take from 15 minutes to 24 hours to fully propagate
+3. [Check DNS propagation](https://dnschecker.org/), it should take from 15 minutes to 24 hours to fully propagate
 4. Deply at least one branch to AWS
 5. Click on **Create Record Set**
    1. Enter the branch name in the **Name** field. For `master` branch, the live site, leave it blank
