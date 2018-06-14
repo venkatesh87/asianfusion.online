@@ -185,9 +185,11 @@ More detailed instructions can be found: https://deliciousbrains.com/wp-offload-
 
 #### Create EC2 Instance Profile
 
-If you need a new EC2 instance, run `create-ec2-instance-profile.sh`
+If you need a new EC2 instance profile, run `create-ec2-instance-profile.sh [profile-name]`
 
 See `iamInstanceProfile` config in `app.json`
+
+If you need to remove an EC2 instance profile, run `remove-ec2-instance-profile.sh [profile-name]`
 
 ## Instructions and Script Usages
 
