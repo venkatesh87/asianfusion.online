@@ -32,10 +32,10 @@ This repository has 3 branches:
 * qa - used for review
 * master (refer to as live) - used for production
 
-Once all branches are deployed, you will have 3 enviornments running in AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided in [Domain and SSL Management](#domain-and-ssl-management) so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, migrating databases and images to production are simplifed and automated.
+Once all branches are deployed, you will have 3 enviornments running in AWS Elastic Beanstalk. That's one environment per branch. Instructions are provided in [Domain and SSL Management](#domain-and-ssl-management) so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, migrating databases and images to production are simplifed and automated.
 
 There are many features you can benefit from using this project:
-- Develop locally in Docker environment, push to AWS ElasticBeanstalk dev/qa/live straight LAMP environments
+- Develop locally in Docker environment, push to AWS Elastic Beanstalk dev/qa/live straight LAMP environments
 - When there is no internet connection, switch to local MySQL
 - phpMyAdmin for quick database edits
 - One command deployment to AWS, no CI tool needed
@@ -249,17 +249,17 @@ SSH into MySQL console
 
 **`./aws.sh deploy`**
 
-Deploy current branch to ElasticBeanstalk environment.
+Deploy current branch to Elastic Beanstalk environment.
 
 If application doesn't exists, it creates the application. If environment doesn't exist, it creates the environment. If environment exists, it updates the environment.
 
 **`./aws.sh terminate`**
 
-Terminate the ElasticBeanstalk environment of current branch.
+Terminate the Elastic Beanstalk environment of current branch.
 
 **`./aws.sh terminate app`**
 
-Terminate the application and all of its ElasticBeanstalk environments (all branches).
+Terminate the application and all of its Elastic Beanstalk environments (all branches).
 
 **`./delete-s3.sh [s3-bucket] [how-many-days-old]`**
 
@@ -330,9 +330,21 @@ Shortcut for `push-db.sh dev live`
 
 Shortcut for `push-db.sh qa live`
 
-**`sync-images.sh`**
+**`sync-images.sh [origin-branch] [destination-branch]`**
+
+Push datbase from `origin-branch` to `destination-branch`
+
+**`sync-images-from-dev-to-qa.sh`**
+
+Shortcut for `sync-image.sh dev qa`
 
 **`sync-images-from-dev-to-live.sh`**
+
+Shortcut for `sync-image.sh dev live`
+
+**`sync-images-from-qa-to-live.sh`**
+
+Shortcut for `sync-image.sh qa live`
 
 **`install-pro-plugins`**
 
@@ -363,7 +375,7 @@ The parameter value `1` will activate all the base plugins.
 
 ### EBS Instance Upgrade
 
-Whenever you update one the following ElasticBeanstalk configurations, you will need to terminate the environment and re-deploy.
+Whenever you update one the following Elastic Beanstalk configurations, you will need to terminate the environment and re-deploy.
 * `ec2SecurityGroups`
 * `elbSecurityGroups`
 * `iamInstanceProfile`
@@ -387,81 +399,61 @@ https://www.google.com/recaptcha
  * Add your domain and `localhost`
 
 ## Domain/SSL Management
-Route 53 -> Create Hosted Zone(public hosted zone)
-By default, a hosted zone gets 4 AWS NS(Nameserver) records
 
-DNS
-----
-Go to your domain name provider, remove all existing NS records
-Add the 4 AWS NS records
+### Domain Name Registered in AWS
 
-Create Domains
---------------
-dev, qa and master all deployed
+#### Coming...
 
-Create Record Set -> A - IPv4 address -> Alias YES -> Alias Target (Elastic Beanstalk Environments)
+### Domain Name Registered Elsewhere
 
+1. Go to *Route 53* -> *Create Hosted Zone* (public hosted zone). By default, a hosted zone gets 4 AWS NS(Nameserver) records.
+   Examples: ns-459.awsdns-57.com, ns-1696.awsdns-20.co.uk, ns-598.awsdns-10.net, ns-1194.awsdns-21.org
+2. Go to your domain name provider account, remove all existing NS records, add 4 AWS NS records
+3. [Check DNS propagation](#https://dnschecker.org/), it should take from 15 minutes to 24 hours to fully propagate
+4. Deply at least one branch to AWS
+5. Click on **Create Record Set**
+   1. Enter the branch name in the **Name** field. For `master` branch, the live site, leave it blank
+   2. **Type**: A - IPv4 address
+   3. **Alias**: Yes
+   4. **Alias Target**: select a CNME under Elastic Beanstalk environments, eg: mywordpress-dev.us-east-1.elasticbeanstalk.com
+   5. **Create**
+6. The domain should bring up the site in browser
 
-Certificate Manager
------------------
-Request a certificate -> Request a public certificate
-  * Add domain names: www.domain.com, domain.com, *.domain.com
-   * Select DNS validation
-   * Confirm and request
- 
-    You will see "Validation not complete"
-    Each domain has "Pending validation status"
-   Under each domain, do Create record in Route 53
-(This will create additional CNAME records in route53 for validation)
-    Wait for few mins you will see "Issued" status for the domain
+### SSL Certificate
+1. Go to **Certificate Manager** -> **Request a certificate** -> **Request a public certificate**
+2. Add domain names: `domain.com` and `*.domain.com`. `*.domain.name` will cover all subdomains including `www`
+3. Select *DNS validation*, **Review**, then *Confirm and request*
+   1. Each domain shows "Pending validation status"
+   2. For each domain, Click *Create record in Route 53*. This will create additional CNAME records in route53 for validation
+   3. Wait for few mins you will see status changed to **Issued**
+4. Look at doamin *Details*, copy the *ARN* string
+5. Paste the *ARN* string in `app.json` as the `sslCertificateId` value
+6. Re-deploy the branch. The site will be SSL secured instance is updated
 
-  Go to Details -> ARN -> Copy the string. Exampl: arn:aws:acm:us-eash-1:xxxxxxxxxxxx:certificate/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+### Simple Email Service (SES)
+If you would like AWS as your SMTP server
+1. Verify your email, go to **SES** -> **Email Addresses** -> **Verify a New Email Address**
+2. Domains -> Verify a New Domain
+   1. Enter a **Domain** and check **Generate DKIM settings**
+   2. Click **Use Route53** -> **Create Record Sets**. This will create additional DNS records in route53 for verification
+   3. The **Verification Status** will go from "pending verification" to "verified" status
+3. Go to **SMTP Settings** -> **Create My SMTP Credentials**. It will create an AWS user with SMTP permissions. Save the SMTP username and password
+4. Copy and paste the SMTP username and password into `app.json`, the SMTP configs will look like
+ ``
+ "smtpHost": "email-smtp.us-east-1.amazonaws.com",
+ "smtpPort": 587,
+ "smtpUsername": "xxxxxxxxxx",
+ "smtpPassword": "xxxxxxxxxx"
+``
+5. Re-deploy the branch
 
-
-SES
-  * Email Addresses -> Verify a New Email Address
-  * Domains -> Verify a New Domain (Generate DKIM settings)
-    * This will create additional CNAME records in route53 for domain verification
-   * This domain will goes into "pending verification" status 
-  * SMTP Settings -> Create My SMTP Credentials -> It basically creates an AWS user with SMTP permissions -> Copy SMTP username and password
-
-
-
-AWS
-======
-
-Network & Security -> Security Groups
-  * EBS create security groups automatically by default port 80, 442
-  * If key pair is specified, port 22 will be open in the security group
-
-Network & Security -> Key Pairs
-  * Create new Key Pair
-  * Save it and chmod it to 600
-
-Route53
-  * Create a new Zone
-  * Update NS records
-  * Point your domain DNS to Amazon DNS(update NS records)
-
-Certificate Manager
-  * Add domain names: www.domain.com, domain.com, *.domain.com
-   * Select DNS validation. Under each domain, do Create record in Route 53.
-    This will create additional CNAME records in route53 for validation
-
-SES
-  * Email Addresses -> Verify a New Email Address
-  * Domains -> Verify a New Domain (Generate DKIM settings)
-    * This will create additional CNAME records in route53 for domain verification
-  * SMTP Settings -> Create My SMTP Credentials
-
-
-AWS Profile
-===========
-IAM -> Users -> Security credentials -> Create access key
-(~/.aws/credentials)
+### Other Notes
+- Eleastic Beanstalk will create a default security group with *Inbound* rules of 80 and 22
+  - Load balancer will forward traffics from both port 80 and 443 to port 80 on the instance, the instance itself doesn't need port 443 to be open.
+  - Port 22 allows SSH connection from anywhere in the world but key pair has to be specified
 
 ## Forking
-
+### Coming...
 
 ## Tested Platforms
 
