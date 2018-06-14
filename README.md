@@ -352,8 +352,14 @@ Download paid plugins from S3 and install them.
 If `pluginsDownloadFromS3` in `app.json` has been changed, you need to run it manually to reinstall.
 
 ## Environment Migration
-Push db first then image
- 
+You should always push up database changes then the images changes if there is any. The `sync-image.sh` script will update the S3 image URLs in database in respect to their new environment. So you will do:
+
+```
+./push-db-from-dev-to-qa.sh
+# This is optional if you don't image changes
+./sync-images-from-dev-to-qa.sh
+```
+
 ## Maintenance
 
 ### Database Re-initialization
@@ -438,12 +444,12 @@ If you would like AWS as your SMTP server
    3. The **Verification Status** will go from "pending verification" to "verified" status
 3. Go to **SMTP Settings** -> **Create My SMTP Credentials**. It will create an AWS user with SMTP permissions. Save the SMTP username and password
 4. Copy and paste the SMTP username and password into `app.json`, the SMTP configs will look like
- ``
+ ```
  "smtpHost": "email-smtp.us-east-1.amazonaws.com",
  "smtpPort": 587,
  "smtpUsername": "xxxxxxxxxx",
  "smtpPassword": "xxxxxxxxxx"
-``
+```
 5. Re-deploy the branch
 
 ### Other Notes
