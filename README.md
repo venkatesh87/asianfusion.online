@@ -403,7 +403,7 @@ Raw data is saved under `./mysql`. Docker operations (`./docker.sh build` and `.
 https://www.google.com/recaptcha
  * Add your domain and `localhost`
 
-## Domain/SSL Management
+## Domain and SSL Management
 
 ### Domain Name Registered in AWS
 
@@ -427,10 +427,10 @@ https://www.google.com/recaptcha
 ### SSL Certificate
 1. Go to **Certificate Manager** -> **Request a certificate** -> **Request a public certificate**
 2. Add domain names: `domain.com` and `*.domain.com`. `*.domain.name` will cover all subdomains including `www`
-3. Select **DNS validation**, **Review**, then *Confirm and request*
+3. Select **DNS validation**, **Review**, then **Confirm and request**
    1. Each domain shows "Pending validation status"
    2. For each domain, Click **Create record in Route 53**. This will create additional CNAME records in route53 for validation
-   3. Wait for few mins you will see status changed to **Issued**
+   3. Wait for few minutes you will see status changed to **Issued**
 4. Look at doamin **Details**, copy the **ARN** string
 5. Paste the **ARN** string in `app.json` as the `sslCertificateId` value
 6. Re-deploy the branch. The site will be SSL secured instance is updated
