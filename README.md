@@ -35,7 +35,11 @@ This repository has 3 branches:
 Once all branches are deployed, you will have 3 enviornments running in AWS ElasticBeanstalk. That's one environment per branch. Instructions are provided in [Domain and SSL Management](#domain-and-ssl-management) so that you can map the domain names to these EBS environments. Here is a sneak peek! Let's say you own the domain name `mydomain.com`. You will ended up with `dev.mydomain.com`, `qa.mydomain.com` and `mydomain.com`. Cool? Using the scripts provided, a lot of the tedious tasks, such as creating databases, migrating databases and images to production are simplifed and automated.
 
 There are many features you can benefit from using this project:
+- Develop locally in Docker environment, push to AWS ElasticBeanstalk dev/qa/live straight LAMP environments
+- When there is no internet connection, switch to local MySQL
+- phpMyAdmin for quick database edits
 - One command deployment to AWS, no CI tool needed
+- Scripts for common tasks including loading, dumping and pushing databases, SSHing to any environment 
 - Simple application and datagbase configurations
 - Host WordPress upload files in AWS S3
 - Secure WordPress backend login, e.g. `/hidden-login` instead of `/wp-admin`
