@@ -183,6 +183,12 @@ You first create an user without any permission. Go to that user, under Permissi
 
 More detailed instructions can be found: https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
 
+#### Create EC2 Instance Profile
+
+If you need a new EC2 instance, run `create-ec2-instance-profile.sh`
+
+See `iamInstanceProfile` config in `app.json`
+
 ## Instructions and Script Usages
 
 ### Application Configurations
