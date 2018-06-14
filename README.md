@@ -280,7 +280,7 @@ Connect to MySQL running in the Docker container.
 
 **`./mysql-remote.sh`**
 
-Connect to RDS MySQL console.
+Connect to RDS MySQL console of the current branch.
 
 **`./ebs-ssh`**
 
@@ -307,11 +307,11 @@ If `connectLocalMysqlForDev` is `false`, you can login using database credential
 
 **`./list-stacks.sh`**
 
-This returns a list of most current stacks available in AWS.
+This returns a list of most current stacks available in AWS. For upgrade purpose.
 
 **`./list-mysql.sh`**
 
-This returns a list of most curent MySQL versions available in AWS.
+This returns a list of most curent MySQL versions available in AWS. For upgrade purpose.
 
 **`push-db.sh [origin-branch] [destination-branch]`**
 
