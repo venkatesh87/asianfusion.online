@@ -265,4 +265,4 @@ if [ "$ACTIVATE_PREINSTALLED_PLUGINS" == 1 ]; then
 
 fi
 
-echo Resetting Wordpress plugins and configurations
+echo Resetting WordPress plugins and configurations
