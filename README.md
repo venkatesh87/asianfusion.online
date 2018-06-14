@@ -453,9 +453,10 @@ If you would like AWS as your SMTP server
 5. Re-deploy the branch
 
 ### Other Notes
-- Eleastic Beanstalk will create a default security group with *Inbound* rules of 80 and 22
+- Eleastic Beanstalk will create a default security group with **Inbound** rules of 80 and 22
   - Load balancer will forward traffics from both port 80 and 443 to port 80 on the instance, the instance itself doesn't need port 443 to be open.
   - Port 22 allows SSH connection from anywhere in the world but key pair has to be specified
+  - Additional security groups can be added with `ec2SecurityGroups` option in `app.json`
 
 ## Forking
 ### Coming...
