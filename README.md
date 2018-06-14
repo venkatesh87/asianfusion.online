@@ -411,7 +411,7 @@ https://www.google.com/recaptcha
 
 ### Domain Name Registered Elsewhere
 
-1. Go to *Route 53* -> *Create Hosted Zone* (public hosted zone). By default, a hosted zone gets 4 AWS NS(Nameserver) records.
+1. Go to **Route 53** -> **Create Hosted Zone** (public hosted zone). By default, a hosted zone gets 4 AWS NS(Nameserver) records.
    Examples: ns-459.awsdns-57.com, ns-1696.awsdns-20.co.uk, ns-598.awsdns-10.net, ns-1194.awsdns-21.org
 2. Go to your domain name provider account, remove all existing NS records, add 4 AWS NS records
 3. [Check DNS propagation](#https://dnschecker.org/), it should take from 15 minutes to 24 hours to fully propagate
@@ -427,18 +427,18 @@ https://www.google.com/recaptcha
 ### SSL Certificate
 1. Go to **Certificate Manager** -> **Request a certificate** -> **Request a public certificate**
 2. Add domain names: `domain.com` and `*.domain.com`. `*.domain.name` will cover all subdomains including `www`
-3. Select *DNS validation*, **Review**, then *Confirm and request*
+3. Select **DNS validation**, **Review**, then *Confirm and request*
    1. Each domain shows "Pending validation status"
-   2. For each domain, Click *Create record in Route 53*. This will create additional CNAME records in route53 for validation
+   2. For each domain, Click **Create record in Route 53**. This will create additional CNAME records in route53 for validation
    3. Wait for few mins you will see status changed to **Issued**
-4. Look at doamin *Details*, copy the *ARN* string
-5. Paste the *ARN* string in `app.json` as the `sslCertificateId` value
+4. Look at doamin **Details**, copy the **ARN** string
+5. Paste the **ARN** string in `app.json` as the `sslCertificateId` value
 6. Re-deploy the branch. The site will be SSL secured instance is updated
 
 ### Simple Email Service (SES)
 If you would like AWS as your SMTP server
 1. Verify your email, go to **SES** -> **Email Addresses** -> **Verify a New Email Address**
-2. Domains -> Verify a New Domain
+2. Verify you domain, go to **Domains** -> **Verify a New Domain**
    1. Enter a **Domain** and check **Generate DKIM settings**
    2. Click **Use Route53** -> **Create Record Sets**. This will create additional DNS records in route53 for verification
    3. The **Verification Status** will go from "pending verification" to "verified" status
