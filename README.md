@@ -106,7 +106,7 @@ region = us-east-1
 output = json
 ```
 
-**Re-configure AWS profile**
+**Re-configure AWS profile:**
 
 `aws configure --profile your-profile`
 
