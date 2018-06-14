@@ -187,7 +187,7 @@ More detailed instructions can be found: https://deliciousbrains.com/wp-offload-
 
 ### Application Configurations
 
-`cp app.sample.json app.json`
+Run `cp app.sample.json app.json` to create a configuration file.
 
 See app.json configuration details here
 https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
@@ -198,9 +198,9 @@ https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md
 
 #### Create New RDS Instance and Databases
 
-`./rds.sh`
+Run `./rds.sh`
 
-Create a new database in RDS. It will create 6 databases. Let's say your application name is `awesomewp`, following database will be created:
+It will create a new database server with 6 databases. Let's say your application name is `awesomewp`, following database will be created:
 - awesomewp_dev
 - awesomewp_dev_backup*
 - awesomewp_qa
