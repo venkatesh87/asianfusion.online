@@ -21,7 +21,7 @@
  
 
 ## Introduction
-I created this project with the goal of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup and is not intented for developers who has no knowledge of [Bash programming](https://en.wikibooks.org/wiki/Bash_Shell_Scripting) and [AWS](https://aws.amazon.com/), and obviously you need to know [WordPress](https://wordpress.org/).
+I created this project with the goal of easing my life around WordPress builds, deployments and maintenance. This project does have sophisticated setup initially and is not intented for developers who has no knowledge of [Bash programming](https://en.wikibooks.org/wiki/Bash_Shell_Scripting) and [AWS](https://aws.amazon.com/), and obviously you need to know [WordPress](https://wordpress.org/).
 
 This repository contains:
 * bash scripts to automate AWS deployment and management
@@ -136,21 +136,21 @@ https://dev.mysql.com/downloads/shell/
 
 ### Create S3 buckets
 
-Run `aws s3api create-bucket --bucket your-bucket --profile your-profile --region us-east-1`
+Using command: `aws s3api create-bucket --bucket your-bucket --profile your-profile --region us-east-1`
 
 You can also create buckets using S3 console.
 
 #### Application Bucket
-Bucket for application files
+Bucket for application files. See `appS3Bucket` config in [`app.json`](#https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md)
 
 #### Application Credential Bucket
-Bucket for app.json and db.json
+Bucket for app.json and db.json. See `credsS3Bucket` config in [`app.json`](#https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md)
 
 #### WordPress Upload Bucket
-Bucket for WordPress uploads
+Bucket for WordPress uploads. See `wordpressUploadS3Bucket` config in [`app.json`](#https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md)
 
 #### WordPress Plugin Bucket
-Bucket for WordPress paid plugins
+Bucket for WordPress paid plugins. See `pluginS3Bucket` config in [`app.json`](#https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md)
 
 #### Create S3 User for Offload S3 Plugin
 
