@@ -352,7 +352,7 @@ Download paid plugins from S3 and install them.
 If `pluginsDownloadFromS3` in `app.json` has been changed, you need to run it manually to reinstall.
 
 ## Environment Migration
-You should always push up database changes then the images changes if there is any. The `sync-image.sh` script will update the S3 image URLs in database in respect to their new environment. So you will do:
+You should always push up database changes first then the images changes if there is any. The `sync-image.sh` script will update the S3 image URLs in database in respect to their new environment. So you will do:
 
 ```
 ./push-db-from-dev-to-qa.sh
