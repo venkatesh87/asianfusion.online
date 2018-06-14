@@ -141,16 +141,15 @@ Using command: `aws s3api create-bucket --bucket your-bucket --profile your-prof
 You can also create buckets using S3 console.
 
 #### Application Bucket
-Bucket for application files. See `appS3Bucket` config in [`app.json`](#https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md)
+Bucket for application files. See `appS3Bucket` config in `app.json`
 
 #### Application Credential Bucket
-Bucket for app.json and db.json. See `credsS3Bucket` config in [`app.json`](#https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md)
-
+Bucket for app.json and db.json. See `credsS3Bucket` config in `app.json`
 #### WordPress Upload Bucket
-Bucket for WordPress uploads. See `wordpressUploadS3Bucket` config in [`app.json`](#https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md)
+Bucket for WordPress uploads. See `wordpressUploadS3Bucket` config in `app.json`
 
 #### WordPress Plugin Bucket
-Bucket for WordPress paid plugins. See `pluginS3Bucket` config in [`app.json`](#https://github.com/alanzhaonys/mywordpress/blob/dev/APP-JSON.md)
+Bucket for WordPress paid plugins. See `pluginS3Bucket` config in `app.json`
 
 #### Create S3 User for Offload S3 Plugin
 
