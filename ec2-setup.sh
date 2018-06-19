@@ -2,7 +2,7 @@
 
 # Install packages
 sudo yum update -y
-sudo yum install vim jq httpd24 php71 php71-mbstring php71-mcrypt php71-memcache php71-gd php71-mysqlnd -y
+sudo yum install vim jq httpd24 php71 php71-mbstring php71-mcrypt php71-memcache php71-gd php71-mysqlnd mysql57-server -y
 
 # Change Apache server name
 sudo sed -i -e "s/#ServerName www.example.com:80/ServerName localhost/g" /etc/httpd/conf/httpd.conf
@@ -12,9 +12,6 @@ sudo sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.
 
 # Change system timezone
 sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
-
-# Enable networking
-#echo "NETWORKING=yes" | sudo tee --append /etc/sysconfig/network > /dev/null
 
 # Change PHP timezone
 sudo sed -i -e "s/;date.timezone =/date.timezone = America\/New_York/g" /etc/php-7.1.ini
@@ -34,3 +31,5 @@ PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/app.json) \
   && sudo sed -i -e "s/max_execution_time = .*/max_execution_time = ${PHP_MAX_EXECUTION_TIME}/g" /etc/php-7.1.ini \
   && sudo sed -i -e "s/upload_max_filesize = .*/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/g" /etc/php-7.1.ini \
   && sudo sed -i -e "s/post_max_size = .*/post_max_size = ${PHP_POST_MAX_SIZE}/g" /etc/php-7.1.ini
+
+sudo /etc/init.d/httpd restart
