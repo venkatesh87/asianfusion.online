@@ -1,0 +1,10 @@
+{
+  "imageId": "ami-a4dc46db",
+  "securityGroupName": "wordpress-ec2",
+  "securityGroupDescription": "WordPress EC2 Security Group",
+  "keyName": "default-ec2",
+  "instanceType": "t2.micro",
+  "instanceName": "WordPress Server 1",
+  "availabilityZone": "us-east-1a",
+  "volumeSize": "100"
+}
