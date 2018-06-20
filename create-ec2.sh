@@ -10,6 +10,7 @@ readonly SECURITY_GROUP_DESCRIPTION=$(jq -r ".securityGroupDescription" $EC2_CON
 readonly KEY_NAME=$(jq -r ".keyName" $EC2_CONFIG_FILE)
 readonly SSH_PORT=$(jq -r ".sshPort" $EC2_CONFIG_FILE)
 readonly SSH_ALLOWED_IPS=$(jq -r ".sshAllowedIps" $EC2_CONFIG_FILE)
+readonly MYSQL_ALLOWED_IPS=$(jq -r ".mysqlAllowedIps" $EC2_CONFIG_FILE)
 readonly WEB_ALLOWED_IPS=$(jq -r ".webAllowedIps" $EC2_CONFIG_FILE)
 readonly INSTANCE_TYPE=$(jq -r ".instanceType" $EC2_CONFIG_FILE)
 readonly INSTANCE_NAME=$(jq -r ".instanceName" $EC2_CONFIG_FILE)
@@ -18,7 +19,7 @@ readonly VOLUME_SIZE=$(jq -r ".volumeSize" $EC2_CONFIG_FILE)
 
 readonly INSTANCE_EXISTS=($(aws ec2 describe-instances \
   --profile $AWS_PROFILE \
-  --filters Name=tag:Name,Values="${INSTANCE_NAME}" \
+  --filters Name=tag:Name,Values="${INSTANCE_NAME}" Name=instance-state-name,Values=running \
   --output text \
   --query 'Reservations[*].Instances[*].InstanceId'))
 
@@ -68,6 +69,17 @@ for WEB_ALLOWED_IP in $WEB_ALLOWED_IPS
     --port 443 \
     --cidr $WEB_ALLOWED_IP
 done
+
+# Configure inbound rules for MySQL port
+for MYSQL_ALLOWED_IP in $MYSQL_ALLOWED_IPS
+  do
+  aws ec2 authorize-security-group-ingress \
+    --profile $AWS_PROFILE \
+    --group-name $SECURITY_GROUP_NAME \
+    --protocol tcp \
+    --port $MYSQL_PORT \
+    --cidr $MYSQL_ALLOWED_IP
+  done
 
 # Configure inbound rules for SSH port
 for SSH_ALLOWED_IP in $SSH_ALLOWED_IPS

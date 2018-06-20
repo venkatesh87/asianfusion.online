@@ -8,7 +8,7 @@ readonly SSH_PORT=$(jq -r ".sshPort" ec2.json)
 
 readonly PUBLIC_IP=($(aws ec2 describe-instances \
   --profile $AWS_PROFILE \
-  --filters "Name=tag:Name,Values=${INSTANCE_NAME}" | jq -r ".Reservations[].Instances[].PublicIpAddress"))
+  --filters "Name=tag:Name,Values=${INSTANCE_NAME}" Name=instance-state-name,Values=running | jq -r ".Reservations[].Instances[].PublicIpAddress"))
 
 echo "Connecting to $PUBLIC_IP using key $KEY_PATH"
 

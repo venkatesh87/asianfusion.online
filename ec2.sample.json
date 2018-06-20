@@ -6,6 +6,8 @@
   "keyPath": "default-ec2.pem",
   "sshPort": "22",
   "sshAllowedIps": "0.0.0.0/0",
+  "mysqlPort": "3306",
+  "mysqlAllowedIps": "0.0.0.0/0",
   "webAllowedIps": "0.0.0.0/0",
   "instanceType": "t2.micro",
   "instanceName": "WordPress Server 1",
