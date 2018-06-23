@@ -107,40 +107,7 @@ if [ "${1}" != "deploy" ] && [ "${1}" != "terminate" ]; then
   end
 fi
 
-# Get platform
-PLATFORM=$(uname)
-
-# Check platform
-if [ "$PLATFORM" != "Linux" ] && [ "$PLATFORM" != "Darwin" ]; then
-  echo Your platform \"$PLATFORM\" is not supported
-  end
-fi
-
-# Check awscli installation
-if ! hash aws 2>/dev/null; then
-  echo awscli is not installed
-  end
-fi
-
-# Check jq installation
-if ! hash jq 2>/dev/null; then
-  echo jq is not installed
-  end
-fi
-
-# Check gdate (macOS only)
-if [ "$PLATFORM" == "Darwin" ]; then
-  if ! hash gdate 2>/dev/null; then
-    echo gdate is not installed
-    end
-  fi
-fi
-
-# Check awscli configurations
-if [ ! -f ~/.aws/config ] || [ ! -f ~/.aws/credentials ]; then
-  echo awscli is not configured
-  end
-fi
+source ./install-check.sh
 
 ########################
 # Start configurations #
@@ -427,7 +394,7 @@ fi
 
 if [ "$UPDATED" -eq 1 ]; then
 
-  # Make sure wp-config.php is up to date
+  # Make sure wp-config.php is up to date, reset database credential
   sh ./post-checkout
 
   # Reset wordpress

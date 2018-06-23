@@ -4,6 +4,7 @@
   "securityGroupDescription": "WordPress EC2 Security Group",
   "keyName": "default-ec2",
   "keyPath": "default-ec2.pem",
+  "sshUser": "ec2-user",
   "sshPort": "22",
   "sshAllowedIps": "0.0.0.0/0",
   "mysqlPort": "3306",
@@ -12,5 +13,6 @@
   "instanceType": "t2.micro",
   "instanceName": "WordPress Server 1",
   "availabilityZone": "us-east-1a",
-  "volumeSize": "100"
+  "volumeSize": "100",
+  "serverName": "change-me"
 }
