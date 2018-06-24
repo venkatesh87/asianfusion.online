@@ -168,7 +168,7 @@ readonly RSYNC_TMP_INCLUDE_FILE=${TMP}/${ENV_NAME}-rsync-include.tmp
 git ls-files --others > $RSYNC_TMP_EXCLUDE_FILE
 
 # Get a list of files to force include (exceptions from the above exclude)
-rm $RSYNC_TMP_INCLUDE_FILE
+rm $RSYNC_TMP_INCLUDE_FILE > /dev/null 2>&1
 # Specific file
 echo 'wp-config.php' >> $RSYNC_TMP_INCLUDE_FILE
 
@@ -245,7 +245,7 @@ fi
 
 # Setup database backup script and CRON
 readonly CRON_DIR=/usr/local/bin
-readonly CRON_NAME=${ENV_NAME}-wordpress-database-backup-cron.sh
+readonly CRON_NAME=${ENV_NAME}-wordpress-database-backup-cron
 
 readonly CREATE_DB_BACKUP_CRON_CMD="echo -e '#!/bin/bash
 
@@ -260,15 +260,18 @@ readonly SQL_FILE=/tmp/${DB_DATABASE}.sql
 mysqldump -h\$DB_HOST -u\$DB_USER -p\$DB_PASSWORD -P\$DB_PORT \$DB_DATABASE > \$SQL_FILE
 mysql -h\$DB_HOST -u\$DB_USER -p\$DB_PASSWORD -P\$DB_PORT \$DB_DATABASE_BACKUP < \$SQL_FILE
 
-rm \$SQL_FILE' | sudo tee ${CRON_DIR}/${CRON_NAME} > /dev/null 2>&1"
+rm \$SQL_FILE' | sudo tee ${CRON_DIR}/${CRON_NAME}.sh > /dev/null 2>&1"
+
+readonly CHANGE_CRON_PERMISSION_CMD="sudo chmod 777 ${CRON_DIR}/${CRON_NAME}.sh"
 
 readonly MIN=$((RANDOM % 60))
-readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} * * * * root ${CRON_DIR}/${CRON_NAME}' | sudo tee /etc/cron.d/${CRON_NAME} > /dev/null 2>&1"
+readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} * * * * root ${CRON_DIR}/${CRON_NAME}.sh' | sudo tee /etc/cron.d/${CRON_NAME} > /dev/null 2>&1"
 
 ec2_ssh_run_cmd "$CREATE_DB_BACKUP_CRON_CMD"
+ec2_ssh_run_cmd "$CHANGE_CRON_PERMISSION_CMD"
 ec2_ssh_run_cmd "$SETUP_DB_BACKUP_CRON_CMD"
 
-echo Created ${CRON_DIR}/${CRON_NAME}
+echo Created ${CRON_DIR}/${CRON_NAME}.sh
 
 # Reload web server
 ec2_ssh_run_cmd "sudo /etc/init.d/httpd restart"
