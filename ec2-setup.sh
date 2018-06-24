@@ -36,6 +36,17 @@ sudo sed -i -e "s/max_execution_time = .*/max_execution_time = ${PHP_MAX_EXECUTI
 sudo sed -i -e "s/upload_max_filesize = .*/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/g" /etc/php-7.1.ini
 sudo sed -i -e "s/post_max_size = .*/post_max_size = ${PHP_POST_MAX_SIZE}/g" /etc/php-7.1.ini
 
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-LAMP.html
+sudo usermod -a -G apache ec2-user
+sudo chown -R ec2-user:apache /var/www
+
+chmod 2775 /var/www
+find /var/www -type d -exec sudo chmod 2775 {} \;
+find /var/www -type f -exec sudo chmod 0664 {} \;
+
+# Make directory for htpassword
+sudo mkdir -p /etc/httpd/htpasswd
+
 # Restart services
 sudo /etc/init.d/httpd start
 sudo /etc/init.d/mysqld start

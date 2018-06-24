@@ -55,7 +55,7 @@ source ./install-check.sh
 # Application domain name
 readonly DOMAIN_NAME=$(jq -r ".domainName" $APP_CONFIG_FILE)
 # Environment name
-readonly ENV_NAME=${APP_NAME}_${APP_BRANCH}
+readonly ENV_NAME=${APP_NAME}-${APP_BRANCH}
 # Public web directory
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
 # Plugin directory
@@ -92,14 +92,14 @@ readonly KEY_PATH=$(jq -r ".keyPath" ec2.json)
 readonly SSH_PORT=$(jq -r ".sshPort" ec2.json)
 readonly SSH_USER=$(jq -r ".sshUser" ec2.json)
 
-readonly HTML_DIR=/home/${SSH_USER}/${ENV_NAME}
-readonly HTML_DIR_WILDCARD=/home/${SSH_USER}/${APP_NAME}_*
+readonly HTML_DIR=/var/www/${ENV_NAME}
+readonly HTML_DIR_WILDCARD=/var/www/${APP_NAME}-*
 
-readonly HTML_SYMLINK=/var/www/${ENV_NAME}
-readonly HTML_SYMLINK_WILDCARD=/var/www/${APP_NAME}_*
+readonly HTTPD_CONF_FILE=/etc/httpd/conf.d/${ENV_NAME}.conf
+readonly HTTPD_CONF_FILE_WILDCARD=/etc/httpd/conf.d/${APP_NAME}-*
 
-readonly HTTPD_CONF_SYMLINK=/etc/httpd/conf.d/${ENV_NAME}.conf
-readonly HTTPD_CONF_SYMLINK_WILDCARD=/etc/httpd/conf.d/${APP_NAME}_*
+readonly HTPASSWD_FILE=/etc/httpd/htpasswd/${ENV_NAME}.htpasswd
+readonly HTPASSWD_FILE_WILDCARD=/etc/httpd/htpasswd/${APP_NAME}-*.htpasswd
 
 ######################
 # End configurations #
@@ -131,23 +131,23 @@ fi
 # Terminate
 if [ "${1}" == "terminate" ]; then
   if [ "${2}" == "app" ]; then
-    ec2_ssh_run_cmd "sudo rm $HTML_SYMLINK_WILDCARD > /dev/null 2>&1" 
-    echo $HTML_SYMLINK_WILDCARD removed
-
-    ec2_ssh_run_cmd "sudo rm $HTTPD_CONF_SYMLINK_WILDCARD > /dev/null 2>&1" 
-    echo $HTTPD_CONF_SYMLINK_WILDCARD removed
-
-    ec2_ssh_run_cmd "rm -rf $HTML_DIR_WILDCARD"
+    ec2_ssh_run_cmd "rm $HTML_DIR_WILDCARD > /dev/null 2>&1" 
     echo $HTML_DIR_WILDCARD removed
+
+    ec2_ssh_run_cmd "sudo rm $HTTPD_CONF_FILE_WILDCARD > /dev/null 2>&1" 
+    echo $HTTPD_CONF_FILE_WILDCARD removed
+
+    ec2_ssh_run_cmd "sudo rm $HTPASSWD_FILE_WILDCARD > /dev/null 2>&1" 
+    echo $HTPASSWD_FILE_WILDCARD removed
   else
-    ec2_ssh_run_cmd "sudo rm $HTML_SYMLINK > /dev/null 2>&1"
-    echo $HTML_SYMLINK removed
-
-    ec2_ssh_run_cmd "sudo rm $HTTPD_CONF_SYMLINK > /dev/null 2>&1"
-    echo $HTTPD_CONF_SYMLINK removed
-
-    ec2_ssh_run_cmd "rm -rf $HTML_DIR"
+    ec2_ssh_run_cmd "rm $HTML_DIR > /dev/null 2>&1"
     echo $HTML_DIR removed
+
+    ec2_ssh_run_cmd "sudo rm $HTTPD_CONF_FILE > /dev/null 2>&1"
+    echo $HTTPD_CONF_FILE removed
+
+    ec2_ssh_run_cmd "sudo rm $HTPASSWD_FILE > /dev/null 2>&1"
+    echo $HTPASSWD_FILE removed
   fi
   end
 fi
@@ -183,32 +183,60 @@ fi
 
 cd ../
 
-rsync -ah --delete --include-from $RSYNC_TMP_INCLUDE_FILE --exclude-from $RSYNC_TMP_EXCLUDE_FILE --prune-empty-dirs -e "ssh -i $KEY_PATH" $PUBLIC_WEB_DIR ${SSH_USER}@${PUBLIC_IP}:${HTML_DIR}
+rsync -avh --delete --include-from $RSYNC_TMP_INCLUDE_FILE --exclude-from $RSYNC_TMP_EXCLUDE_FILE --prune-empty-dirs -e "ssh -i $KEY_PATH" $PUBLIC_WEB_DIR/ ${SSH_USER}@${PUBLIC_IP}:${HTML_DIR}
 
-echo "Sync'd WordPress files at $HTML_DIR with server"
+# Replace DB_HOST with `localhost` if database server is running on the server
+ec2_ssh_run_cmd "sed -i -e \"s/define('DB_HOST', '${PUBLIC_IP}');/define('DB_HOST', 'localhost');/g\" ${HTML_DIR}/wp-config.php"
+
+ec2_ssh_run_cmd "chown -R ${SSH_USER}:apache $HTML_DIR"
+
+# Hardening WordPress
+# https://codex.wordpress.org/Hardening_WordPress
+
+# For directories
+ec2_ssh_run_cmd "find ${HTML_DIR} -type d -exec chmod 750 {} \;"
+# For files
+ec2_ssh_run_cmd "find ${HTML_DIR} -type f -exec chmod 640 {} \;"
+
+echo "Sync'd WordPress files at $HTML_DIR"
 
 # Generate httpd.conf file and upload to server
-readonly TMP_HTTPD_CONF_FILE=${TMP}/${ENV_NAME}_httpd.conf
+readonly TMP_HTTPD_CONF_FILE=${TMP}/${ENV_NAME}-httpd.conf
 cp httpd-sample.conf $TMP_HTTPD_CONF_FILE
 THIS_DOMAIN_NAME=$DOMAIN_NAME
+
+# Apache log levels
+#emerg   Emergencies - system is unusable.
+#alert   Action must be taken immediately.
+#crit    Critical Conditions.
+#error   Error conditions.
+#warn    Warning conditions.
+#notice  Normal but significant condition.
+#info    Informational.
+#debug   Debug-level messages
+#trace1-8  Trace messages
+LOG_LEVEL=warn
 if [ "$APP_BRANCH" != "master" ]; then
   THIS_DOMAIN_NAME=${APP_BRANCH}.${DOMAIN_NAME}
+  LOG_LEVEL=debug
 fi
 
 sed -i '' -e "s/{ENV_NAME}/${ENV_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{DOMAIN_NAME}/${THIS_DOMAIN_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{SERVER_NAME}/${SERVER_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{SSH_USER}/${SSH_USER}/g" $TMP_HTTPD_CONF_FILE
+sed -i '' -e "s/{LOG_LEVEL}/${LOG_LEVEL}/g" $TMP_HTTPD_CONF_FILE
 
-rsync -ah -e "ssh -i $KEY_PATH" $TMP_HTTPD_CONF_FILE ${SSH_USER}@${PUBLIC_IP}:${HTML_DIR}/httpd.conf
-
-echo "Sync'd ${HTML_DIR}/httpd.conf file with server"
+rsync -ah -e "ssh -i $KEY_PATH" $TMP_HTTPD_CONF_FILE ${SSH_USER}@${PUBLIC_IP}:${TMP_HTTPD_CONF_FILE}
+ec2_ssh_run_cmd "sudo mv ${TMP_HTTPD_CONF_FILE} ${HTTPD_CONF_FILE}"
+ec2_ssh_run_cmd "sudo chown root:root ${HTTPD_CONF_FILE}"
+echo "Sync'd ${HTTPD_CONF_FILE} file"
 
 # Setup basic auth
 if [ "$BASIC_AUTH_ENABLED" -eq 1 ] && [ "$BASIC_AUTH_USER" != "" ] && [ "$BASIC_AUTH_PASSWORD" != "" ]; then
-  readonly SETUP_HTPASSWD_CMD="echo '$(htpasswd -nb $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD)' | sudo tee $HTML_DIR/.htpasswd > /dev/null 2>&1"
+  readonly SETUP_HTPASSWD_CMD="echo '$(htpasswd -nb $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD)' | sudo tee $HTPASSWD_FILE > /dev/null 2>&1"
   ec2_ssh_run_cmd "$SETUP_HTPASSWD_CMD"
-  echo Created $HTML_DIR/.htpasswd
+  echo Created $HTPASSWD_FILE
 fi
 
 # Setup SSL cert
@@ -241,17 +269,6 @@ ec2_ssh_run_cmd "$CREATE_DB_BACKUP_CRON_CMD"
 ec2_ssh_run_cmd "$SETUP_DB_BACKUP_CRON_CMD"
 
 echo Created ${CRON_DIR}/${CRON_NAME}
-
-# Setup symlinks
-ec2_ssh_run_cmd "sudo rm $HTML_SYMLINK > /dev/null 2>&1"
-#echo $HTML_SYMLINK removed
-ec2_ssh_run_cmd "sudo ln -s ${HTML_DIR}/${PUBLIC_WEB_DIR} $HTML_SYMLINK"
-echo Created symlink for $HTML_SYMLINK
-
-ec2_ssh_run_cmd "sudo rm $HTTPD_CONF_SYMLINK > /dev/null 2>&1"
-#echo $HTTPD_CONF_SYMLINK removed
-ec2_ssh_run_cmd "sudo ln -s ${HTML_DIR}/httpd.conf $HTTPD_CONF_SYMLINK"
-echo Created symlink for $HTTPD_CONF_SYMLINK
 
 # Reload web server
 ec2_ssh_run_cmd "sudo /etc/init.d/httpd restart"
