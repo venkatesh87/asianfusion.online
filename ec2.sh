@@ -262,7 +262,7 @@ mysql -h\$DB_HOST -u\$DB_USER -p\$DB_PASSWORD -P\$DB_PORT \$DB_DATABASE_BACKUP <
 
 rm \$SQL_FILE' | sudo tee ${CRON_DIR}/${CRON_NAME}.sh > /dev/null 2>&1"
 
-readonly CHANGE_CRON_PERMISSION_CMD='sudo chmod 777 ${CRON_DIR}/${CRON_NAME}.sh'
+readonly CHANGE_CRON_PERMISSION_CMD="sudo chmod 777 ${CRON_DIR}/${CRON_NAME}.sh"
 
 readonly MIN=$((RANDOM % 60))
 readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} * * * * root ${CRON_DIR}/${CRON_NAME}.sh' | sudo tee /etc/cron.d/${CRON_NAME} > /dev/null 2>&1"
