@@ -6,6 +6,9 @@ Search for `change-me`, they are the values you most likely need to change.
   // A short application name
   "appName": "change-me",
   
+  // The domain name of this site
+  "domainName": "change-me",
+  
   // Directory where WordPress source code is
   "publicWebDir": "wordpress",
   
