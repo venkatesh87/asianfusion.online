@@ -69,6 +69,7 @@ mysql -hlocalhost -uroot -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON *.
 # Flush privileges
 mysql -hlocalhost -uroot -p${MYSQL_ROOT_PASSWORD} -e "FLUSH PRIVILEGES;"
 
+# Create /tmp/ec2-db.json
 echo "{
   \"root\": {
     \"endpoint\": \"\",

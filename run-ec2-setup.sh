@@ -29,3 +29,6 @@ ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT < ec2-setup.sh
 scp -i $KEY_PATH -P $SSH_PORT ${SSH_USER}@${PUBLIC_IP}:/tmp/ec2-db.json ec2-db.json
 sed -i -e "s/\"endpoint\": \"\"/\"endpoint\": \"${PUBLIC_IP}\"/g" ec2-db.json
 sed -i -e "s/\"port\": \"\"/\"port\": \"${MYSQL_PORT}\"/g" ec2-db.json
+
+# Clean up
+ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/app.json; rm /tmp/ec2-db.json"
