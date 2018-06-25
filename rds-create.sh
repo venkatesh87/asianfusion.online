@@ -22,9 +22,6 @@ readonly DB_LIVE_DATABASE=${DB_INSTANCE_IDENTIFIER}_live
 readonly DB_LIVE_USER=${DB_INSTANCE_IDENTIFIER}_live
 readonly DB_LIVE_PASSWORD=$(get_password)
 
-# For creating new databses on existing RDS using rds-existing.sh,
-# it will remove existing databases and reset user passwords
-
 # Dev database and user
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
