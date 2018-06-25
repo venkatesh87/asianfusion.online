@@ -36,6 +36,30 @@ sudo sed -i -e "s/max_execution_time = .*/max_execution_time = ${PHP_MAX_EXECUTI
 sudo sed -i -e "s/upload_max_filesize = .*/upload_max_filesize = ${PHP_UPLOAD_MAX_FILESIZE}/g" /etc/php-7.1.ini
 sudo sed -i -e "s/post_max_size = .*/post_max_size = ${PHP_POST_MAX_SIZE}/g" /etc/php-7.1.ini
 
+# Make directory for htpassword
+sudo mkdir -p /etc/httpd/htpasswd
+
+# Default site
+echo "<VirtualHost *:80>
+
+    ServerName default.allsol.us
+    
+    DocumentRoot /var/www/000-default
+
+    <Directory /var/www/000-default>
+        AllowOverride All
+    </Directory>
+
+    ErrorLog /var/log/httpd/000-default_error.log
+    LogLevel debug
+    CustomLog /var/log/httpd/000-default_access.log combined
+
+</VirtualHost>" | sudo tee /etc/httpd/conf.d/000-default.conf > /dev/null 2>&1
+
+sudo mkdir /var/www/000-default
+
+echo "<h2>Sorry, the page cannot be found</h2>" | sudo tee /var/www/000-default/index.html > /dev/null 2>&1
+
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-LAMP.html
 sudo usermod -a -G apache ec2-user
 sudo chown -R ec2-user:apache /var/www
@@ -43,9 +67,6 @@ sudo chown -R ec2-user:apache /var/www
 chmod 2775 /var/www
 find /var/www -type d -exec sudo chmod 2775 {} \;
 find /var/www -type f -exec sudo chmod 0664 {} \;
-
-# Make directory for htpassword
-sudo mkdir -p /etc/httpd/htpasswd
 
 # Restart services
 sudo /etc/init.d/httpd start
