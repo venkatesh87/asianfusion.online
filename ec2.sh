@@ -47,7 +47,6 @@ fi
 
 source ./install-check.sh
 
-
 ########################
 # Start configurations #
 ########################
@@ -58,24 +57,6 @@ readonly DOMAIN_NAME=$(jq -r ".domainName" $APP_CONFIG_FILE)
 readonly ENV_NAME=${APP_NAME}-${APP_BRANCH}
 # Public web directory
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" $APP_CONFIG_FILE)
-# Plugin directory
-readonly PLUGIN_DIR=./${PUBLIC_WEB_DIR}/wp-content/plugins
-# Platform stack
-readonly STACK=$(jq -r ".aws.${APP_BRANCH}.stack" $APP_CONFIG_FILE)
-# EC2 instance type
-readonly INSTANCE_TYPE=$(jq -r ".aws.${APP_BRANCH}.instanceType" $APP_CONFIG_FILE)
-# EC2 security group
-readonly EC2_SECURITY_GROUPS=$(jq -r ".aws.${APP_BRANCH}.securityGroups" $APP_CONFIG_FILE)
-# EBS load balancer security group
-readonly ELB_SECURITY_GROUPS=$(jq -r ".aws.${APP_BRANCH}.elbSecurityGroups" $APP_CONFIG_FILE)
-# IAM instance profile
-readonly IAM_INSTANCE_PROFILE=$(jq -r ".aws.${APP_BRANCH}.iamInstanceProfile" $APP_CONFIG_FILE)
-# Environment tags
-readonly ENVIRONMENT_TAGS=$(jq -r ".aws.${APP_BRANCH}.tags" $APP_CONFIG_FILE)
-# EC2 key pair name
-readonly EC2_KEY_NAME=$(jq -r ".aws.${APP_BRANCH}.ec2KeyName" $APP_CONFIG_FILE)
-# SSL certificate ID
-readonly SSL_CERTIFICATE_ID=$(jq -r ".aws.sslCertificateId" $APP_CONFIG_FILE)
 # Basic auth enabled?
 readonly BASIC_AUTH_ENABLED=$(jq -r ".basicAuth.${APP_BRANCH}.enabled" $APP_CONFIG_FILE)
 # Basic auth user
@@ -116,6 +97,7 @@ fi;
 
 # Check if database exists
 if [ -f "$DB_CONFIG_FILE" ]; then
+  echo Checking database...
   readonly CURRENT_DB=`no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "SHOW DATABASES" | grep "^$DB_DATABASE$"`
   if [ "$CURRENT_DB" != "$DB_DATABASE" ]; then
     echo Database $DB_DATABASE does not exist
@@ -242,6 +224,8 @@ fi
 # Setup SSL cert
 #if [ "$SSL_CERTIFICATE_ID" != "" ]; then
 #fi
+
+# Redirect
 
 # Setup database backup script and CRON
 readonly CRON_DIR=/usr/local/bin
