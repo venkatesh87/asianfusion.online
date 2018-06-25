@@ -209,17 +209,23 @@ sed -i '' -e "s/{SERVER_NAME}/${SERVER_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{SSH_USER}/${SSH_USER}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{LOG_LEVEL}/${LOG_LEVEL}/g" $TMP_HTTPD_CONF_FILE
 
-rsync -ah -e "ssh -i $KEY_PATH" $TMP_HTTPD_CONF_FILE ${SSH_USER}@${PUBLIC_IP}:${TMP_HTTPD_CONF_FILE}
-ec2_ssh_run_cmd "sudo mv ${TMP_HTTPD_CONF_FILE} ${HTTPD_CONF_FILE}"
-ec2_ssh_run_cmd "sudo chown root:root ${HTTPD_CONF_FILE}"
-echo "Sync'd ${HTTPD_CONF_FILE} file"
-
 # Setup basic auth
 if [ "$BASIC_AUTH_ENABLED" -eq 1 ] && [ "$BASIC_AUTH_USER" != "" ] && [ "$BASIC_AUTH_PASSWORD" != "" ]; then
   readonly SETUP_HTPASSWD_CMD="echo '$(htpasswd -nb $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD)' | sudo tee $HTPASSWD_FILE > /dev/null 2>&1"
   ec2_ssh_run_cmd "$SETUP_HTPASSWD_CMD"
   echo Created $HTPASSWD_FILE
+else
+  # Comment out basic auth
+  sed -i '' -e "s/AuthType/#AuthType/g" $TMP_HTTPD_CONF_FILE
+  sed -i '' -e "s/AuthName/#AuthName/g" $TMP_HTTPD_CONF_FILE
+  sed -i '' -e "s/AuthUserFile/#AuthUserFile/g" $TMP_HTTPD_CONF_FILE
+  sed -i '' -e "s/Require valid-user/#Require valid-user/g" $TMP_HTTPD_CONF_FILE
 fi
+
+rsync -ah -e "ssh -i $KEY_PATH" $TMP_HTTPD_CONF_FILE ${SSH_USER}@${PUBLIC_IP}:${TMP_HTTPD_CONF_FILE}
+ec2_ssh_run_cmd "sudo mv ${TMP_HTTPD_CONF_FILE} ${HTTPD_CONF_FILE}"
+ec2_ssh_run_cmd "sudo chown root:root ${HTTPD_CONF_FILE}"
+echo "Sync'd ${HTTPD_CONF_FILE} file"
 
 # Setup SSL cert
 #if [ "$SSL_CERTIFICATE_ID" != "" ]; then
