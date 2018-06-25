@@ -42,8 +42,7 @@ cp ./${PUBLIC_WEB_DIR}/wp-config-default.php $WP_CONFIG_FILE
 # Update wp-config.php
 sed -i '' -e "s/define('DB_NAME', '.*');/define('DB_NAME', '$DATABASE');/g" $WP_CONFIG_FILE
 sed -i '' -e "s/define('DB_USER', '.*');/define('DB_USER', '$USER');/g" $WP_CONFIG_FILE
-# Password might contain slash, so use ~ as delimiter
-sed -i '' -e "s~define('DB_PASSWORD', '.*');~define('DB_PASSWORD', '$PASSWORD');~g" $WP_CONFIG_FILE
+sed -i '' -e "s/define('DB_PASSWORD', '.*');/define('DB_PASSWORD', '$PASSWORD');/g" $WP_CONFIG_FILE
 sed -i '' -e "s/define('DB_HOST', '.*');/define('DB_HOST', '$HOST');/g" $WP_CONFIG_FILE
 sed -i '' -e "s/define('DBI_AWS_ACCESS_KEY_ID', '.*');/define('DBI_AWS_ACCESS_KEY_ID', '$AWS_ACCESS_KEY_ID');/g" $WP_CONFIG_FILE
 sed -i '' -e "s/define('DBI_AWS_SECRET_ACCESS_KEY', '.*');/define('DBI_AWS_SECRET_ACCESS_KEY', '$AWS_SECRET_ACCESS_KEY');/g" $WP_CONFIG_FILE
