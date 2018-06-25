@@ -176,12 +176,10 @@ fi
 
 cd ../
 
+# Change permission so rsync can be performed
+ec2_ssh_run_cmd "sudo chown -R ${SSH_USER}:apache $HTML_DIR"
+
 rsync -avh --delete --include-from $RSYNC_TMP_INCLUDE_FILE --exclude-from $RSYNC_TMP_EXCLUDE_FILE --prune-empty-dirs -e "ssh -i $KEY_PATH" $PUBLIC_WEB_DIR/ ${SSH_USER}@${PUBLIC_IP}:${HTML_DIR}
-
-# Replace DB_HOST with `localhost` if database server is running on the server
-ec2_ssh_run_cmd "sed -i -e \"s/define('DB_HOST', '${PUBLIC_IP}');/define('DB_HOST', 'localhost');/g\" ${HTML_DIR}/wp-config.php"
-
-ec2_ssh_run_cmd "chown -R ${SSH_USER}:apache $HTML_DIR"
 
 # Hardening WordPress
 # https://codex.wordpress.org/Hardening_WordPress
@@ -191,6 +189,9 @@ ec2_ssh_run_cmd "find ${HTML_DIR} -type d -exec chmod 750 {} \;"
 # For files
 ec2_ssh_run_cmd "find ${HTML_DIR} -type f -exec chmod 640 {} \;"
 
+# Replace DB_HOST with `localhost` if database server is running on the server
+ec2_ssh_run_cmd "sed -i -e \"s/define('DB_HOST', '${PUBLIC_IP}');/define('DB_HOST', 'localhost');/g\" ${HTML_DIR}/wp-config.php"
+
 echo "Sync'd WordPress files at $HTML_DIR"
 
 # Generate httpd.conf file and upload to server
@@ -199,15 +200,15 @@ cp httpd-sample.conf $TMP_HTTPD_CONF_FILE
 THIS_DOMAIN_NAME=$DOMAIN_NAME
 
 # Apache log levels
-#emerg   Emergencies - system is unusable.
-#alert   Action must be taken immediately.
-#crit    Critical Conditions.
-#error   Error conditions.
-#warn    Warning conditions.
-#notice  Normal but significant condition.
-#info    Informational.
-#debug   Debug-level messages
-#trace1-8  Trace messages
+# emerg   Emergencies - system is unusable.
+# alert   Action must be taken immediately.
+# crit    Critical Conditions.
+# error   Error conditions.
+# warn    Warning conditions.
+# notice  Normal but significant condition.
+# info    Informational.
+# debug   Debug-level messages
+# trace1-8  Trace messages
 LOG_LEVEL=warn
 if [ "$APP_BRANCH" != "master" ]; then
   THIS_DOMAIN_NAME=${APP_BRANCH}.${DOMAIN_NAME}
@@ -270,6 +271,9 @@ ec2_ssh_run_cmd "$CHANGE_CRON_PERMISSION_CMD"
 ec2_ssh_run_cmd "$SETUP_DB_BACKUP_CRON_CMD"
 
 echo Created ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh
+
+# Revert the permission
+ec2_ssh_run_cmd "sudo chown -R apache:apache $HTML_DIR"
 
 # Reload web server
 ec2_ssh_run_cmd "sudo /etc/init.d/httpd restart"
