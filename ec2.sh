@@ -72,15 +72,20 @@ readonly SERVER_NAME=$(jq -r ".serverName" $EC2_CONFIG_FILE)
 readonly KEY_PATH=$(jq -r ".keyPath" ec2.json)
 readonly SSH_PORT=$(jq -r ".sshPort" ec2.json)
 readonly SSH_USER=$(jq -r ".sshUser" ec2.json)
+readonly CRON_DIR=/usr/local/bin
+readonly DB_BACKUP_CRON_NAME=${ENV_NAME}-wordpress-database-backup-cron
 
 readonly HTML_DIR=/var/www/${ENV_NAME}
 readonly HTML_DIR_WILDCARD=/var/www/${APP_NAME}-*
 
 readonly HTTPD_CONF_FILE=/etc/httpd/conf.d/${ENV_NAME}.conf
-readonly HTTPD_CONF_FILE_WILDCARD=/etc/httpd/conf.d/${APP_NAME}-*
+readonly HTTPD_CONF_FILE_WILDCARD=/etc/httpd/conf.d/${APP_NAME}-*.conf
 
 readonly HTPASSWD_FILE=/etc/httpd/htpasswd/${ENV_NAME}.htpasswd
 readonly HTPASSWD_FILE_WILDCARD=/etc/httpd/htpasswd/${APP_NAME}-*.htpasswd
+
+readonly CRON_FILE=${CRON_DIR}/${ENV_NAME}-*.sh
+readonly CRON_FILE_WILDCARD=${CRON_DIR}/${APP_NAME}-*.sh
 
 ######################
 # End configurations #
@@ -121,6 +126,9 @@ if [ "${1}" == "terminate" ]; then
 
     ec2_ssh_run_cmd "sudo rm $HTPASSWD_FILE_WILDCARD > /dev/null 2>&1" 
     echo $HTPASSWD_FILE_WILDCARD removed
+
+    ec2_ssh_run_cmd "sudo rm $CRON_FILE_WILDCARD > /dev/null 2>&1" 
+    echo $CRON_FILE_WILDCARD removed
   else
     ec2_ssh_run_cmd "rm $HTML_DIR > /dev/null 2>&1"
     echo $HTML_DIR removed
@@ -130,6 +138,9 @@ if [ "${1}" == "terminate" ]; then
 
     ec2_ssh_run_cmd "sudo rm $HTPASSWD_FILE > /dev/null 2>&1"
     echo $HTPASSWD_FILE removed
+
+    ec2_ssh_run_cmd "sudo rm $CRON_FILE > /dev/null 2>&1"
+    echo $CRON_FILE removed
   fi
   end
 fi
@@ -234,9 +245,6 @@ echo "Sync'd ${HTTPD_CONF_FILE} file"
 # Redirect
 
 # Setup database backup script and CRON
-readonly CRON_DIR=/usr/local/bin
-readonly CRON_NAME=${ENV_NAME}-wordpress-database-backup-cron
-
 readonly CREATE_DB_BACKUP_CRON_CMD="echo -e '#!/bin/bash
 
 readonly DB_HOST=localhost
@@ -250,18 +258,18 @@ readonly SQL_FILE=/tmp/${DB_DATABASE}.sql
 mysqldump -h\$DB_HOST -u\$DB_USER -p\$DB_PASSWORD -P\$DB_PORT \$DB_DATABASE > \$SQL_FILE
 mysql -h\$DB_HOST -u\$DB_USER -p\$DB_PASSWORD -P\$DB_PORT \$DB_DATABASE_BACKUP < \$SQL_FILE
 
-rm \$SQL_FILE' | sudo tee ${CRON_DIR}/${CRON_NAME}.sh > /dev/null 2>&1"
+rm \$SQL_FILE' | sudo tee ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh > /dev/null 2>&1"
 
-readonly CHANGE_CRON_PERMISSION_CMD="sudo chmod 777 ${CRON_DIR}/${CRON_NAME}.sh"
+readonly CHANGE_CRON_PERMISSION_CMD="sudo chmod 777 ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh"
 
 readonly MIN=$((RANDOM % 60))
-readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} * * * * root ${CRON_DIR}/${CRON_NAME}.sh' | sudo tee /etc/cron.d/${CRON_NAME} > /dev/null 2>&1"
+readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} * * * * root ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh' | sudo tee /etc/cron.d/${DB_BACKUP_CRON_NAME} > /dev/null 2>&1"
 
 ec2_ssh_run_cmd "$CREATE_DB_BACKUP_CRON_CMD"
 ec2_ssh_run_cmd "$CHANGE_CRON_PERMISSION_CMD"
 ec2_ssh_run_cmd "$SETUP_DB_BACKUP_CRON_CMD"
 
-echo Created ${CRON_DIR}/${CRON_NAME}.sh
+echo Created ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh
 
 # Reload web server
 ec2_ssh_run_cmd "sudo /etc/init.d/httpd restart"
