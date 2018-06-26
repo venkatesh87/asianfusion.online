@@ -2,7 +2,9 @@
 
 # Install packages
 sudo yum update -y
-sudo yum install vim jq httpd24 php71 php71-mbstring php71-mcrypt php71-memcache php71-gd php71-mysqlnd mysql57-server -y
+sudo yum install vim jq httpd24 php71 php71-mbstring \
+  php71-mcrypt php71-memcache php71-gd php71-mysqlnd \
+  mysql57-server mod24_ssl -y
 
 # Change Apache server name
 sudo sed -i -e "s/#ServerName www.example.com:80/ServerName localhost/g" /etc/httpd/conf/httpd.conf
@@ -37,7 +39,10 @@ sudo sed -i -e "s/upload_max_filesize = .*/upload_max_filesize = ${PHP_UPLOAD_MA
 sudo sed -i -e "s/post_max_size = .*/post_max_size = ${PHP_POST_MAX_SIZE}/g" /etc/php-7.1.ini
 
 # Make directory for htpassword
-sudo mkdir -p /etc/httpd/htpasswd
+sudo mkdir /etc/httpd/htpasswd
+
+# Make directory for SSL certs
+sudo mkdir /etc/httpd/certs
 
 # Default site
 echo "<VirtualHost *:80>
