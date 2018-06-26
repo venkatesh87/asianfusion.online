@@ -15,3 +15,14 @@ get_password() {
   password=$(openssl rand -base64 29 | tr -d "=+/" | cut -c1-25)
   echo $password
 }
+
+ec2_ssh_run_cmd() {
+  CMD=$1
+  ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "$CMD"
+}
+
+end() {
+  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echo
+  exit
+}

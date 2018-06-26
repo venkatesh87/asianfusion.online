@@ -7,7 +7,7 @@ source ./functions.sh
 # Begin functions
 #
 
-function begin() {
+begin() {
   # http://patorjk.com/software/taag/#p=display&f=Big&t=EC2%20DEPLOY
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "
@@ -20,17 +20,6 @@ function begin() {
                                                                v 0.1
   "
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-}
-
-function ec2_ssh_run_cmd() {
-  CMD=$1
-  ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "$CMD"
-}
-
-function end() {
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo
-  exit
 }
 
 #
