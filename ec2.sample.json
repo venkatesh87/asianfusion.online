@@ -1,7 +1,7 @@
 {
   "imageId": "ami-a4dc46db",
-  "securityGroupName": "wordpress-ec2",
-  "securityGroupDescription": "WordPress EC2 Security Group",
+  "securityGroupName": "wordpress-server-1-ec2-sg",
+  "securityGroupDescription": "WordPress Server 1 EC2 Security Group",
   "keyName": "default-ec2",
   "keyPath": "default-ec2.pem",
   "sshUser": "ec2-user",
@@ -14,5 +14,6 @@
   "instanceName": "WordPress Server 1",
   "availabilityZone": "us-east-1a",
   "volumeSize": "100",
-  "serverName": "change-me"
+  "serverName": "change-me",
+  "certS3Bucket": "change-me"
 }

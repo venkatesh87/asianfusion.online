@@ -72,6 +72,7 @@ readonly SERVER_NAME=$(jq -r ".serverName" $EC2_CONFIG_FILE)
 readonly KEY_PATH=$(jq -r ".keyPath" ec2.json)
 readonly SSH_PORT=$(jq -r ".sshPort" ec2.json)
 readonly SSH_USER=$(jq -r ".sshUser" ec2.json)
+readonly CERT_S3_BUCKET=$(jq -r ".certS3Bucket" ec2.json)
 readonly CRON_DIR=/usr/local/bin
 readonly DB_BACKUP_CRON_NAME=${ENV_NAME}-wordpress-database-backup-cron
 
@@ -86,6 +87,9 @@ readonly HTPASSWD_FILE_WILDCARD=/etc/httpd/htpasswd/${APP_NAME}-*.htpasswd
 
 readonly CRON_FILE=${CRON_DIR}/${ENV_NAME}-*.sh
 readonly CRON_FILE_WILDCARD=${CRON_DIR}/${APP_NAME}-*.sh
+
+readonly CERT_DIR=/etc/httpd/certs/${DOMAIN_NAME}
+readonly CERT_DIR_WILDCARD=/etc/httpd/certs/${DOMAIN_NAME}
 
 ######################
 # End configurations #
@@ -129,6 +133,9 @@ if [ "${1}" == "terminate" ]; then
 
     ec2_ssh_run_cmd "sudo rm $CRON_FILE_WILDCARD > /dev/null 2>&1" 
     echo $CRON_FILE_WILDCARD removed
+
+    ec2_ssh_run_cmd "rm $CERT_DIR_WILDCARD > /dev/null 2>&1" 
+    echo $CERT_DIR_WILDCARD removed
   else
     ec2_ssh_run_cmd "rm $HTML_DIR > /dev/null 2>&1"
     echo $HTML_DIR removed
@@ -141,7 +148,11 @@ if [ "${1}" == "terminate" ]; then
 
     ec2_ssh_run_cmd "sudo rm $CRON_FILE > /dev/null 2>&1"
     echo $CRON_FILE removed
+
+    ec2_ssh_run_cmd "rm $CERT_DIR > /dev/null 2>&1"
+    echo $CERT_DIR removed
   fi
+  ec2_ssh_run_cmd "sudo /etc/init.d/httpd reload"
   end
 fi
 
@@ -216,7 +227,8 @@ if [ "$APP_BRANCH" != "master" ]; then
 fi
 
 sed -i '' -e "s/{ENV_NAME}/${ENV_NAME}/g" $TMP_HTTPD_CONF_FILE
-sed -i '' -e "s/{DOMAIN_NAME}/${THIS_DOMAIN_NAME}/g" $TMP_HTTPD_CONF_FILE
+sed -i '' -e "s/{THIS_DOMAIN_NAME}/${THIS_DOMAIN_NAME}/g" $TMP_HTTPD_CONF_FILE
+sed -i '' -e "s/{DOMAIN_NAME}/${DOMAIN_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{SERVER_NAME}/${SERVER_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{SSH_USER}/${SSH_USER}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{LOG_LEVEL}/${LOG_LEVEL}/g" $TMP_HTTPD_CONF_FILE
@@ -235,13 +247,18 @@ else
 fi
 
 rsync -ah -e "ssh -i $KEY_PATH" $TMP_HTTPD_CONF_FILE ${SSH_USER}@${PUBLIC_IP}:${TMP_HTTPD_CONF_FILE}
-ec2_ssh_run_cmd "sudo mv ${TMP_HTTPD_CONF_FILE} ${HTTPD_CONF_FILE}"
-ec2_ssh_run_cmd "sudo chown root:root ${HTTPD_CONF_FILE}"
+ec2_ssh_run_cmd "sudo mv ${TMP_HTTPD_CONF_FILE} ${HTTPD_CONF_FILE};sudo chown root:root ${HTTPD_CONF_FILE}"
 echo "Sync'd ${HTTPD_CONF_FILE} file"
 
-# Setup SSL cert
-#if [ "$SSL_CERTIFICATE_ID" != "" ]; then
-#fi
+readonly TMP_CERT_DIR=${TMP}/${DOMAIN_NAME}-certs
+# Download certs from S3
+aws s3 cp --profile $AWS_PROFILE s3://$CERT_S3_BUCKET/${DOMAIN_NAME} $TMP_CERT_DIR --recursive
+
+# Send certs to server
+rsync -ah -e "ssh -i $KEY_PATH" $TMP_CERT_DIR/ ${SSH_USER}@${PUBLIC_IP}:${TMP_CERT_DIR}
+ec2_ssh_run_cmd "sudo mkdir -p ${CERT_DIR};sudo cp ${TMP_CERT_DIR}/* ${CERT_DIR}/;rm -rf ${TMP_CERT_DIR};sudo chown -R root:root ${CERT_DIR}"
+echo "Sync'd SSL certs at $CERT_DIR"
+rm -rf $TMP_CERT_DIR
 
 # Redirect
 
@@ -266,9 +283,7 @@ readonly CHANGE_CRON_PERMISSION_CMD="sudo chmod 777 ${CRON_DIR}/${DB_BACKUP_CRON
 readonly MIN=$((RANDOM % 60))
 readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} * * * * root ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh' | sudo tee /etc/cron.d/${DB_BACKUP_CRON_NAME} > /dev/null 2>&1"
 
-ec2_ssh_run_cmd "$CREATE_DB_BACKUP_CRON_CMD"
-ec2_ssh_run_cmd "$CHANGE_CRON_PERMISSION_CMD"
-ec2_ssh_run_cmd "$SETUP_DB_BACKUP_CRON_CMD"
+ec2_ssh_run_cmd "$CREATE_DB_BACKUP_CRON_CMD;$CHANGE_CRON_PERMISSION_CMD;$SETUP_DB_BACKUP_CRON_CMD"
 
 echo Created ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh
 
@@ -276,7 +291,7 @@ echo Created ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh
 ec2_ssh_run_cmd "sudo chown -R apache:apache $HTML_DIR"
 
 # Reload web server
-ec2_ssh_run_cmd "sudo /etc/init.d/httpd restart"
+ec2_ssh_run_cmd "sudo /etc/init.d/httpd reload"
 
 # Make sure wp-config.php is up to date, reset database credential
 sh ./post-checkout
