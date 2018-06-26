@@ -7,7 +7,7 @@ source ./functions.sh
 # Begin functions
 #
 
-function begin() {
+begin() {
   # http://patorjk.com/software/taag/#p=display&f=Big&t=AWS%20DEPLOY
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "
@@ -20,12 +20,6 @@ function begin() {
                                                                v 0.1
   "
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-}
-
-function end() {
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo
-  exit
 }
 
 function create_environment() {
