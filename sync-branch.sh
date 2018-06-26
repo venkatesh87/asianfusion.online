@@ -2,7 +2,7 @@
 
 for BRANCH in `git branch --list|sed 's/\*//g'`;
   do
-    if [ "$BRANCH" -ne "dev" ]; then
+    if [ "$BRANCH" != "dev" ]; then
       git checkout $BRANCH
       git merge dev --no-edit
       git push
