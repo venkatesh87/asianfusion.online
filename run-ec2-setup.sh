@@ -7,6 +7,7 @@ readonly KEY_PATH=$(jq -r ".keyPath" ec2.json)
 readonly SSH_PORT=$(jq -r ".sshPort" ec2.json)
 readonly SSH_USER=$(jq -r ".sshUser" ec2.json)
 readonly MYSQL_PORT=$(jq -r ".mysqlPort" ec2.json)
+readonly SERVER_NAME=$(jq -r ".serverName" ec2.json)
 
 readonly PUBLIC_IP=($(aws ec2 describe-instances \
   --profile $AWS_PROFILE \
@@ -17,10 +18,16 @@ if [ "$PUBLIC_IP" == "" ]; then
   exit
 fi;
 
+# Upload certs for server
+source ./ec2-upload-certs.sh $SERVER_NAME
+
 echo "Connecting to $PUBLIC_IP using key $KEY_PATH"
 
 # Copy up app.json to server
 scp -i $KEY_PATH -P $SSH_PORT app.json ${SSH_USER}@${PUBLIC_IP}:/tmp/app.json
+
+# Copy up ec2.json to server
+scp -i $KEY_PATH -P $SSH_PORT ec2.json ${SSH_USER}@${PUBLIC_IP}:/tmp/ec2.json
 
 # Run setup script via SSH
 ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT < ec2-setup.sh
@@ -31,4 +38,4 @@ sed -i '' -e "s/\"endpoint\": \"\"/\"endpoint\": \"${PUBLIC_IP}\"/g" ec2-db.json
 sed -i '' -e "s/\"port\": \"\"/\"port\": \"${MYSQL_PORT}\"/g" ec2-db.json
 
 # Clean up
-ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/app.json; rm /tmp/ec2-db.json"
+ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/app.json; rm /tmp/ec2.json; rm /tmp/ec2-db.json"
