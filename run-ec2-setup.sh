@@ -8,6 +8,19 @@ readonly SSH_PORT=$(jq -r ".sshPort" ec2.json)
 readonly SSH_USER=$(jq -r ".sshUser" ec2.json)
 readonly MYSQL_PORT=$(jq -r ".mysqlPort" ec2.json)
 readonly SERVER_NAME=$(jq -r ".serverName" ec2.json)
+readonly ELASTIC_IP=$(jq -r ".elasticIp" ec2.json)
+
+readonly INSTANCE_ID=($(aws ec2 describe-instances \
+  --profile $AWS_PROFILE \
+  --filters "Name=tag:Name,Values=${INSTANCE_NAME}" Name=instance-state-name,Values=running | jq -r ".Reservations[].Instances[].InstanceId"))
+
+if [ "$INSTANCE_ID" == "" ]; then
+  echo $INSTANCE_NAME is not found, abort.
+  exit
+fi
+
+aws ec2 associate-address --profile $AWS_PROFILE \
+  --instance-id $INSTANCE_ID --public-ip $ELASTIC_IP
 
 readonly PUBLIC_IP=($(aws ec2 describe-instances \
   --profile $AWS_PROFILE \
@@ -16,12 +29,17 @@ readonly PUBLIC_IP=($(aws ec2 describe-instances \
 if [ "$PUBLIC_IP" == "" ]; then
   echo $INSTANCE_NAME is not found, abort.
   exit
-fi;
+fi
 
-# Upload certs for server
-source ./ec2-upload-certs.sh $SERVER_NAME
+if [ "$PUBLIC_IP" != "$ELASTIC_IP" ]; then
+  echo Elastic IP assignment error
+  exit
+fi
 
 echo "Connecting to $PUBLIC_IP using key $KEY_PATH"
+
+# Upload certs for server
+sh ./ec2-upload-certs.sh $SERVER_NAME
 
 # Copy up app.json to server
 scp -i $KEY_PATH -P $SSH_PORT app.json ${SSH_USER}@${PUBLIC_IP}:/tmp/app.json
