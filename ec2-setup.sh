@@ -21,6 +21,9 @@ sudo sed -i -e "s/;date.timezone =/date.timezone = America\/New_York/g" /etc/php
 # Allow outside access to MySQL
 sudo sed -i -e "s/\[mysqld\]/\[mysqld\]\nbind-address = 0.0.0.0\n/g" /etc/my.cnf
 
+# Server configs
+SERVER_NAME=$(jq -r ".serverName" /tmp/ec2.json)
+
 # Other MISC PHP settings
 PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/app.json)
 PHP_OUTPUT_COMPRESSION=$(jq -r ".php.dev.outputCompression" /tmp/app.json)
@@ -47,13 +50,36 @@ sudo mkdir /etc/httpd/certs
 # Default site
 echo "<VirtualHost *:80>
 
-    ServerName default.allsol.us
+    ServerName ${SERVER_NAME}
+    ServerAlias *.${SERVER_NAME}
     
     DocumentRoot /var/www/000-default
 
     <Directory /var/www/000-default>
         AllowOverride All
     </Directory>
+
+    ErrorLog /var/log/httpd/000-default_error.log
+    LogLevel debug
+    CustomLog /var/log/httpd/000-default_access.log combined
+
+</VirtualHost>
+
+<VirtualHost *:443>
+
+    ServerName ${SERVER_NAME}
+    ServerAlias *.${SERVER_NAME}
+
+    DocumentRoot /var/www/000-default
+
+    <Directory /var/www/000-default>
+        AllowOverride All
+    </Directory>
+
+    SSLEngine On
+    SSLCertificateFile /etc/httpd/certs/${SERVER_NAME}/cert.pem
+    SSLCertificateKeyFile /etc/httpd/certs/${SERVER_NAME}/privkey.pem
+    SSLCertificateChainFile /etc/httpd/certs/${SERVER_NAME}/chain.pem
 
     ErrorLog /var/log/httpd/000-default_error.log
     LogLevel debug
