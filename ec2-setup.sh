@@ -51,7 +51,6 @@ sudo mkdir /etc/httpd/certs
 echo "<VirtualHost *:80>
 
     ServerName ${SERVER_NAME}
-    ServerAlias *.${SERVER_NAME}
     
     DocumentRoot /var/www/000-default
 
@@ -68,7 +67,6 @@ echo "<VirtualHost *:80>
 <VirtualHost *:443>
 
     ServerName ${SERVER_NAME}
-    ServerAlias *.${SERVER_NAME}
 
     DocumentRoot /var/www/000-default
 

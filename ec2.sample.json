@@ -15,5 +15,6 @@
   "availabilityZone": "us-east-1a",
   "volumeSize": "100",
   "serverName": "change-me",
+  "elasticIp": "change-me",
   "certS3Bucket": "change-me"
 }
