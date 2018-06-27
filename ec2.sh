@@ -215,7 +215,7 @@ if [ "$APP_BRANCH" != "master" ]; then
   THIS_DOMAIN_NAME=${APP_BRANCH}.${DOMAIN_NAME}
   LOG_LEVEL=debug
 else
-  THIS_SERVER_ALIAS=ServerAlias www.${DOMAIN_NAME}
+  THIS_SERVER_ALIAS="ServerAlias www.${DOMAIN_NAME}"
 fi
 
 sed -i '' -e "s/{ENV_NAME}/${ENV_NAME}/g" $TMP_HTTPD_CONF_FILE
