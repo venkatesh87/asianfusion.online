@@ -52,6 +52,9 @@ define('DB_COLLATE', '');
 define('DBI_AWS_ACCESS_KEY_ID', 'to-be-replaced');
 define('DBI_AWS_SECRET_ACCESS_KEY', 'to-be-replaced');
 
+/** Disable file editing **/
+define('DISALLOW_FILE_EDIT', true);
+
 /**#@+
  * Authentication Unique Keys and Salts.
  *
