@@ -24,11 +24,11 @@ readonly DEST_PATH=${UPLOAD_S3_BUCKET}/${DEST_PATH_FOLDER}
 readonly ORIGIN_URL=https://s3.amazonaws.com/${ORIGIN_PATH}
 readonly DEST_URL=https://s3.amazonaws.com/${DEST_PATH}
 
-readonly DEST_DB_HOST=$(jq -r ".${APP_BRANCH}.endpoint" $DB_CONFIG_FILE)
-readonly DEST_DB_DATABASE=$(jq -r ".${APP_BRANCH}.database" $DB_CONFIG_FILE)
-readonly DEST_DB_USER=$(jq -r ".${APP_BRANCH}.user" $DB_CONFIG_FILE)
-readonly DEST_DB_PASSWORD=$(jq -r ".${APP_BRANCH}.password" $DB_CONFIG_FILE)
-readonly DEST_DB_PORT=$(jq -r ".${APP_BRANCH}.port" $DB_CONFIG_FILE)
+readonly DEST_DB_HOST=$(jq -r ".${DEST_BRANCH}.endpoint" $DB_CONFIG_FILE)
+readonly DEST_DB_DATABASE=$(jq -r ".${DEST_BRANCH}.database" $DB_CONFIG_FILE)
+readonly DEST_DB_USER=$(jq -r ".${DEST_BRANCH}.user" $DB_CONFIG_FILE)
+readonly DEST_DB_PASSWORD=$(jq -r ".${DEST_BRANCH}.password" $DB_CONFIG_FILE)
+readonly DEST_DB_PORT=$(jq -r ".${DEST_BRANCH}.port" $DB_CONFIG_FILE)
 
 # Sync images between buckets
 echo Syncing images
