@@ -41,10 +41,10 @@ aws s3 sync --profile $AWS_PROFILE s3://${ORIGIN_PATH} s3://${DEST_PATH}
 # Replace image URLs in database
 echo Replacing image URLs in database
 
-no_pw_warning mysql -h$DEST_DB_HOST -u$DEST_DB_USER -p$DEST_DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_posts SET post_content = replace(post_content, '${ORIGIN_URL}', '${DEST_URL}');"
+no_pw_warning mysql -h$DEST_DB_HOST -u$DEST_DB_USER -p$DEST_DB_PASSWORD -e "UPDATE ${DEST_DB_DATABASE}.wp_posts SET post_content = replace(post_content, '${ORIGIN_URL}', '${DEST_URL}');"
 
-no_pw_warning mysql -h$DEST_DB_HOST -u$DEST_DB_USER -p$DEST_DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_postmeta SET meta_value = replace(meta_value, '${ORIGIN_URL}', '${DEST_URL}');"
+no_pw_warning mysql -h$DEST_DB_HOST -u$DEST_DB_USER -p$DEST_DB_PASSWORD -e "UPDATE ${DEST_DB_DATABASE}.wp_postmeta SET meta_value = replace(meta_value, '${ORIGIN_URL}', '${DEST_URL}');"
 
-no_pw_warning mysql -h$DEST_DB_HOST -u$DEST_DB_USER -p$DEST_DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_posts SET post_content = replace(post_content, '${ORIGIN_PATH_FOLDER}', '${DEST_PATH_FOLDER}');"
+no_pw_warning mysql -h$DEST_DB_HOST -u$DEST_DB_USER -p$DEST_DB_PASSWORD -e "UPDATE ${DEST_DB_DATABASE}.wp_posts SET post_content = replace(post_content, '${ORIGIN_PATH_FOLDER}', '${DEST_PATH_FOLDER}');"
 
-no_pw_warning mysql -h$DEST_DB_HOST -u$DEST_DB_USER -p$DEST_DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_postmeta SET meta_value = replace(meta_value, '${ORIGIN_PATH_FOLDER}', '${DEST_PATH_FOLDER}');"
+no_pw_warning mysql -h$DEST_DB_HOST -u$DEST_DB_USER -p$DEST_DB_PASSWORD -e "UPDATE ${DEST_DB_DATABASE}.wp_postmeta SET meta_value = replace(meta_value, '${ORIGIN_PATH_FOLDER}', '${DEST_PATH_FOLDER}');"
