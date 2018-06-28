@@ -120,6 +120,10 @@ find /var/www -type f -exec sudo chmod 0664 {} \;
 sudo /etc/init.d/httpd start
 sudo /etc/init.d/mysqld start
 
+# Set to auto restart
+sudo chkconfig mysqld on
+sudo chkconfig httpd on
+
 # Get password
 get_password() {
   password=$(openssl rand -base64 29 | tr -d "=+/" | cut -c1-25)
