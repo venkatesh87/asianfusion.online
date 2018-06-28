@@ -7,6 +7,7 @@ add recaptcha to login form/or fail login ban plugin
 
 if "connectLocalMysqlForDev" install local db
 update user instead of "insert"
+lockdown preinstalled plugins
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php
