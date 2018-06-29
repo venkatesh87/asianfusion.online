@@ -238,8 +238,10 @@ fi
 for USER in $WP_USERS; do
 
   USERNAME=$(echo $USER | base64 --decode | jq -r ".username")
-  
+ 
   if [ "$USERNAME" != "" ]; then
+
+    echo User name in the list $USERNAME
 
     PASSWORD=$(echo $USER | base64 --decode | jq -r ".password")
     EMAIL=$(echo $USER | base64 --decode | jq -r ".email")
@@ -247,11 +249,18 @@ for USER in $WP_USERS; do
     ROLE_COUNT=${#ROLE}
     USER_NICENAME=$(echo $USER | base64 --decode | jq -r ".userNicename")
     DISPLAY_NAME=$(echo $USER | base64 --decode | jq -r ".displayName")
+    CURRENT_DATE=`date '+%Y-%m-%d %H:%M:%S'`
 
-    no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_users (user_login, user_pass, user_nicename, display_name, user_email, user_status) VALUES ('${USERNAME}', MD5('${PASSWORD}'), '${USER_NICENAME}', '${DISPLAY_NAME}', '${EMAIL}', '0'); INSERT INTO ${DB_DATABASE}.wp_usermeta (umeta_id, user_id, meta_key, meta_value) VALUES (NULL, (SELECT id FROM ${DB_DATABASE}.wp_users WHERE user_login = '${USERNAME}'), 'wp_capabilities', 'a:1:{s:${ROLE_COUNT}:\"${ROLE}\";b:1;}'); INSERT INTO ${DB_DATABASE}.wp_usermeta (umeta_id, user_id, meta_key, meta_value) VALUES (NULL, (SELECT id FROM ${DB_DATABASE}.wp_users WHERE user_login = '${USERNAME}'), 'wp_user_level', '10');"
-  
+    HAS_USER=$(no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(ID) FROM ${DB_DATABASE}.wp_users WHERE user_login = '${USERNAME}' OR user_email = '${EMAIL}';")
+
+    if [ "$HAS_USER" == 1 ]; then
+      echo "User ${USERNAME} <${EMAIL}> already exist, will update"
+      mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_users SET user_login = '${USERNAME}', user_pass = MD5('${PASSWORD}'), user_nicename = '${USER_NICENAME}', display_name = '${DISPLAY_NAME}', user_email = '${EMAIL}' WHERE user_login = '${USERNAME}' OR user_email = '${EMAIL}'; UPDATE ${DB_DATABASE}.wp_usermeta SET meta_key = 'wp_capabilities', meta_value = 'a:1:{s:${ROLE_COUNT}:\"${ROLE}\";b:1;}' WHERE (SELECT id FROM ${DB_DATABASE}.wp_users WHERE user_login = '${USERNAME}' OR user_email = '${EMAIL}')"
+    else
+      echo "Creating new user ${USERNAME} <${EMAIL}>"
+      mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_users (user_login, user_pass, user_nicename, display_name, user_email, user_status, user_registered) VALUES ('${USERNAME}', MD5('${PASSWORD}'), '${USER_NICENAME}', '${DISPLAY_NAME}', '${EMAIL}', '0', '${CURRENT_DATE}'); INSERT INTO ${DB_DATABASE}.wp_usermeta (umeta_id, user_id, meta_key, meta_value) VALUES (NULL, (SELECT id FROM ${DB_DATABASE}.wp_users WHERE user_login = '${USERNAME}'), 'wp_capabilities', 'a:1:{s:${ROLE_COUNT}:\"${ROLE}\";b:1;}'); INSERT INTO ${DB_DATABASE}.wp_usermeta (umeta_id, user_id, meta_key, meta_value) VALUES (NULL, (SELECT id FROM ${DB_DATABASE}.wp_users WHERE user_login = '${USERNAME}'), 'wp_user_level', '10');"
+    fi
   fi
-
 done
 
 # Activate pre-installed plugins
@@ -265,4 +274,4 @@ if [ "$ACTIVATE_PREINSTALLED_PLUGINS" == 1 ]; then
 
 fi
 
-echo Resetting Wordpress plugins and configurations
+echo Resetting WordPress plugins and configurations

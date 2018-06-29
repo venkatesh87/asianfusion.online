@@ -7,7 +7,7 @@ source ./functions.sh
 # Begin functions
 #
 
-function begin() {
+begin() {
   # http://patorjk.com/software/taag/#p=display&f=Big&t=AWS%20DEPLOY
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "
@@ -20,12 +20,6 @@ function begin() {
                                                                v 0.1
   "
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-}
-
-function end() {
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo
-  exit
 }
 
 function create_environment() {
@@ -107,40 +101,7 @@ if [ "${1}" != "deploy" ] && [ "${1}" != "terminate" ]; then
   end
 fi
 
-# Get platform
-PLATFORM=$(uname)
-
-# Check platform
-if [ "$PLATFORM" != "Linux" ] && [ "$PLATFORM" != "Darwin" ]; then
-  echo Your platform \"$PLATFORM\" is not supported
-  end
-fi
-
-# Check awscli installation
-if ! hash aws 2>/dev/null; then
-  echo awscli is not installed
-  end
-fi
-
-# Check jq installation
-if ! hash jq 2>/dev/null; then
-  echo jq is not installed
-  end
-fi
-
-# Check gdate (macOS only)
-if [ "$PLATFORM" == "Darwin" ]; then
-  if ! hash gdate 2>/dev/null; then
-    echo gdate is not installed
-    end
-  fi
-fi
-
-# Check awscli configurations
-if [ ! -f ~/.aws/config ] || [ ! -f ~/.aws/credentials ]; then
-  echo awscli is not configured
-  end
-fi
+source ./install-check.sh
 
 ########################
 # Start configurations #
@@ -305,7 +266,7 @@ cp ../ebextensions.sample.config ${EBEXTENSIONS_DIR}/default.config
 if [ "$BASIC_AUTH_ENABLED" -eq 1 ] && [ "$BASIC_AUTH_USER" != "" ] && [ "$BASIC_AUTH_PASSWORD" != "" ]; then
   # Search, replace and uncomment these lines
   readonly HTPASSWD=$(htpasswd -nb $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD)
-  sed -i '' -e "s~#user:password~${HTPASSWD}~g" ${EBEXTENSIONS_DIR}/default.config
+  sed -i '' -e "s/#user:password/${HTPASSWD}/g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/#AuthType Basic/AuthType Basic/g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/#AuthName \"My Protected Area\"/AuthName \"${APP_NAME} ${APP_BRANCH}\"/g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/#AuthUserFile \/etc\/httpd\/\.htpasswd/AuthUserFile \/etc\/httpd\/\.htpasswd/g" ${EBEXTENSIONS_DIR}/default.config
@@ -324,7 +285,7 @@ if [ "$SSL_CERTIFICATE_ID" == "" ]; then
   # Comment out SSL redirect
   sed -i '' -e "s/RewriteRule ^(.*)$ https:\/\/%{HTTP_HOST}%{REQUEST_URI} [R=301,L]/#RewriteRule ^(.*)$ https:\/\/%{HTTP_HOST}%{REQUEST_URI} [R=301,L]/" ${EBEXTENSIONS_DIR}/default.config
 else
-  sed -i '' -e "s~SSLCertificateId:~SSLCertificateId: ${SSL_CERTIFICATE_ID}~g" ${EBEXTENSIONS_DIR}/default.config
+  sed -i '' -e "s/SSLCertificateId:/SSLCertificateId: ${SSL_CERTIFICATE_ID}/g" ${EBEXTENSIONS_DIR}/default.config
 fi
 
 # PHP SETTINGS
@@ -427,7 +388,7 @@ fi
 
 if [ "$UPDATED" -eq 1 ]; then
 
-  # Make sure wp-config.php is up to date
+  # Make sure wp-config.php is up to date, reset database credential
   sh ./post-checkout
 
   # Reset wordpress
