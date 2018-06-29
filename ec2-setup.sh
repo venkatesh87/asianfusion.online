@@ -42,10 +42,10 @@ sudo sed -i -e "s/upload_max_filesize = .*/upload_max_filesize = ${PHP_UPLOAD_MA
 sudo sed -i -e "s/post_max_size = .*/post_max_size = ${PHP_POST_MAX_SIZE}/g" /etc/php-7.1.ini
 
 # Make directory for htpassword
-sudo mkdir /etc/httpd/htpasswd
+sudo mkdir -p /etc/httpd/htpasswd
 
 # Make directory for SSL certs
-sudo mkdir /etc/httpd/certs
+sudo mkdir -p /etc/httpd/certs
 
 # Default site
 echo "<VirtualHost *:80>
