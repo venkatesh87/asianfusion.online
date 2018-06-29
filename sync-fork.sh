@@ -9,7 +9,7 @@ git remote add upstream git@github.com:alanzhaonys/mywordpress.git
 git fetch upstream
 
 # Merge with remote
-git merge upstream/${APP_BRANCH}
+git merge upstream/${APP_BRANCH} --no-edit
 
 # Remove remote
 git remote remove upstream

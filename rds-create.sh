@@ -22,9 +22,6 @@ readonly DB_LIVE_DATABASE=${DB_INSTANCE_IDENTIFIER}_live
 readonly DB_LIVE_USER=${DB_INSTANCE_IDENTIFIER}_live
 readonly DB_LIVE_PASSWORD=$(get_password)
 
-# For creating new databses on existing RDS using rds-existing.sh,
-# it will remove existing databases and reset user passwords
-
 # Dev database and user
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
@@ -169,8 +166,10 @@ sh ./post-checkout
 cp ./post-checkout .git/hooks/post-checkout
 chmod u+x .git/hooks/post-checkout
 
-# Load starting point database to dev db
-sh ./load-db.sh db/wordpress.sql
+# Load starting point databases
+sh ./load-db.sh db/wordpress.sql dev
+sh ./load-db.sh db/wordpress.sql qa
+sh ./load-db.sh db/wordpress.sql master
 
 # Reset wordpress
 ./reset-wordpress.sh 1
