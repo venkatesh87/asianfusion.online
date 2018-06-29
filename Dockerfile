@@ -15,7 +15,7 @@ RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.c
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 
 # Enable networking
-RUN echo "NETWORKING=yes" >/etc/sysconfig/network
+RUN echo "NETWORKING=yes" > /etc/sysconfig/network
 
 # Add app.json to tmp directory for use later
 ADD app.json /tmp/

@@ -6,6 +6,9 @@ datetime zone config
 add recaptcha to login form/or fail login ban plugin
 
 if "connectLocalMysqlForDev" install local db
+update user instead of "insert"
+lockdown preinstalled plugins
+check Dockerfile ADD ./$PUBLIC_WEB_DIR
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php

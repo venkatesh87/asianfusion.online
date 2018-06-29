@@ -1,3 +1,7 @@
+v1.3.4
+- Improvement: Updated the theme screenshot.
+- Fix: WooCommerce categories with `,` in the category name not displayed correctly in product grid.
+
 v1.3.3
 - Improvement: Add icon for the LifterLMS My certificates link in My account page. Switch certificate icon with achievements icon.
 - Improvement: Add icon for the LifterLMS Social Learner link.

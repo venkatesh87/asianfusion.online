@@ -6,6 +6,9 @@ Search for `change-me`, they are the values you most likely need to change.
   // A short application name
   "appName": "change-me",
   
+  // The domain name of this site
+  "domainName": "change-me",
+  
   // Directory where WordPress source code is
   "publicWebDir": "wordpress",
   
@@ -48,10 +51,14 @@ Search for `change-me`, they are the values you most likely need to change.
       // Additional EC2 security groups
       "ec2SecurityGroups": "",
       
-      //
+      // Additional load balancer security groups
       "elbSecurityGroups": "",
       
-      //
+      // A user role for the EC2 instance, specifying this will make code change deployment
+      // to complete fast.
+      // https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html
+      // https://aws.amazon.com/blogs/security/new-attach-an-aws-iam-role-to-an-existing-amazon-ec2-instance-by-using-the-aws-cli/
+      // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html
       "iamInstanceProfile": "",
       
       // The name of the EC2 key to SSH into ElasticBeanstalk
