@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# 
+# Cherry pick a commit to all other branches in a project,
+# specify --skip-master as 2nd parameter to skip master branch.
+#
+# *** BE CAREFUL: ***
+# This script assumes your branches are clean
+# and there will be no pending merges when it's doing
+# the `git pull` prior to cherry picking.
+#
+
 if [[ $# -eq 0 ]] ; then
   echo "Enter a commit id (run \`git log\` to see commit history)"
   echo "Example: ./cherry-pick.sh [commit id] --skip-master"
@@ -29,6 +39,7 @@ for branch in `git branch --list|sed 's/\*//g'`;
         continue
       fi
 
+      git pull
       git checkout $branch
       git cherry-pick -x $commit
       git push
