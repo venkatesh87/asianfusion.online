@@ -177,7 +177,7 @@ fi
 cd ../
 
 # Change permission so rsync can be performed
-ec2_ssh_run_cmd "sudo chown -R ${SSH_USER}:apache $HTML_DIR"
+ec2_ssh_run_cmd "sudo mkdir -p $HTML_DIR; sudo chown -R ${SSH_USER}:apache $HTML_DIR"
 
 rsync -avh --delete --include-from $RSYNC_TMP_INCLUDE_FILE --exclude-from $RSYNC_TMP_EXCLUDE_FILE --prune-empty-dirs -e "ssh -i $KEY_PATH" $PUBLIC_WEB_DIR/ ${SSH_USER}@${PUBLIC_IP}:${HTML_DIR}
 
