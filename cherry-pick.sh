@@ -5,7 +5,10 @@ if [[ $# -eq 0 ]] ; then
   exit
 fi
 
+# Commmit id parameter
 readonly commit=$1
+# --skip-master parameter
+readonly skip_master=$2
 # Current branch
 readonly current_branch=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 # The branch of the original commit is made under
@@ -19,6 +22,12 @@ fi
 for branch in `git branch --list|sed 's/\*//g'`;
   do
     if [ "$branch" != $originating_branch ] ; then
+      
+      if [ "$skip_master" == "--skip-master" ] \
+        && [ "$branch" == "master" ] ; then
+        continue
+      fi
+
       git checkout $branch
       git cherry-pick -x $commit
       git push
