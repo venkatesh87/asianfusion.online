@@ -9,6 +9,13 @@ if "connectLocalMysqlForDev" install local db
 update user instead of "insert"
 lockdown preinstalled plugins
 check Dockerfile ADD ./$PUBLIC_WEB_DIR
+when dumping database, env specific plugin settings like s3 offload bucket will be overwritten
+better way to do docker port
+ssignment
+
+upgrade to amz2
+
+s3 bucket for keys
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php
