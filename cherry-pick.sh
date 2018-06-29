@@ -2,6 +2,7 @@
 
 if [[ $# -eq 0 ]] ; then
   echo "Enter a commit id (run \`git log\` to see commit history)"
+  echo "Example: ./cherry-pick.sh [commit id] --skip-master"
   exit
 fi
 
