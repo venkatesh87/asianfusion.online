@@ -217,7 +217,7 @@ if [ "$APP_BRANCH" != "master" ]; then
   HTTPS_DOMAIN_NAME=$THIS_DOMAIN_NAME
   LOG_LEVEL=debug
 else
-  THIS_SERVER_ALIAS="ServerAlias www.${DOMAIN_NAME} *.${DOMAIN_NAME}"
+  THIS_SERVER_ALIAS="ServerAlias www.${DOMAIN_NAME}"
   HTTPS_DOMAIN_NAME="www.${DOMAIN_NAME}"
 fi
 
