@@ -54,7 +54,7 @@ readonly BASIC_AUTH_USER=$(jq -r ".basicAuth.${APP_BRANCH}.user" $APP_CONFIG_FIL
 readonly BASIC_AUTH_PASSWORD=$(jq -r ".basicAuth.${APP_BRANCH}.password" $APP_CONFIG_FILE)
 # Pro plugins to download from S3
 readonly PLUGINS_DOWNLOAD_FROM_S3=$(jq -r ".wordpress.pluginsDownloadFromS3" ./app.json)
-
+# EC2 Settings
 readonly EC2_CONFIG_FILE=ec2.json
 readonly INSTANCE_NAME=$(jq -r ".instanceName" $EC2_CONFIG_FILE)
 readonly SERVER_NAME=$(jq -r ".serverName" $EC2_CONFIG_FILE)
@@ -64,19 +64,27 @@ readonly SSH_USER=$(jq -r ".sshUser" ec2.json)
 readonly CERT_S3_BUCKET=$(jq -r ".certS3Bucket" ec2.json)
 readonly CRON_DIR=/usr/local/bin
 readonly DB_BACKUP_CRON_NAME=${ENV_NAME}-wordpress-database-backup-cron
-
+# PHP settings
+PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" ./app.json)
+PHP_OUTPUT_COMPRESSION=$(jq -r ".php.dev.outputCompression" ./app.json)
+PHP_ALLOW_URL_FOPEN=$(jq -r ".php.dev.allowUrlFopen" ./app.json)
+PHP_DISPLAY_ERRORS=$(jq -r ".php.dev.displayErrors" ./app.json)
+PHP_MAX_EXECUTION_TIME=$(jq -r ".php.dev.maxExecutionTime" ./app.json)
+PHP_UPLOAD_MAX_FILESIZE=$(jq -r ".php.dev.uploadMaxFilesize" ./app.json)
+PHP_POST_MAX_SIZE=$(jq -r ".php.dev.postMaxSize" ./app.json)
+# HTML paths
 readonly HTML_DIR=/var/www/${ENV_NAME}
 readonly HTML_DIR_WILDCARD=/var/www/${APP_NAME}-*
-
+# HTTPD paths
 readonly HTTPD_CONF_FILE=/etc/httpd/conf.d/${ENV_NAME}.conf
 readonly HTTPD_CONF_FILE_WILDCARD=/etc/httpd/conf.d/${APP_NAME}-*.conf
-
+# HTPASSWD paths
 readonly HTPASSWD_FILE=/etc/httpd/htpasswd/${ENV_NAME}.htpasswd
 readonly HTPASSWD_FILE_WILDCARD=/etc/httpd/htpasswd/${APP_NAME}-*.htpasswd
-
+# CRON paths
 readonly CRON_FILE=${CRON_DIR}/${ENV_NAME}-*.sh
 readonly CRON_FILE_WILDCARD=${CRON_DIR}/${APP_NAME}-*.sh
-
+# Certificate paths
 readonly CERT_DIR=/etc/httpd/certs/${DOMAIN_NAME}
 readonly CERT_DIR_WILDCARD=/etc/httpd/certs/${DOMAIN_NAME}
 
@@ -283,6 +291,17 @@ readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} * * * * root ${CRON_DIR}/${DB_BA
 ec2_ssh_run_cmd "$CREATE_DB_BACKUP_CRON_CMD;$CHANGE_CRON_PERMISSION_CMD;$SETUP_DB_BACKUP_CRON_CMD"
 
 echo Created ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh
+
+# PHP settings (can append to .htaccess because it get replaced upon every deploy)
+ec2_ssh_run_cmd "sudo echo '
+# PHP settings
+php_value memory_limit $PHP_MEMORY_LIMIT
+php_value output_compression $PHP_OUTPUT_COMPRESSION
+php_value allow_url_fopen $PHP_ALLOW_URL_FOPEN
+php_value display_errors $PHP_DISPLAY_ERRORS
+php_value max_execution_time $PHP_MAX_EXECUTION_TIME
+php_value upload_max_filesize $PHP_UPLOAD_MAX_FILESIZE
+php_value post_max_size $PHP_POST_MAX_SIZE' >> $HTML_DIR/.htaccess"
 
 # Revert the permission
 ec2_ssh_run_cmd "sudo chown -R apache:apache $HTML_DIR"

@@ -41,9 +41,6 @@ echo "Connecting to $PUBLIC_IP using key $KEY_PATH"
 # Upload certs for server
 sh ./ec2-upload-certs.sh $SERVER_NAME
 
-# Copy up app.json to server
-scp -i $KEY_PATH -P $SSH_PORT app.json ${SSH_USER}@${PUBLIC_IP}:/tmp/app.json
-
 # Copy up ec2.json to server
 scp -i $KEY_PATH -P $SSH_PORT ec2.json ${SSH_USER}@${PUBLIC_IP}:/tmp/ec2.json
 
@@ -56,4 +53,4 @@ sed -i '' -e "s/\"endpoint\": \"\"/\"endpoint\": \"${PUBLIC_IP}\"/g" ec2-db.json
 sed -i '' -e "s/\"port\": \"\"/\"port\": \"${MYSQL_PORT}\"/g" ec2-db.json
 
 # Clean up
-ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/app.json; rm /tmp/ec2.json; rm /tmp/ec2-db.json"
+ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/ec2.json; rm /tmp/ec2-db.json"
