@@ -103,3 +103,36 @@ function add_custom_dashboard_widget() {
 }
 
 add_action('wp_dashboard_setup', 'add_custom_dashboard_widget');
+
+// Hide plugins
+function hide_plugins() {
+  global $wp_list_table;
+  $hideplugin = array(
+    'advanced-custom-fields/acf.php',
+    'akismet/akismet.php',
+    'amazon-s3-and-cloudfront/wordpress-s3.php',
+    'astra-sites/astra-sites.php',
+    'cf7-conditional-fields/contact-form-7-conditional-fields.php',
+    'contact-form-7/wp-contact-form-7.php',
+    'custom-post-type-ui/custom-post-type-ui.php',
+    'elementor/elementor.php',
+    'emoji-settings/emojisettings.php',
+    'flamingo/flamingo.php',
+    'google-analytics-dashboard-for-wp/gadwp.php',
+    'minify-html-markup/minify-html.php',
+    'simple-301-redirects/wp-simple-301-redirects.php',
+    'wordpress-importer/wordpress-importer.php',
+    'wordpress-seo/wp-seo.php',
+    'wp-email-smtp/wp_email_smtp.php',
+    'wpcf7-redirect/wpcf7-redirect.php',
+    'wps-hide-login/wps-hide-login.php'
+  );
+  $mypluginslist = $wp_list_table->items;
+  foreach ($mypluginslist as $key => $val) {
+    if (in_array($key,$hideplugin)) {
+      unset($wp_list_table->items[$key]);
+    }
+  }
+}
+
+add_action('pre_current_active_plugins', 'hide_plugins');
