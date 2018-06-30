@@ -20,9 +20,6 @@ RUN echo "NETWORKING=yes" > /etc/sysconfig/network
 # Add app.json to tmp directory for use later
 ADD app.json /tmp/
 
-# Get public web directory configuration
-RUN PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" /tmp/app.json)
-
 # Change PHP timezone
 RUN sed -i -e "s/;date.timezone =/date.timezone = America\/New_York/g" /etc/php.ini
 
@@ -44,9 +41,6 @@ RUN PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/app.json) \
 
 # Done with app.json, remove
 RUN rm /tmp/app.json
-
-# Mount public web directory
-ADD ./$PUBLIC_WEB_DIR /var/www/html
 
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
 

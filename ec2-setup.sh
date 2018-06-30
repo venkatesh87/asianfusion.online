@@ -25,13 +25,13 @@ sudo sed -i -e "s/\[mysqld\]/\[mysqld\]\nbind-address = 0.0.0.0\n/g" /etc/my.cnf
 SERVER_NAME=$(jq -r ".serverName" /tmp/ec2.json)
 
 # Other MISC PHP settings
-PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/app.json)
-PHP_OUTPUT_COMPRESSION=$(jq -r ".php.dev.outputCompression" /tmp/app.json)
-PHP_ALLOW_URL_FOPEN=$(jq -r ".php.dev.allowUrlFopen" /tmp/app.json)
-PHP_DISPLAY_ERRORS=$(jq -r ".php.dev.displayErrors" /tmp/app.json)
-PHP_MAX_EXECUTION_TIME=$(jq -r ".php.dev.maxExecutionTime" /tmp/app.json)
-PHP_UPLOAD_MAX_FILESIZE=$(jq -r ".php.dev.uploadMaxFilesize" /tmp/app.json)
-PHP_POST_MAX_SIZE=$(jq -r ".php.dev.postMaxSize" /tmp/app.json)
+PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/ec2.json)
+PHP_OUTPUT_COMPRESSION=$(jq -r ".php.dev.outputCompression" /tmp/ec2.json)
+PHP_ALLOW_URL_FOPEN=$(jq -r ".php.dev.allowUrlFopen" /tmp/ec2.json)
+PHP_DISPLAY_ERRORS=$(jq -r ".php.dev.displayErrors" /tmp/ec2.json)
+PHP_MAX_EXECUTION_TIME=$(jq -r ".php.dev.maxExecutionTime" /tmp/ec2.json)
+PHP_UPLOAD_MAX_FILESIZE=$(jq -r ".php.dev.uploadMaxFilesize" /tmp/ec2.json)
+PHP_POST_MAX_SIZE=$(jq -r ".php.dev.postMaxSize" /tmp/ec2.json)
 
 sudo sed -i -e "s/memory_limit = .*/memory_limit = ${PHP_MEMORY_LIMIT}/g" /etc/php-7.1.ini
 sudo sed -i -e "s/zlib.output_compression = .*/zlib.output_compression = ${PHP_OUTPUT_COMPRESSION}/g" /etc/php-7.1.ini
