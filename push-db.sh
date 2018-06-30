@@ -25,6 +25,16 @@ readonly DEST_PORT=$(jq -r ".${DEST_BRANCH}.port" $DB_CONFIG_FILE)
 
 readonly SQL_FILE=${TMP}/${APP_NAME}-${ORIGIN_BRANCH}.sql
 
+if [ "$ORIGIN_HOST" == null ]; then
+  echo "Database not found for origin branch '$ORIGIN_BRANCH', wrong branch?"
+  exit
+fi
+
+if [ "$DEST_HOST" == null ]; then
+  echo "Database not found for destination branch '$DEST_BRANCH', wrong branch?"
+  exit
+fi
+
 echo Dumping SQL file $SQL_FILE from $ORIGIN_HOST
 no_pw_warning mysqldump -h$ORIGIN_HOST -u$ORIGIN_USER -p$ORIGIN_PASSWORD -P$ORIGIN_PORT $ORIGIN_DATABASE > "$SQL_FILE"
 
