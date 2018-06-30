@@ -296,9 +296,9 @@ echo Created ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh
 ec2_ssh_run_cmd "sudo echo '
 # PHP settings
 php_value memory_limit $PHP_MEMORY_LIMIT
-php_value output_compression $PHP_OUTPUT_COMPRESSION
-php_value allow_url_fopen $PHP_ALLOW_URL_FOPEN
-php_value display_errors $PHP_DISPLAY_ERRORS
+php_flag output_compression $PHP_OUTPUT_COMPRESSION
+php_flag allow_url_fopen $PHP_ALLOW_URL_FOPEN
+php_flag display_errors $PHP_DISPLAY_ERRORS
 php_value max_execution_time $PHP_MAX_EXECUTION_TIME
 php_value upload_max_filesize $PHP_UPLOAD_MAX_FILESIZE
 php_value post_max_size $PHP_POST_MAX_SIZE' >> $HTML_DIR/.htaccess"
