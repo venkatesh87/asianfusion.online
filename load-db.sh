@@ -22,6 +22,11 @@ readonly USER=$(jq -r ".${BRANCH}.user" ./db.json)
 readonly PASSWORD=$(jq -r ".${BRANCH}.password" ./db.json)
 readonly PORT=$(jq -r ".${BRANCH}.port" ./db.json)
 
+if [ "$HOST" == null ]; then
+  echo "Database not found for '$BRANCH' branch, wrong branch?"
+  exit
+fi
+
 echo Loading SQL file $SQL_FILE to $HOST for $ENV_NAME
 
 no_pw_warning mysql -h$HOST -u$USER -p$PASSWORD -P$PORT $DATABASE < "$SQL_FILE"
