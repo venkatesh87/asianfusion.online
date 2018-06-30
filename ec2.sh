@@ -65,13 +65,13 @@ readonly CERT_S3_BUCKET=$(jq -r ".certS3Bucket" ec2.json)
 readonly CRON_DIR=/usr/local/bin
 readonly DB_BACKUP_CRON_NAME=${ENV_NAME}-wordpress-database-backup-cron
 # PHP settings
-PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" ./app.json)
-PHP_OUTPUT_COMPRESSION=$(jq -r ".php.dev.outputCompression" ./app.json)
-PHP_ALLOW_URL_FOPEN=$(jq -r ".php.dev.allowUrlFopen" ./app.json)
-PHP_DISPLAY_ERRORS=$(jq -r ".php.dev.displayErrors" ./app.json)
-PHP_MAX_EXECUTION_TIME=$(jq -r ".php.dev.maxExecutionTime" ./app.json)
-PHP_UPLOAD_MAX_FILESIZE=$(jq -r ".php.dev.uploadMaxFilesize" ./app.json)
-PHP_POST_MAX_SIZE=$(jq -r ".php.dev.postMaxSize" ./app.json)
+PHP_MEMORY_LIMIT=$(jq -r ".php.${APP_BRANCH}.memoryLimit" ./app.json)
+PHP_OUTPUT_COMPRESSION=$(jq -r ".php.${APP_BRANCH}.outputCompression" ./app.json)
+PHP_ALLOW_URL_FOPEN=$(jq -r ".php.${APP_BRANCH}.allowUrlFopen" ./app.json)
+PHP_DISPLAY_ERRORS=$(jq -r ".php.${APP_BRANCH}.displayErrors" ./app.json)
+PHP_MAX_EXECUTION_TIME=$(jq -r ".php.${APP_BRANCH}.maxExecutionTime" ./app.json)
+PHP_UPLOAD_MAX_FILESIZE=$(jq -r ".php.${APP_BRANCH}.uploadMaxFilesize" ./app.json)
+PHP_POST_MAX_SIZE=$(jq -r ".php.${APP_BRANCH}.postMaxSize" ./app.json)
 # HTML paths
 readonly HTML_DIR=/var/www/${ENV_NAME}
 readonly HTML_DIR_WILDCARD=/var/www/${APP_NAME}-*
