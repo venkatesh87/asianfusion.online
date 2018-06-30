@@ -16,5 +16,14 @@
   "volumeSize": "100",
   "serverName": "change-me",
   "elasticIp": "change-me",
-  "certS3Bucket": "change-me"
+  "certS3Bucket": "change-me",
+  "php": {
+    "memoryLimit": "512M",
+    "outputCompression": "On",
+    "allowUrlFopen": "Off",
+    "displayErrors": "Off",
+    "maxExecutionTime": 60,
+    "uploadMaxFilesize": "20M",
+    "postMaxSize": "2M"
+  }
 }
