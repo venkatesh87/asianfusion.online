@@ -110,7 +110,6 @@ function hide_plugins() {
   $hideplugin = array(
     'advanced-custom-fields/acf.php',
     'akismet/akismet.php',
-    'amazon-s3-and-cloudfront/wordpress-s3.php',
     'astra-sites/astra-sites.php',
     'cf7-conditional-fields/contact-form-7-conditional-fields.php',
     'contact-form-7/wp-contact-form-7.php',
@@ -135,4 +134,4 @@ function hide_plugins() {
   }
 }
 
-add_action('pre_current_active_plugins', 'hide_plugins');
+//add_action('pre_current_active_plugins', 'hide_plugins');
