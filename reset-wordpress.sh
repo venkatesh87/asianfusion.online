@@ -30,13 +30,6 @@ readonly WP_EMAIL_SMTP_PORT_CHAR_COUNT=${#WP_EMAIL_SMTP_PORT}
 readonly WP_EMAIL_SMTP_USERNAME_CHAR_COUNT=${#WP_EMAIL_SMTP_USERNAME}
 readonly WP_EMAIL_SMTP_PASSWORD_CHAR_COUNT=${#WP_EMAIL_SMTP_PASSWORD}
 
-# Wordpress upload S3 bucket settings
-readonly UPLOAD_S3_BUCKET=$(jq -r ".aws.wordpressUploadS3Bucket" $APP_CONFIG_FILE)
-readonly UPLOAD_S3_BUCKET_PATH=${APP_NAME}/${APP_BRANCH}/wp-content/uploads
-
-readonly UPLOAD_S3_BUCKET_PATH_CHAR_COUNT=${#UPLOAD_S3_BUCKET_PATH}
-readonly UPLOAD_S3_BUCKET_CHAR_COUNT=${#UPLOAD_S3_BUCKET}
-
 # Wordpress site name
 readonly WP_SITE_NAME=$(jq -r ".wordpress.siteTitle" $APP_CONFIG_FILE)
 
@@ -93,22 +86,6 @@ if [ "$WP_EMAIL_SMTP_FROM_EMAIL" != "" ] && [ "$WP_EMAIL_SMTP_FROM_NAME" != "" ]
     no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('wp_email_smtp_option_name', '${WP_EMAIL_SMTP_OPTION_VALUE}', 'yes');"
 
   fi
-
-fi
-
-# Update Offload S3 plugin settings
-
-readonly WP_OFFLOAD_S3_OPTION_VALUE="a:13:{s:6:\"bucket\";s:${UPLOAD_S3_BUCKET_CHAR_COUNT}:\"${UPLOAD_S3_BUCKET}\";s:10:\"cloudfront\";s:0:\"\";s:10:\"copy-to-s3\";s:1:\"1\";s:6:\"domain\";s:4:\"path\";s:20:\"enable-object-prefix\";s:1:\"1\";s:11:\"force-https\";s:1:\"0\";s:13:\"object-prefix\";s:${UPLOAD_S3_BUCKET_PATH_CHAR_COUNT}:\"${UPLOAD_S3_BUCKET_PATH}\";s:17:\"object-versioning\";s:1:\"1\";s:17:\"post_meta_version\";i:6;s:6:\"region\";s:0:\"\";s:17:\"remove-local-file\";s:1:\"0\";s:13:\"serve-from-s3\";s:1:\"1\";s:21:\"use-yearmonth-folders\";s:1:\"1\";}"
-
-readonly HAS_WP_OFFLOAD_S3=$(no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -se "SELECT COUNT(option_id) FROM ${DB_DATABASE}.wp_options WHERE option_name = 'tantan_wordpress_s3';")
-
-if [ "$HAS_WP_OFFLOAD_S3" == 1 ]; then
-
-  no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_OFFLOAD_S3_OPTION_VALUE}' WHERE option_name = 'tantan_wordpress_s3';"
-
-else
-
-  no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "INSERT INTO ${DB_DATABASE}.wp_options (option_name, option_value, autoload) VALUES ('tantan_wordpress_s3', '${WP_OFFLOAD_S3_OPTION_VALUE}', 'yes');"
 
 fi
 
@@ -268,7 +245,7 @@ done
 
 if [ "$ACTIVATE_PREINSTALLED_PLUGINS" == 1 ]; then
 
-  readonly WP_ACTIVATE_PLUGIN_VALUES="a:18:{i:0;s:30:\"advanced-custom-fields/acf.php\";i:1;s:19:\"akismet/akismet.php\";i:2;s:41:\"amazon-s3-and-cloudfront/wordpress-s3.php\";i:3;s:27:\"astra-sites/astra-sites.php\";i:4;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:5;s:36:\"contact-form-7/wp-contact-form-7.php\";i:6;s:43:\"custom-post-type-ui/custom-post-type-ui.php\";i:7;s:23:\"elementor/elementor.php\";i:8;s:32:\"emoji-settings/emojisettings.php\";i:9;s:21:\"flamingo/flamingo.php\";i:10;s:43:\"google-analytics-dashboard-for-wp/gadwp.php\";i:11;s:34:\"minify-html-markup/minify-html.php\";i:12;s:48:\"simple-301-redirects/wp-simple-301-redirects.php\";i:13;s:41:\"wordpress-importer/wordpress-importer.php\";i:14;s:24:\"wordpress-seo/wp-seo.php\";i:15;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:16;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";i:17;s:33:\"wps-hide-login/wps-hide-login.php\";}"
+  readonly WP_ACTIVATE_PLUGIN_VALUES="a:17:{i:0;s:30:\"advanced-custom-fields/acf.php\";i:1;s:19:\"akismet/akismet.php\";i:2;s:27:\"astra-sites/astra-sites.php\";i:3;s:60:\"cf7-conditional-fields/contact-form-7-conditional-fields.php\";i:4;s:36:\"contact-form-7/wp-contact-form-7.php\";i:5;s:43:\"custom-post-type-ui/custom-post-type-ui.php\";i:6;s:23:\"elementor/elementor.php\";i:7;s:32:\"emoji-settings/emojisettings.php\";i:8;s:21:\"flamingo/flamingo.php\";i:9;s:43:\"google-analytics-dashboard-for-wp/gadwp.php\";i:10;s:34:\"minify-html-markup/minify-html.php\";i:11;s:48:\"simple-301-redirects/wp-simple-301-redirects.php\";i:12;s:41:\"wordpress-importer/wordpress-importer.php\";i:13;s:24:\"wordpress-seo/wp-seo.php\";i:14;s:31:\"wp-email-smtp/wp_email_smtp.php\";i:15;s:33:\"wpcf7-redirect/wpcf7-redirect.php\";i:16;s:33:\"wps-hide-login/wps-hide-login.php\";}"
   
   no_pw_warning mysql -h$DB_HOST -u$DB_USER -p$DB_PASSWORD -e "UPDATE ${DB_DATABASE}.wp_options SET option_value = '${WP_ACTIVATE_PLUGIN_VALUES}' WHERE option_name = 'active_plugins';"
 
