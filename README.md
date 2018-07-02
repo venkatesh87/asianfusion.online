@@ -53,7 +53,6 @@ There are many features you can benefit from using this project:
   - [Contact Form 7](https://wordpress.org/plugins/contact-form-7/)
   - [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
   - [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/)
-  - [WP Offload S3 Lite](https://wordpress.org/plugins/amazon-s3-and-cloudfront/)
 
 ## Installation
 
@@ -150,38 +149,6 @@ Bucket for WordPress uploads. See `wordpressUploadS3Bucket` config in `app.json`
 
 #### WordPress Plugin Bucket
 Bucket for WordPress paid plugins. See `pluginS3Bucket` config in `app.json`
-
-#### Create S3 User for Offload S3 Plugin
-
-Create an user with S3 programtic access only, get Access key ID and Secret access key for Wordpress S3 upload plugin.
-
-IAM -> Users -> Add User -> Programatic access -> Attach existing policies directly -> Review -> Get Access Key ID/Screct access key
-
-You first create an user without any permission. Go to that user, under Permissions tab -> Add inline policy -> JSON tab, copy and paste the policy below with your own bucket name -> Save.
-
-```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:CreateBucket",
-                "s3:DeleteObject",
-                "s3:Put*",
-                "s3:Get*",
-                "s3:List*"
-            ],
-            "Resource": [
-                "arn:aws:s3:::your-upload-bucket",
-                "arn:aws:s3:::your-upload-bucket/*"
-            ]
-        }
-    ]
-}
-```
-
-More detailed instructions can be found: https://deliciousbrains.com/wp-offload-s3/doc/quick-start-guide/
 
 #### Create EC2 Instance Profile
 
