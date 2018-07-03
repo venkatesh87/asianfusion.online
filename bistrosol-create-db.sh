@@ -115,7 +115,7 @@ echo Loading database. This is going to take a while, please wait.
 mysql -h$ROOT_DB_HOST -u$BISTROSOL_DB_USER \
   -p$BISTROSOL_DB_PASSWORD -P$ROOT_DB_PORT < $S3_SQL_FILE_DOWNLOAD_TO
 
-# Generate db.json file
+# Generate database json file
 echo "{
   \"${BISTROSOL_DB_USER}\": {
     \"endpoint\": \"$ROOT_DB_HOST\",
