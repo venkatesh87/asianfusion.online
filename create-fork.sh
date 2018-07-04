@@ -8,12 +8,14 @@ fi
 GIT_LOCATION=$1
 
 # Create initial branch
-echo "# README" >> README.md
+echo "# README" >> README-junk.md
 git init
-git add README.md
+git add README-junk.md
 git commit -m "initial commit"
 git remote add origin $GIT_LOCATION
 git push -u origin master
+
+rm .gitignore
 
 # Fork from remote repo
 
@@ -24,7 +26,7 @@ git remote add upstream git@github.com:alanzhaonys/mywordpress.git
 git fetch upstream
 
 # Merge with remote
-git merge upstream/master --allow-unrelated-histories
+git merge upstream/master --allow-unrelated-histories --no-edit
 
 # Remove remote
 git remote remove upstream
