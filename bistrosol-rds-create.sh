@@ -21,6 +21,7 @@ if [[ $# -ne 0 ]] ; then
 fi
 
 readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" ./app.json)
+readonly APP_NAME=$(jq -r ".appName" ./app.json)
 readonly S3_SQL_PATH=s3://bistrosolutions/databases
 readonly S3_SQL_FILE=bistrosolutions.sql
 readonly S3_SQL_FILE_DOWNLOAD_TO=/tmp/${S3_SQL_FILE}
@@ -29,7 +30,7 @@ readonly EXPORT_DEFINER=terminal
 
 readonly BISTROSOL_DB_NAME=bistrosolutions
 readonly BISTROSOL_DB_DATABASE=${BISTROSOL_DB_NAME}_${APP_BRANCH}
-readonly DB_JSON_FILE=${BISTROSOL_DB_NAME}-${APP_BRANCH}.json
+readonly DB_JSON_FILE=${APP_NAME}-${APP_BRANCH}.json
 
 # SSL
 readonly BISTROSOL_DB_USER=${BISTROSOL_DB_NAME}_${APP_BRANCH}_replication
