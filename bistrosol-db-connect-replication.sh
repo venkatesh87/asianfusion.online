@@ -7,7 +7,8 @@ fi
 
 readonly APP_NAME=$(jq -r ".appName" ./app.json)
 readonly DB_CONFIG_FILE=${APP_NAME}-${APP_BRANCH}.json
-readonly DB_USER=${APP_NAME}_${APP_BRANCH}_web
+readonly DB_USER=${APP_NAME}_${APP_BRANCH}_replication
+readonly CERT_DIR=./mysql-certs
 
 readonly HOST=$(jq -r ".${DB_USER}.endpoint" ${DB_CONFIG_FILE})
 readonly DATABASE=$(jq -r ".${DB_USER}.database" ${DB_CONFIG_FILE})
@@ -15,6 +16,7 @@ readonly USER=$(jq -r ".${DB_USER}.user" ${DB_CONFIG_FILE})
 readonly PASSWORD=$(jq -r ".${DB_USER}.password" ${DB_CONFIG_FILE})
 readonly PORT=$(jq -r ".${DB_USER}.port" ${DB_CONFIG_FILE})
 
-mysql -h$HOST -u$USER -p$PASSWORD -P$PORT -D$DATABASE
-
-#--ssl-ca=ca.pem --ssl-cert=client-cert.pem --ssl-key=client-key.pem
+mysql -h$HOST -u$USER -p$PASSWORD -P$PORT -D$DATABASE \
+  --ssl-ca=${CERT_DIR}/ca.pem \
+  --ssl-cert=${CERT_DIR}/client-cert.pem \
+  --ssl-key=${CERT_DIR}/client-key.pem

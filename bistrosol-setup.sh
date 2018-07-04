@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# to do: timezone, ssl cert setup
+
 SERVER_ID=1000
 
 # Install packages
@@ -10,6 +12,9 @@ sudo amazon-linux-extras install php7.2 -y
 # MySQL 8 - https://dev.mysql.com/doc/refman/8.0/en/linux-installation-yum-repo.html
 wget https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
 sudo yum localinstall mysql80-community-release-el7-1.noarch.rpm -y
+#For mysql57
+#sudo yum-config-manager --enable mysql57-community
+#sudo yum-config-manager --disable mysql80-community
 sudo yum install mysql-community-server -y
 
 # Change Apache server name
@@ -26,9 +31,10 @@ sudo ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 sudo sed -i -e "s/;date.timezone =/date.timezone = America\/New_York/g" /etc/php.ini
 
 # Allow outside access to MySQL
-# Lower password policy - https://dev.mysql.com/doc/refman/8.0/en/validate-password-options-variables.html
 # Set server_id global variable
-sudo sed -i -e "s/\[mysqld\]/\[mysqld\]\nbind-address = 0.0.0.0\nvalidate_password.policy=LOW\nserver_id=${SERVER_ID}\n/g" /etc/my.cnf
+# Lower password policy - https://dev.mysql.com/doc/refman/8.0/en/validate-password-options-variables.html
+# https://mysqlserverteam.com/upgrading-to-mysql-8-0-default-authentication-plugin-considerations/
+sudo sed -i -e "s/\[mysqld\]/\[mysqld\]\nbind-address = 0.0.0.0\nserver_id=${SERVER_ID}\n#validate_password.policy=LOW\ndefault-authentication-plugin=mysql_native_password\n/g" /etc/my.cnf
 
 # Other MISC PHP settings
 PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/bistrosol.json)
@@ -86,11 +92,30 @@ get_password() {
   echo $password
 }
 
-readonly MYSQL_TEMP_PASSWORD=$(sudo grep 'temporary password' /var/log/mysqld.log | sed 's/.* //')
-readonly MYSQL_ROOT_PASSWORD=$(get_password)
+MYSQL_TEMP_PASSWORD=$(sudo grep 'temporary password' /var/log/mysqld.log | sed 's/.* //')
+MYSQL_TEMP_ROOT_PASSWORD='Test12345%'
+MYSQL_ROOT_PASSWORD=$(get_password)
 
-# Add MySQL root password
-mysql -hlocalhost -uroot -p${MYSQL_TEMP_PASSWORD} -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
+# MySQL 8 creates root user with temporary password by default.
+# On first password reset, it requires secure password
+# http://mysqlblog.fivefarmers.com/2014/05/20/batch-mode-and-expired-passwords/
+mysql --connect-expired-password -hlocalhost -uroot --password="${MYSQL_TEMP_PASSWORD}" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_TEMP_ROOT_PASSWORD}';"
+
+# Flush privileges
+mysql -hlocalhost -uroot --password="${MYSQL_TEMP_ROOT_PASSWORD}" -e "FLUSH PRIVILEGES;"
+
+# Stop
+sudo systemctl stop mysqld
+
+# Disable secure password
+# Lower password policy - https://dev.mysql.com/doc/refman/8.0/en/validate-password-options-variables.html
+sudo sed -i -e "s/#validate_password.policy=LOW/validate_password.policy=LOW/g" /etc/my.cnf
+
+# Start
+sudo systemctl start mysqld
+
+# Now change MySQL root password for real
+mysql -hlocalhost -uroot --password="${MYSQL_TEMP_ROOT_PASSWORD}" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
 
 # Add MySQL root user for outside access
 mysql -hlocalhost -uroot -p${MYSQL_ROOT_PASSWORD} -e "CREATE USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
@@ -98,6 +123,23 @@ mysql -hlocalhost -uroot -p${MYSQL_ROOT_PASSWORD} -e "GRANT ALL PRIVILEGES ON *.
 
 # Flush privileges
 mysql -hlocalhost -uroot -p${MYSQL_ROOT_PASSWORD} -e "FLUSH PRIVILEGES;"
+
+# Add timezone support
+mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -uroot -p${MYSQL_ROOT_PASSWORD} mysql
+
+# Enable MySQL SSL file - cert files are generated at /var/lib/mysql/
+sudo mysql_ssl_rsa_setup --uid=mysql
+sudo openssl verify -CAfile /var/lib/mysql/ca.pem /var/lib/mysql/server-cert.pem /var/lib/mysql/client-cert.pem
+
+MYSQL_CERT_TEMP_DIR=/tmp/mysql-certs
+mkdir ${MYSQL_CERT_TEMP_DIR}
+sudo mv /var/lib/mysql/ca.pem ${MYSQL_CERT_TEMP_DIR}
+sudo mv /var/lib/mysql/client-cert.pem ${MYSQL_CERT_TEMP_DIR}
+sudo mv /var/lib/mysql/client-key.pem ${MYSQL_CERT_TEMP_DIR}
+sudo chown -R ec2-user:ec2-user ${MYSQL_CERT_TEMP_DIR}
+
+# Restart
+sudo systemctl start mysqld
 
 # Create /tmp/bistrosol-db.json
 echo "{

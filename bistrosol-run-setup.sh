@@ -11,6 +11,9 @@ readonly MYSQL_PORT=$(jq -r ".mysqlPort" $EC2_CONFIG_FILE)
 readonly SERVER_NAME=$(jq -r ".serverName" $EC2_CONFIG_FILE)
 readonly ELASTIC_IP=$(jq -r ".elasticIp" $EC2_CONFIG_FILE)
 
+# Remove entry from .known_hosts
+ssh-keygen -R $ELASTIC_IP
+
 readonly INSTANCE_ID=($(aws ec2 describe-instances \
   --profile $AWS_PROFILE \
   --filters "Name=tag:Name,Values=${INSTANCE_NAME}" Name=instance-state-name,Values=running | jq -r ".Reservations[].Instances[].InstanceId"))
@@ -50,5 +53,10 @@ scp -i $KEY_PATH -P $SSH_PORT ${SSH_USER}@${PUBLIC_IP}:/tmp/$EC2_DB_FILE $EC2_DB
 sed -i '' -e "s/\"endpoint\": \"\"/\"endpoint\": \"${PUBLIC_IP}\"/g" $EC2_DB_FILE
 sed -i '' -e "s/\"port\": \"\"/\"port\": \"${MYSQL_PORT}\"/g" $EC2_DB_FILE
 
+# Copy down MySQL certs
+scp -r -i $KEY_PATH -P $SSH_PORT ${SSH_USER}@${PUBLIC_IP}:/tmp/mysql-certs .
+
 # Clean up
 ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/$EC2_CONFIG_FILE; rm /tmp/$EC2_DB_FILE"
+
+sh ./sync-creds-up.sh
