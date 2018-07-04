@@ -2,13 +2,14 @@
 
 readonly AWS_PROFILE=azhao
 readonly EC2_CONFIG_FILE=ec2.json
+readonly EC2_DB_FILE=ec2-db.json
 readonly INSTANCE_NAME=$(jq -r ".instanceName" $EC2_CONFIG_FILE)
-readonly KEY_PATH=$(jq -r ".keyPath" ec2.json)
-readonly SSH_PORT=$(jq -r ".sshPort" ec2.json)
-readonly SSH_USER=$(jq -r ".sshUser" ec2.json)
-readonly MYSQL_PORT=$(jq -r ".mysqlPort" ec2.json)
-readonly SERVER_NAME=$(jq -r ".serverName" ec2.json)
-readonly ELASTIC_IP=$(jq -r ".elasticIp" ec2.json)
+readonly KEY_PATH=$(jq -r ".keyPath" $EC2_CONFIG_FILE)
+readonly SSH_PORT=$(jq -r ".sshPort" $EC2_CONFIG_FILE)
+readonly SSH_USER=$(jq -r ".sshUser" $EC2_CONFIG_FILE)
+readonly MYSQL_PORT=$(jq -r ".mysqlPort" $EC2_CONFIG_FILE)
+readonly SERVER_NAME=$(jq -r ".serverName" $EC2_CONFIG_FILE)
+readonly ELASTIC_IP=$(jq -r ".elasticIp" $EC2_CONFIG_FILE)
 
 readonly INSTANCE_ID=($(aws ec2 describe-instances \
   --profile $AWS_PROFILE \
@@ -41,16 +42,16 @@ echo "Connecting to $PUBLIC_IP using key $KEY_PATH"
 # Upload certs for server
 sh ./ec2-upload-certs.sh $SERVER_NAME
 
-# Copy up ec2.json to server
-scp -i $KEY_PATH -P $SSH_PORT ec2.json ${SSH_USER}@${PUBLIC_IP}:/tmp/ec2.json
+# Copy up $EC2_CONFIG_FILE to server
+scp -i $KEY_PATH -P $SSH_PORT $EC2_CONFIG_FILE ${SSH_USER}@${PUBLIC_IP}:/tmp/$EC2_CONFIG_FILE
 
 # Run setup script via SSH
 ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT < ec2-setup.sh
 
-# Copy down ec2-db.json from server
-scp -i $KEY_PATH -P $SSH_PORT ${SSH_USER}@${PUBLIC_IP}:/tmp/ec2-db.json ec2-db.json
-sed -i '' -e "s/\"endpoint\": \"\"/\"endpoint\": \"${PUBLIC_IP}\"/g" ec2-db.json
-sed -i '' -e "s/\"port\": \"\"/\"port\": \"${MYSQL_PORT}\"/g" ec2-db.json
+# Copy down $EC2_DB_FILE from server
+scp -i $KEY_PATH -P $SSH_PORT ${SSH_USER}@${PUBLIC_IP}:/tmp/$EC2_DB_FILE $EC2_DB_FILE
+sed -i '' -e "s/\"endpoint\": \"\"/\"endpoint\": \"${PUBLIC_IP}\"/g" $EC2_DB_FILE
+sed -i '' -e "s/\"port\": \"\"/\"port\": \"${MYSQL_PORT}\"/g" $EC2_DB_FILE
 
 # Clean up
-ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/ec2.json; rm /tmp/ec2-db.json"
+ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/$EC2_CONFIG_FILE; rm /tmp/$EC2_DB_FILE"
