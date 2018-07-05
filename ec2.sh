@@ -17,7 +17,7 @@ begin() {
        |  __|| |      / /  | |  | |  __| |  ___/| |   | |  | |\   /  
        | |___| |____ / /_  | |__| | |____| |    | |___| |__| | | |   
        |______\_____|____| |_____/|______|_|    |______\____/  |_|   
-                                                               v 0.1
+                                                 v 0.2 Amazon Linux 2
   "
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 }
@@ -149,7 +149,7 @@ if [ "${1}" == "terminate" ]; then
     ec2_ssh_run_cmd "rm $CERT_DIR > /dev/null 2>&1"
     echo $CERT_DIR removed
   fi
-  ec2_ssh_run_cmd "sudo /etc/init.d/httpd reload"
+  ec2_ssh_run_cmd "sudo systemctl reload httpd"
   end
 fi
 
@@ -307,7 +307,7 @@ php_value post_max_size $PHP_POST_MAX_SIZE' >> $HTML_DIR/.htaccess"
 ec2_ssh_run_cmd "sudo chown -R apache:apache $HTML_DIR"
 
 # Reload web server
-ec2_ssh_run_cmd "sudo /etc/init.d/httpd reload"
+ec2_ssh_run_cmd "sudo systemctl reload httpd"
 
 # Make sure wp-config.php is up to date, reset database credential
 sh ./post-checkout

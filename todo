@@ -11,6 +11,8 @@ when dumping database, env specific plugin settings like s3 offload bucket will 
 better way to do docker port assignment
 
 upgrade to amz2
+ec2 mysql timezone
+mysql/php version in dashboard
 
 s3 bucket for keys
 
