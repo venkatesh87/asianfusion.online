@@ -1,5 +1,5 @@
 {
-  "imageId": "ami-a4dc46db",
+  "imageId": "ami-b70554c8",
   "securityGroupName": "wordpress-server-1-ec2-sg",
   "securityGroupDescription": "WordPress Server 1 EC2 Security Group",
   "keyName": "default-ec2",

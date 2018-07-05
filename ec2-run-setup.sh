@@ -11,6 +11,9 @@ readonly MYSQL_PORT=$(jq -r ".mysqlPort" $EC2_CONFIG_FILE)
 readonly SERVER_NAME=$(jq -r ".serverName" $EC2_CONFIG_FILE)
 readonly ELASTIC_IP=$(jq -r ".elasticIp" $EC2_CONFIG_FILE)
 
+# Remove entry from .known_hosts
+ssh-keygen -R $ELASTIC_IP
+
 readonly INSTANCE_ID=($(aws ec2 describe-instances \
   --profile $AWS_PROFILE \
   --filters "Name=tag:Name,Values=${INSTANCE_NAME}" Name=instance-state-name,Values=running | jq -r ".Reservations[].Instances[].InstanceId"))
