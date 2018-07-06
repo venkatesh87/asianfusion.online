@@ -14,7 +14,7 @@ services:
     restart: always
 
   mysql:
-    image: mysql/mysql-server:latest
+    image: mysql/mysql-server:8.0.11
     container_name: {WP_NAME}_mysql
     ports:
       - {LOCAL_MYSQL_PORT}:3306

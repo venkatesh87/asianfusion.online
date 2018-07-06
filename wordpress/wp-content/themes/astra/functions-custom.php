@@ -81,10 +81,16 @@ add_action( 'admin_menu', 'remove_menus' );
 
 // example custom dashboard widget
 function custom_dashboard_widget() {
+  global $wpdb;
   echo "<ul>";
   echo "<li><strong>Site URL:</strong> " . WP_HOME . "</li>";
   echo "<li><strong>Database Host:</strong> " . DB_HOST . "</li>";
   echo "<li><strong>Database Name:</strong> " . DB_NAME . "</li>";
+  echo "<li><strong>Server Settings:</strong></li>";
+  echo "<ul>";
+  echo "<li><strong>PHP version: " . phpversion() . "</li>";
+  echo "<li><strong>MySQL version: " . $wpdb->db_version() . "</li>";
+  echo "</ul>";
   echo "<li><strong>PHP Settings:</strong></li>";
   echo "<ul>";
   echo "<li><strong>memory_limit:</strong> " . ini_get('memory_limit') . "</li>";
