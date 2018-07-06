@@ -10,11 +10,8 @@ lockdown preinstalled plugins
 when dumping database, env specific plugin settings like s3 offload bucket will be overwritten
 better way to do docker port assignment
 
-upgrade to amz2
-ec2 mysql timezone
-mysql/php version in dashboard
-
 s3 bucket for keys
+docker mysql local user unaccessable
 
 bugs:
 - report to wordpress is_ssl() method @wordpress/wp-includes/load.php
