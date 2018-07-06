@@ -16,6 +16,7 @@ get_password() {
   echo $password
 }
 
+# Run command over SSH
 ec2_ssh_run_cmd() {
   CMD=$1
   ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "$CMD"
