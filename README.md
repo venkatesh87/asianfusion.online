@@ -54,6 +54,19 @@ There are many features you can benefit from using this project:
   - [Custom Post Type UI](https://wordpress.org/plugins/custom-post-type-ui/)
   - [Yoast SEO](https://wordpress.org/plugins/wordpress-seo/)
 
+## Versions as of 7/5/2018
+### EBS Deployment
+PHP - 7.1.15
+MySQL - 5.7.21
+
+### EC2 Deployment (featuring Amazon Linux 2)
+PHP - 7.2.5
+MySQL - 8.0.11
+
+### Docker
+PHP - 7.2.5
+MySQL - 8.0.11
+
 ## Installation
 
 ### awscli
