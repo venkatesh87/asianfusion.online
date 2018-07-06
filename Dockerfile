@@ -3,25 +3,27 @@ MAINTAINER Alan Zhao <alanzhaonys@yahoo.com>
 
 # Install packages
 RUN yum update -y
-RUN yum install vim jq httpd php php-mbstring php-mcrypt php-memcache php-gd php-mysqlnd -y
+RUN amazon-linux-extras install php7.2 -y
+RUN yum install jq httpd mod_php -y
 
 # Change Apache server name
 RUN sed -i -e "s/#ServerName www.example.com:80/ServerName localhost/g" /etc/httpd/conf/httpd.conf
 
 # Allow .htaccess
 RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.conf
+RUN sed -i -e "s/AllowOverride none/AllowOverride All/g" /etc/httpd/conf/httpd.conf
 
 # Change system timezone
 RUN ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
+
+# Change PHP timezone
+RUN sed -i -e "s/;date.timezone =/date.timezone = America\/New_York/g" /etc/php.ini
 
 # Enable networking
 RUN echo "NETWORKING=yes" > /etc/sysconfig/network
 
 # Add app.json to tmp directory for use later
 ADD app.json /tmp/
-
-# Change PHP timezone
-RUN sed -i -e "s/;date.timezone =/date.timezone = America\/New_York/g" /etc/php.ini
 
 # Other MISC PHP settings
 RUN PHP_MEMORY_LIMIT=$(jq -r ".php.dev.memoryLimit" /tmp/app.json) \
