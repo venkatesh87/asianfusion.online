@@ -8,8 +8,6 @@
 
 /wordpress/wp-config.php
 /wordpress/.ebextensions/default.config
-/wordpress/wp-content/uploads/*
-!/wordpress/wp-content/uploads/.htaccess
 
 /mysql/data/*
 /mysq/logs/*
