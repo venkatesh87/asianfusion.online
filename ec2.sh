@@ -150,6 +150,9 @@ if [ "${1}" == "terminate" ]; then
     echo $CERT_DIR removed
   fi
   ec2_ssh_run_cmd "sudo systemctl reload httpd; sudo systemctl status httpd | grep 'Active'"
+
+  # Remove docker containers
+  ./docker.sh remove
   end
 fi
 
