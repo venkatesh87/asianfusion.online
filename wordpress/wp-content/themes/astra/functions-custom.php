@@ -3,13 +3,18 @@
 // Custom login logo
 function my_login_logo() { ?>
     <style type="text/css">
-        #login h1 a, .login h1 a {
-            background-image: url(<?php echo get_stylesheet_directory_uri(); ?>/assets/images/login-logo.jpeg);
-		        height: 80px;
-		        width: 80px;
-		        background-size: 80px 80px;
-		        background-repeat: no-repeat;
-        	  padding-bottom: 30px;
+        #login h1 a {
+            background-image: url(<?php echo get_stylesheet_directory_uri(); ?>/assets/images/login-logo.svg);
+		        background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            padding-bottom: 50px;
+            width: 100%;
+            height: auto;
+        }
+        #loginform {
+          overflow: initial;
+          border-radius: 10px;
         }
     </style>
 <?php }
