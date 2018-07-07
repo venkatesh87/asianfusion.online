@@ -62,14 +62,14 @@ elif [ "${1}" == "remove" ]; then
 
 elif [ "${1}" == "ssh" ]; then
 
-    docker exec -it ${WP_NAME}_wordpress /bin/sh
+    docker exec -it ${WP_NAME}_wordpress /bin/bash
 
 elif [ "${1}" == "ssh-phpmyadmin" ]; then
 
-    docker exec -it ${WP_NAME}_phpmyadmin /bin/sh
+    docker exec -it ${WP_NAME}_phpmyadmin /bin/bash
 
 elif [ "${1}" == "ssh-mysql" ]; then
 
-    docker exec -it ${WP_NAME}_mysql /bin/sh
+    docker exec -it ${WP_NAME}_mysql /bin/bash
 
 fi
