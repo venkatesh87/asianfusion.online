@@ -10,4 +10,8 @@ readonly DATABASE=$(jq -r ".${APP_BRANCH}.database" ./db.json)
 readonly USER=$(jq -r ".${APP_BRANCH}.user" ./db.json)
 readonly PASSWORD=$(jq -r ".${APP_BRANCH}.password" ./db.json)
 
-mysql -h$HOST -u$USER -p$PASSWORD -D$DATABASE
+if [ "$USER" == "root" ]; then
+  mysql -h$HOST -u$USER -p$PASSWORD
+else
+  mysql -h$HOST -u$USER -p$PASSWORD -D$DATABASE
+fi
