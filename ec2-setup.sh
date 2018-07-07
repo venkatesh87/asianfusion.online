@@ -113,7 +113,7 @@ SSLSessionTickets off" | sudo tee /etc/httpd/conf.d/000-default.conf > /dev/null
 
 sudo mkdir /var/www/000-default
 
-echo "<h2>Sorry, the page cannot be found</h2>" | sudo tee /var/www/000-default/index.html > /dev/null 2>&1
+echo '<h2 style="font-size:50px;width:100%;height:100%;display:flex;justify-content:center;align-items:center;">Sorry, the page cannot be found!</h2>' | sudo tee /var/www/000-default/index.html > /dev/null 2>&1
 
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/install-LAMP.html
 sudo usermod -a -G apache ec2-user
