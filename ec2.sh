@@ -158,6 +158,9 @@ echo Starting...please wait
 # Make sure wp-config.php is up to date                                         
 sh ./post-checkout 1
 
+# Install pro plugins
+sh ./install-pro-plugins.sh
+
 # Upload WordPress files to server
 
 cd $PUBLIC_WEB_DIR
