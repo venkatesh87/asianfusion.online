@@ -266,7 +266,8 @@ cp ../ebextensions.sample.config ${EBEXTENSIONS_DIR}/default.config
 if [ "$BASIC_AUTH_ENABLED" -eq 1 ] && [ "$BASIC_AUTH_USER" != "" ] && [ "$BASIC_AUTH_PASSWORD" != "" ]; then
   # Search, replace and uncomment these lines
   readonly HTPASSWD=$(htpasswd -nb $BASIC_AUTH_USER $BASIC_AUTH_PASSWORD)
-  sed -i '' -e "s/#user:password/${HTPASSWD}/g" ${EBEXTENSIONS_DIR}/default.config
+  # Use '|' as delimiter to avoid conflict with '/' in the password
+  sed -i '' -e "s|#user:password|${HTPASSWD}|g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/#AuthType Basic/AuthType Basic/g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/#AuthName \"My Protected Area\"/AuthName \"${APP_NAME} ${APP_BRANCH}\"/g" ${EBEXTENSIONS_DIR}/default.config
   sed -i '' -e "s/#AuthUserFile \/etc\/httpd\/\.htpasswd/AuthUserFile \/etc\/httpd\/\.htpasswd/g" ${EBEXTENSIONS_DIR}/default.config
@@ -285,7 +286,8 @@ if [ "$SSL_CERTIFICATE_ID" == "" ]; then
   # Comment out SSL redirect
   sed -i '' -e "s/RewriteRule ^(.*)$ https:\/\/%{HTTP_HOST}%{REQUEST_URI} [R=301,L]/#RewriteRule ^(.*)$ https:\/\/%{HTTP_HOST}%{REQUEST_URI} [R=301,L]/" ${EBEXTENSIONS_DIR}/default.config
 else
-  sed -i '' -e "s/SSLCertificateId:/SSLCertificateId: ${SSL_CERTIFICATE_ID}/g" ${EBEXTENSIONS_DIR}/default.config
+  # Use '#' as delimiter to avoid conflict with '/' in the SSL ID
+  sed -i '' -e "s#SSLCertificateId:#SSLCertificateId: ${SSL_CERTIFICATE_ID}#g" ${EBEXTENSIONS_DIR}/default.config
 fi
 
 # PHP SETTINGS
