@@ -54,9 +54,10 @@ sed -i '' -e "s/\"endpoint\": \"\"/\"endpoint\": \"${PUBLIC_IP}\"/g" $EC2_DB_FIL
 sed -i '' -e "s/\"port\": \"\"/\"port\": \"${MYSQL_PORT}\"/g" $EC2_DB_FILE
 
 # Copy down MySQL certs
-scp -r -i $KEY_PATH -P $SSH_PORT ${SSH_USER}@${PUBLIC_IP}:/tmp/mysql-certs .
+MYSQL_CERT_TEMP_DIR=/tmp/mysql-certs
+scp -r -i $KEY_PATH -P $SSH_PORT ${SSH_USER}@${PUBLIC_IP}:${MYSQL_CERT_TEMP_DIR} .
 
 # Clean up
-ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/$EC2_CONFIG_FILE; rm /tmp/$EC2_DB_FILE"
+ssh ${SSH_USER}@${PUBLIC_IP} -i $KEY_PATH -p $SSH_PORT "rm /tmp/$EC2_CONFIG_FILE; rm /tmp/$EC2_DB_FILE; rm -rf $MYSQL_CERT_TEMP_DIR"
 
 sh ./sync-creds-up.sh
