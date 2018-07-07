@@ -1,13 +1,11 @@
 #!/bin/bash
 
-# to do: timezone, ssl cert setup
-
 SERVER_ID=1000
 
 # Install packages
 sudo yum update -y
-sudo yum install jq httpd mod_ssl -y
 sudo amazon-linux-extras install php7.2 -y
+sudo yum install jq httpd mod_php mod_ssl -y
 
 # MySQL 8 - https://dev.mysql.com/doc/refman/8.0/en/linux-installation-yum-repo.html
 wget https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
