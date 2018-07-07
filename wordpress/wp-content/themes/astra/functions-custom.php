@@ -82,17 +82,18 @@ add_action( 'admin_menu', 'remove_menus' );
 // example custom dashboard widget
 function custom_dashboard_widget() {
   global $wpdb;
+  echo "<style>.dashboard-info { display: block; border: 1px solid #c0c0c0; padding: 10px; border-radius: 5px; margin: 10px 0; }</style>";
   echo "<ul>";
   echo "<li><strong>Site URL:</strong> " . WP_HOME . "</li>";
   echo "<li><strong>Database Host:</strong> " . DB_HOST . "</li>";
   echo "<li><strong>Database Name:</strong> " . DB_NAME . "</li>";
   echo "<li><strong>Server Settings:</strong></li>";
-  echo "<ul>";
+  echo "<ul class=\"dashboard-info\">";
   echo "<li><strong>PHP version: " . phpversion() . "</li>";
   echo "<li><strong>MySQL version: " . $wpdb->db_version() . "</li>";
   echo "</ul>";
   echo "<li><strong>PHP Settings:</strong></li>";
-  echo "<ul>";
+  echo "<ul class=\"dashboard-info\">";
   echo "<li><strong>memory_limit:</strong> " . ini_get('memory_limit') . "</li>";
   echo "<li><strong>max_execution_time:</strong> " . ini_get('max_execution_time') . "</li>";
   echo "<li><strong>upload_max_filesize:</strong> " . ini_get('upload_max_filesize') . "</li>";
