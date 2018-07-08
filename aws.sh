@@ -221,6 +221,9 @@ if [ "${1}" == "terminate" ]; then
       --profile $AWS_PROFILE \
       --application-name $APP_NAME \
       --terminate-env-by-force
+
+    # Remove docker containers
+    ./docker.sh remove
     end
 
   elif [ "$ENV_AVAILABLE" == "false" ]; then

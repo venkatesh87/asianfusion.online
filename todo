@@ -13,5 +13,5 @@ better way to do docker port assignment
 s3 bucket for keys
 docker mysql local user unaccessable
 
-bugs:
-- report to wordpress is_ssl() method @wordpress/wp-includes/load.php
+wp-cli install, use cli to active plugin, create/modifier user
+build process
