@@ -1,4 +1,4 @@
-/*! elementor - v2.1.1 - 03-07-2018 */
+/*! elementor - v2.1.2 - 08-07-2018 */
 .dialog-widget-content {
   background-color: #fff;
   position: absolute;
@@ -700,6 +700,13 @@ ul.elementor-icon-list-items.elementor-inline-items {
     .elementor-grid-mobile-12 .elementor-grid {
       grid-template-columns: repeat(12, 1fr); } }
 
+.elementor-grid-0 .elementor-grid {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  overflow: hidden; }
+
 .elementor-screen-only,
 .screen-reader-text,
 .screen-reader-text span,
@@ -755,6 +762,7 @@ ul.elementor-icon-list-items.elementor-inline-items {
             align-items: flex-end; }
   .elementor-field-group .elementor-field-textual {
     width: 100%;
+    max-width: 100%;
     border: 1px solid #818a91;
     background-color: transparent;
     color: #373a3c;
