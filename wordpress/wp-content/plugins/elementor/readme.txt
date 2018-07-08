@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor, visual edito
 Requires at least: 4.7
 Tested up to: 4.9
 Requires PHP: 5.4
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -215,6 +215,18 @@ No. Elementor supports WordPress 4.6 or greater, and is compatible with PHP 5.4 
 7. **Shape Divider.** Choose from a wide array of shape dividers and separate your sections in endless ways, that until now were simply not possible.
 
 == Changelog ==
+
+= 2.1.2 - 2018-07-08 =
+* Tweak: Set active/inactive category by `'active' => false` (default is `true`)
+* Tweak: Added forms input style compatibility for some themes
+* Fix: XML Demo Import compatibility for admin based imports ([#4947](https://github.com/pojome/elementor/issues/4947))
+* Fix: Set correct `post_id` when call `enqueue_scripts` from preview mode
+* Fix: Conditions not working on dynamic backgrounds
+* Fix: Paste of multiple content in Add Section Area
+* Fix: Set lower priority to `template_include` hook to override 3rd party plugins, e.g. WooCommerce
+* Fix: Hide Save Widget as Global button for old versions
+* Fix: Added RTL style for section with handles inside
+* Deprecated: Restore `get_page` method as hard deprecated ([#4870](https://github.com/pojome/elementor/issues/4870))
 
 = 2.1.1 - 2018-07-03 =
 * Tweak: Compatibility Gutenberg classic editor
