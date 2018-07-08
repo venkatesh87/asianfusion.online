@@ -1,7 +1,9 @@
 <?php
 
+//
 // Custom login logo
-function my_login_logo() { ?>
+//
+function custom_login_logo() { ?>
     <style type="text/css">
         #login h1 a {
             background-image: url(<?php echo get_stylesheet_directory_uri(); ?>/assets/images/login-logo.svg);
@@ -19,9 +21,11 @@ function my_login_logo() { ?>
     </style>
 <?php }
 
-add_action('login_enqueue_scripts', 'my_login_logo');
+add_action('login_enqueue_scripts', 'custom_login_logo');
 
+//
 // Clean up dashboard
+//
 function disable_default_dashboard_widgets() {
 	remove_meta_box('dashboard_right_now', 'dashboard', 'core');
 	remove_meta_box('dashboard_activity', 'dashboard', 'core');
@@ -39,27 +43,37 @@ function disable_default_dashboard_widgets() {
 }
 add_action('admin_menu', 'disable_default_dashboard_widgets');
 
+//
 // Remove welcome panel
+//
 remove_action('welcome_panel', 'wp_welcome_panel');
 
+//
 // Remove Yoast SEO link from admin bar
-add_action('wp_before_admin_bar_render', 'seo_admin_bar');
+//
 function seo_admin_bar() {
   global $wp_admin_bar;
   $wp_admin_bar->remove_menu('wpseo-menu');
 }
+add_action('wp_before_admin_bar_render', 'seo_admin_bar');
 
+//
 // Remove help tab
+//
 function remove_help_tabs($old_help, $screen_id, $screen) {
     $screen->remove_help_tabs();
     return $old_help;
 }
 add_filter('contextual_help', 'remove_help_tabs', 999, 3);
 
+//
 // Remove screen option tab
+//
 add_filter( 'screen_options_show_screen', '__return_false');
 
-// Disable notice for all users
+//
+// Disable notice
+//
 function hide_update_noticee_to_all_but_admin_users() {
     //if (!is_super_admin()) {
         remove_all_actions('admin_notices');
@@ -67,24 +81,9 @@ function hide_update_noticee_to_all_but_admin_users() {
 }
 add_action('admin_head', 'hide_update_noticee_to_all_but_admin_users', 1);
 
-// Remove admin menu items
-function remove_menus() {  
-
-  //remove_menu_page( 'index.php' );                  //Dashboard  
-  //remove_menu_page( 'edit.php' );                   //Posts  
-  //remove_menu_page( 'upload.php' );                 //Media  
-  //remove_menu_page( 'edit.php?post_type=page' );    //Pages  
-  //remove_menu_page( 'edit-comments.php' );          //Comments  
-  //remove_menu_page( 'themes.php' );                 //Appearance  
-  //remove_menu_page( 'plugins.php' );                //Plugins  
-  //remove_menu_page( 'users.php' );                  //Users  
-  //remove_menu_page( 'tools.php' );                  //Tools  
-  //remove_menu_page( 'options-general.php' );        //Settings  
-
-}  
-add_action( 'admin_menu', 'remove_menus' );  
-
-// example custom dashboard widget
+//
+// Custom dashboard
+//
 function custom_dashboard_widget() {
   global $wpdb;
   echo "<style>.dashboard-info { display: block; border: 1px solid #c0c0c0; padding: 10px; border-radius: 5px; margin: 10px 0; }</style>";
@@ -116,7 +115,41 @@ function add_custom_dashboard_widget() {
 
 add_action('wp_dashboard_setup', 'add_custom_dashboard_widget');
 
+//
+// Nice search - Redirects search results from /?s=query to /search/query/
+// https://github.com/roots/soil/blob/master/modules/nice-search.php
+//
+function search_redirect() {
+  global $wp_rewrite;
+  if (!isset($wp_rewrite) || !is_object($wp_rewrite) || !$wp_rewrite->get_search_permastruct()) {
+    return;
+  }
+  $search_base = $wp_rewrite->search_base;
+  if (is_search() && !is_admin() && strpos($_SERVER['REQUEST_URI'], "/{$search_base}/") === false && strpos($_SERVER['REQUEST_URI'], '&') === false) {
+    wp_redirect(get_search_link());
+    exit();
+  }
+}
+add_action('template_redirect', 'search_redirect');
+
+function search_rewrite($url) {
+  return str_replace('/?s=', '/search/', $url);
+}
+add_filter('wpseo_json_ld_search_url', 'search_rewrite');
+
+//
+// https://github.com/roots/soil/blob/master/modules/js-to-footer.php
+//
+function js_to_footer() {
+  remove_action('wp_head', 'wp_print_scripts');
+  remove_action('wp_head', 'wp_print_head_scripts', 9);
+  remove_action('wp_head', 'wp_enqueue_scripts', 1);
+}
+add_action('wp_enqueue_scripts', 'js_to_footer');
+
+//
 // Hide plugins
+//
 function hide_plugins() {
   global $wp_list_table;
   $hideplugin = array(
