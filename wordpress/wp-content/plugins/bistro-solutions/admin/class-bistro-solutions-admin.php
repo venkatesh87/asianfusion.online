@@ -50,7 +50,9 @@ class Bistro_Solutions_Admin {
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
+    $this->version = $version;
+
+    $this->options = get_option( 'bistrosol_settings' );
 
 	}
 
@@ -98,6 +100,176 @@ class Bistro_Solutions_Admin {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/bistro-solutions-admin.js', array( 'jquery' ), $this->version, false );
 
-	}
+  }
+
+  public function add_menu() {
+    // Todo: add icon URL
+    // https://developer.wordpress.org/reference/functions/add_menu_page/
+    add_menu_page( 'Bistro Solutions', 'Bistro Solutions', 'manage_options', 'bistrosol', array($this, 'setting_options_page') );
+  }
+
+  function init_settings(  ) {
+
+    register_setting( 'bistrosolPluginPage', 'bistrosol_settings' );
+
+    add_settings_section(
+      'database_section',
+      __( 'Database', 'bistrosol' ),
+      array($this, 'database_section_callback'),
+      'bistrosolPluginPage'
+    );
+
+    add_settings_field(
+      'database_host',
+      __( 'Host', 'bistrosol' ),
+      array($this, 'database_host_render'),
+      'bistrosolPluginPage',
+      'database_section'
+    );
+
+    add_settings_field(
+      'database_name',
+      __( 'Name', 'bistrosol' ),
+      array($this, 'database_name_render'),
+      'bistrosolPluginPage',
+      'database_section'
+    );
+
+    add_settings_field(
+      'database_user',
+      __( 'User', 'bistrosol' ),
+      array($this, 'database_user_render'),
+      'bistrosolPluginPage',
+      'database_section'
+    );
+
+    add_settings_field(
+      'database_password',
+      __( 'Password', 'bistrosol' ),
+      array($this, 'database_password_render'),
+      'bistrosolPluginPage',
+      'database_section'
+    );
+
+    add_settings_field(
+      'database_port',
+      __( 'Port', 'bistrosol' ),
+      array($this, 'database_port_render'),
+      'bistrosolPluginPage',
+      'database_section'
+    );
+
+    add_settings_field(
+      'database_ca',
+      __( 'ca.pem', 'bistrosol' ),
+      array($this, 'database_ca_render'),
+      'bistrosolPluginPage',
+      'database_section'
+    );
+
+    add_settings_field(
+      'database_client_cert',
+      __( 'client-cert.pem', 'bistrosol' ),
+      array($this, 'database_client_cert_render'),
+      'bistrosolPluginPage',
+      'database_section'
+    );
+
+    add_settings_field(
+      'database_client_key',
+      __( 'client-key.pem', 'bistrosol' ),
+      array($this, 'database_client_key_render'),
+      'bistrosolPluginPage',
+      'database_section'
+    );
+  }
+
+  function setting_options_page(  ) { 
+
+    ?>
+    <form action='options.php' method='post'>
+
+      <h2>Bistro Solutions</h2>
+
+      <?php
+      settings_fields( 'bistrosolPluginPage' );
+      do_settings_sections( 'bistrosolPluginPage' );
+      submit_button();
+      ?>
+
+    </form>
+    <?php
+
+  }
+
+
+  function database_section_callback(  ) { 
+
+    echo __( 'Database section description', 'bistrosol' );
+
+  }
+
+  function database_host_render(  ) { 
+    ?>
+    <input type='text' name='bistrosol_settings[database_host]' value='<?=$this->options['database_host']; ?>'>
+    <?php
+
+  }
+
+
+  function database_name_render(  ) { 
+    ?>
+    <input type='text' name='bistrosol_settings[database_name]' value='<?=$this->options['database_name']; ?>'>
+    <?php
+
+  }
+
+
+  function database_user_render(  ) { 
+    ?>
+    <input type='text' name='bistrosol_settings[database_user]' value='<?=$this->options['database_user']; ?>'>
+    <?php
+
+  }
+
+
+  function database_password_render(  ) { 
+    ?>
+    <input type='password' name='bistrosol_settings[database_password]' value='<?=$this->options['database_password']; ?>'>
+    <?php
+
+  }
+
+
+  function database_port_render(  ) { 
+    ?>
+    <input type='text' name='bistrosol_settings[database_port]' value='<?=$this->options['database_port'] ? $this->options['database_port'] : '3306'; ?>'>
+    <?php
+
+  }
+
+
+  function database_ca_render(  ) { 
+    ?>
+    <input type='text' name='bistrosol_settings[database_ca]' value='<?=$this->options['database_ca']; ?>'>
+    <?php
+
+  }
+
+
+  function database_client_cert_render(  ) { 
+    ?>
+    <input type='text' name='bistrosol_settings[database_client_cert]' value='<?=$this->options['database_client_cert']; ?>'>
+    <?php
+
+  }
+
+
+  function database_client_key_render(  ) { 
+    ?>
+    <input type='text' name='bistrosol_settings[database_client_key]' value='<?=$this->options['database_client_key']; ?>'>
+    <?php
+
+  }
 
 }
