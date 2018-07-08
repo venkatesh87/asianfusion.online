@@ -1,4 +1,4 @@
-/*! elementor - v2.1.1 - 03-07-2018 */
+/*! elementor - v2.1.2 - 08-07-2018 */
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 var TagPanelView = require( 'elementor-dynamic-tags/tag-panel-view' );
 
@@ -9568,16 +9568,20 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				return;
 			}
 
-			var categoriesActivationList = elementor.config.document.panel.categories,
-				categoryOutOfWhiteList = categoriesActivationList.active && -1 === categoriesActivationList.active.indexOf( categoryName ),
-				categoryInBlackList = categoriesActivationList.inactive && -1 !== categoriesActivationList.inactive.indexOf( categoryName ),
-				isActiveCategory = ! categoryOutOfWhiteList && ! categoryInBlackList;
+			// Set defaults.
+			if ( 'undefined' === typeof categoryConfig.active ) {
+				categoryConfig.active = true;
+			}
+
+			if ( 'undefined' === typeof categoryConfig.icon ) {
+				categoryConfig.icon = 'font';
+			}
 
 			categoriesCollection.add( {
 				name: categoryName,
 				title: categoryConfig.title,
 				icon: categoryConfig.icon,
-				defaultActive: isActiveCategory,
+				defaultActive: categoryConfig.active,
 				items: categories[ categoryName ]
 			} );
 		} );
@@ -11697,6 +11701,10 @@ helpers = {
 				isNegativeCondition = !! conditionNameParts[3],
 				controlValue = values[ conditionRealName ];
 
+			if ( values.__dynamic__ && values.__dynamic__[ conditionRealName ] ) {
+				controlValue = values.__dynamic__[ conditionRealName ];
+			}
+
 			if ( undefined === controlValue ) {
 				return true;
 			}
@@ -11709,6 +11717,7 @@ helpers = {
 			// If the controlValue is a non empty array - check if the controlValue contains the conditionValue
 			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
 			var isContains;
+
 			if ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) {
 				isContains = _.contains( conditionValue, controlValue );
 			} else if ( _.isArray( controlValue ) && ! _.isEmpty( controlValue ) ) {
@@ -13000,10 +13009,6 @@ module.exports = new Schemes();
 },{}],123:[function(require,module,exports){
 module.exports = Marionette.ItemView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-add-section' ),
-
-	options: {
-		at: null
-	},
 
 	attributes: {
 		'data-view': 'choose-action'
