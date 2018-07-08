@@ -119,7 +119,7 @@ fi
 # Terminate
 if [ "${1}" == "terminate" ]; then
   if [ "${2}" == "app" ]; then
-    ec2_ssh_run_cmd "rm $HTML_DIR_WILDCARD > /dev/null 2>&1" 
+    ec2_ssh_run_cmd "rm -rf $HTML_DIR_WILDCARD > /dev/null 2>&1" 
     echo $HTML_DIR_WILDCARD removed
 
     ec2_ssh_run_cmd "sudo rm $HTTPD_CONF_FILE_WILDCARD > /dev/null 2>&1" 
@@ -131,10 +131,10 @@ if [ "${1}" == "terminate" ]; then
     ec2_ssh_run_cmd "sudo rm $CRON_FILE_WILDCARD > /dev/null 2>&1" 
     echo $CRON_FILE_WILDCARD removed
 
-    ec2_ssh_run_cmd "rm $CERT_DIR_WILDCARD > /dev/null 2>&1" 
+    ec2_ssh_run_cmd "rm -rf $CERT_DIR_WILDCARD > /dev/null 2>&1" 
     echo $CERT_DIR_WILDCARD removed
   else
-    ec2_ssh_run_cmd "rm $HTML_DIR > /dev/null 2>&1"
+    ec2_ssh_run_cmd "rm -rf $HTML_DIR > /dev/null 2>&1"
     echo $HTML_DIR removed
 
     ec2_ssh_run_cmd "sudo rm $HTTPD_CONF_FILE > /dev/null 2>&1"
@@ -146,10 +146,13 @@ if [ "${1}" == "terminate" ]; then
     ec2_ssh_run_cmd "sudo rm $CRON_FILE > /dev/null 2>&1"
     echo $CRON_FILE removed
 
-    ec2_ssh_run_cmd "rm $CERT_DIR > /dev/null 2>&1"
+    ec2_ssh_run_cmd "rm -rf $CERT_DIR > /dev/null 2>&1"
     echo $CERT_DIR removed
   fi
   ec2_ssh_run_cmd "sudo systemctl reload httpd; sudo systemctl status httpd | grep 'Active'"
+
+  # Remove docker containers
+  ./docker.sh remove
   end
 fi
 
