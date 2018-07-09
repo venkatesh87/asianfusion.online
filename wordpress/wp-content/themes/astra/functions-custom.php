@@ -148,6 +148,19 @@ function js_to_footer() {
 add_action('wp_enqueue_scripts', 'js_to_footer');
 
 //
+// Disable users REST API
+//
+add_filter( 'rest_endpoints', function( $endpoints ){
+    if ( isset( $endpoints['/wp/v2/users'] ) ) {
+        unset( $endpoints['/wp/v2/users'] );
+    }
+    if ( isset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] ) ) {
+        unset( $endpoints['/wp/v2/users/(?P<id>[\d]+)'] );
+    }
+    return $endpoints;
+});
+
+//
 // Hide plugins
 //
 function hide_plugins() {
