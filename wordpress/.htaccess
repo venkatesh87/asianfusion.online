@@ -10,10 +10,17 @@ RewriteRule ^wp-includes/js/tinymce/langs/.+\.php - [F,L]
 RewriteRule ^wp-includes/theme-compat/ - [F,L]
 </IfModule>
 
-<files wp-config.php>
-order allow,deny
-deny from all
-</files>
+# Block wp-config.php
+<Files wp-config.php>
+Order Deny,Allow
+Deny from all
+</Files>
+
+# Block xmlrpc.php
+<Files xmlrpc.php>
+Order Deny,Allow
+Deny from all
+</Files>
 
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
