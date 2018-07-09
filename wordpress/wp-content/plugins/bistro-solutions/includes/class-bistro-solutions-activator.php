@@ -29,8 +29,29 @@ class Bistro_Solutions_Activator {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function activate() {
+  public static function activate() {
 
-	}
+    //
+    // Pages
+    //
 
+    $menu_page_title = __( 'Menu', BISTRO_SOLUTIONS_TEXTDOMAIN );
+    $menu_page_check = get_page_by_title($menu_page_title);
+
+    if (!isset($menu_page_check->ID)) {
+      $menu_page = array(
+        'post_title'    => $menu_page_title,
+        'post_content'  => __( 'Menu', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        'post_status'   => 'publish',
+        'post_author'   => 1,
+        'post_type'     => 'page',
+      );
+
+      $menu_page_id = wp_insert_post( $menu_page );
+      //update_post_meta($menu_page_id, '_wp_page_template', 'bistro-solutions-base.php');
+
+    } else {
+      die( __( 'Menu page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
+    }
+  }
 }
