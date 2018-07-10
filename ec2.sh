@@ -268,14 +268,16 @@ ec2_ssh_run_cmd "sudo mv ${TMP_HTTPD_CONF_FILE} ${HTTPD_CONF_FILE};sudo chown ro
 echo "Sync'd ${HTTPD_CONF_FILE} file"
 
 # Download certs from S3
-readonly TMP_CERT_DIR=${TMP}/${DOMAIN_NAME}-certs
-aws s3 cp --profile $AWS_PROFILE s3://$CERT_S3_BUCKET/${DOMAIN_NAME} $TMP_CERT_DIR --recursive
+  if [ "$DOMAIN_NAME" != "" ]; then
+  readonly TMP_CERT_DIR=${TMP}/${DOMAIN_NAME}-certs
+  aws s3 cp --profile $AWS_PROFILE s3://$CERT_S3_BUCKET/${DOMAIN_NAME} $TMP_CERT_DIR --recursive
 
-# Send certs to server
-rsync -ah -e "ssh -i $KEY_PATH" $TMP_CERT_DIR/ ${SSH_USER}@${PUBLIC_IP}:${TMP_CERT_DIR}
-ec2_ssh_run_cmd "sudo mkdir -p ${CERT_DIR};sudo cp ${TMP_CERT_DIR}/* ${CERT_DIR}/;rm -rf ${TMP_CERT_DIR};sudo chown -R root:root ${CERT_DIR}"
-echo "Sync'd SSL certs at $CERT_DIR"
-rm -rf $TMP_CERT_DIR
+  # Send certs to server
+  rsync -ah -e "ssh -i $KEY_PATH" $TMP_CERT_DIR/ ${SSH_USER}@${PUBLIC_IP}:${TMP_CERT_DIR}
+  ec2_ssh_run_cmd "sudo mkdir -p ${CERT_DIR};sudo cp ${TMP_CERT_DIR}/* ${CERT_DIR}/;rm -rf ${TMP_CERT_DIR};sudo chown -R root:root ${CERT_DIR}"
+  echo "Sync'd SSL certs at $CERT_DIR"
+  rm -rf $TMP_CERT_DIR
+fi
 
 # Setup database backup script and CRON
 readonly CREATE_DB_BACKUP_CRON_CMD="echo -e '#!/bin/bash
