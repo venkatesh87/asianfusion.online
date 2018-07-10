@@ -13,15 +13,15 @@
  * @package           Bistro_Solutions
  *
  * @wordpress-plugin
- * Plugin Name:        Bistro Solutions
+ * Plugin Name:       Bistro Solutions
  * Plugin URI:        https://www.bistrosol.co
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Bistro Solutions official WordPress plugin.
  * Version:           1.0.0
  * Author:            Alan Zhao
  * Author URI:        https://www.bistrosol.co
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       bistro-solutions
+ * Text Domain:       bistrosol
  * Domain Path:       /languages
  */
 
@@ -33,9 +33,20 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
  */
-define( 'PLUGIN_NAME_VERSION', '1.0.0' );
+define( 'BISTRO_SOLUTIONS_PLUGIN_VERSION', '1.0.0' );
+
+/**
+ * Current plugin directory.
+ */
+define( 'BISTRO_SOLUTIONS_PLUGIN_DIR', basename( dirname( __FILE__ ) ) );
+
+/**
+ * Currently plugin version.
+ * Start at version 1.0.0 and use SemVer - https://semver.org
+ */
+define( 'BISTRO_SOLUTIONS_TEXTDOMAIN', 'bistrosol' );
+
 
 /**
  * The code that runs during plugin activation.

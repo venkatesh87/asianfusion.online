@@ -30,7 +30,12 @@ class Bistro_Solutions_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
+    $menu_page_title = __( 'Menu', BISTRO_SOLUTIONS_TEXTDOMAIN );
+    $menu_page_check = get_page_by_title($menu_page_title);
 
+    if (isset($menu_page_check->ID)) {
+      wp_delete_post($menu_page_check->ID, true);
+    }
 	}
 
 }
