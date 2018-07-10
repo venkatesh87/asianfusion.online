@@ -210,7 +210,13 @@ echo "Sync'd WordPress files at $HTML_DIR"
 
 # Generate httpd.conf file and upload to server
 readonly TMP_HTTPD_CONF_FILE=${TMP}/${ENV_NAME}-httpd.conf
-cp httpd-sample.conf $TMP_HTTPD_CONF_FILE
+
+if [ "$DOMAIN_NAME" != "" ]; then
+  cp httpd-sample.conf $TMP_HTTPD_CONF_FILE
+else
+  cp httpd-sample2.conf $TMP_HTTPD_CONF_FILE
+fi
+
 THIS_DOMAIN_NAME=$DOMAIN_NAME
 HTTPS_DOMAIN_NAME=''
 THIS_SERVER_ALIAS=''
@@ -261,8 +267,8 @@ rsync -ah -e "ssh -i $KEY_PATH" $TMP_HTTPD_CONF_FILE ${SSH_USER}@${PUBLIC_IP}:${
 ec2_ssh_run_cmd "sudo mv ${TMP_HTTPD_CONF_FILE} ${HTTPD_CONF_FILE};sudo chown root:root ${HTTPD_CONF_FILE}"
 echo "Sync'd ${HTTPD_CONF_FILE} file"
 
-readonly TMP_CERT_DIR=${TMP}/${DOMAIN_NAME}-certs
 # Download certs from S3
+readonly TMP_CERT_DIR=${TMP}/${DOMAIN_NAME}-certs
 aws s3 cp --profile $AWS_PROFILE s3://$CERT_S3_BUCKET/${DOMAIN_NAME} $TMP_CERT_DIR --recursive
 
 # Send certs to server
@@ -270,8 +276,6 @@ rsync -ah -e "ssh -i $KEY_PATH" $TMP_CERT_DIR/ ${SSH_USER}@${PUBLIC_IP}:${TMP_CE
 ec2_ssh_run_cmd "sudo mkdir -p ${CERT_DIR};sudo cp ${TMP_CERT_DIR}/* ${CERT_DIR}/;rm -rf ${TMP_CERT_DIR};sudo chown -R root:root ${CERT_DIR}"
 echo "Sync'd SSL certs at $CERT_DIR"
 rm -rf $TMP_CERT_DIR
-
-# Redirect
 
 # Setup database backup script and CRON
 readonly CREATE_DB_BACKUP_CRON_CMD="echo -e '#!/bin/bash
