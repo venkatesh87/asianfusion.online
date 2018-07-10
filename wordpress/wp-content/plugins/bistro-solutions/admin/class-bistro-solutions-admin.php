@@ -105,7 +105,15 @@ class Bistro_Solutions_Admin {
   public function add_menu() {
     // Todo: add icon URL
     // https://developer.wordpress.org/reference/functions/add_menu_page/
-    add_menu_page( 'Bistro Solutions', 'Bistro Solutions', 'manage_options', 'bistrosol', array($this, 'setting_options_page') );
+    add_menu_page( 'Bistro Solutions', 'Bistro Solutions', 'manage_options', 'bistrosol' );
+
+    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Overview', 'Overview', 'manage_options', 'bistrosol' );
+
+    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Settings', 'Settings', 'manage_options', 'bistrosol-settings', array($this, 'setting_options_page') );
+
+    add_submenu_page( 'bistrosol', 'Bistro Solutions - Orders', 'Orders', 'manage_options', 'bistrosol-orders' );
+
+    add_submenu_page( 'bistrosol', 'Bistro Solutions - Customers', 'Customers', 'manage_options', 'bistrosol-customers' );
   }
 
   public function init_settings(  ) {
