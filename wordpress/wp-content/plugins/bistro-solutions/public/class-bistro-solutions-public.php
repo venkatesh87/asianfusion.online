@@ -98,6 +98,62 @@ class Bistro_Solutions_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/bistro-solutions-public.js', array( 'jquery' ), $this->version, false );
 
-	}
+  }
 
+  public function register_routes() {
+    
+    $version = '1';
+    $namespace = 'bistrosol/v' . $version;
+    $base = 'db';
+
+    register_rest_route( $namespace, '/' . $base . '/(?P<id>\d+)', array(
+      'methods' => 'GET',
+      'callback' => array($this, 'my_awesome_func'),
+      'args' => array(
+        'id' => array(
+          //'default' => '',
+          //'required' => true,
+          'validate_callback' => function($param, $request, $key) {
+            return is_numeric( $param );
+          },
+          //'sanitize_callback' => 'sanitize_text_field'
+        ),
+      ),
+      'permission_callback' => array($this, 'permission_check')
+    ) );
+  }
+
+  public function permission_check( $request ) {
+    return true;
+  }
+
+  public function my_awesome_func( WP_REST_Request $request ) {
+
+    // You can access parameters via direct array access on the object:
+    //$param = $request['some_param'];
+
+    // Or via the helper method:
+    //$param = $request->get_param( 'some_param' );
+
+    // You can get the combined, merged set of parameters:
+    //$parameters = $request->get_params();
+
+    // The individual sets of parameters are also available, if needed:
+    //$parameters = $request->get_url_params();
+    //$parameters = $request->get_query_params();
+    //$parameters = $request->get_body_params();
+    //$parameters = $request->get_json_params();
+    //$parameters = $request->get_default_params();
+
+    // Uploads aren't merged in, but can be accessed separately:
+    //$parameters = $request->get_file_params();
+
+    if ( empty( $posts ) ) {
+      //return new WP_Error( 'no_author', 'Invalid author', array( 'status' => 404 ) );
+    }
+
+    $data = array( 'some', 'response', 'data' );
+
+    return new WP_REST_Response( $data, 200 );
+  }
 }
