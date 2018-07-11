@@ -2,3 +2,36 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
+
+#bistrosol-db-settings-form
+{
+}
+
+#bistrosol-db-settings-form #test-db-spinner,
+#bistrosol-db-settings-form #test-db-result-connected,
+#bistrosol-db-settings-form #test-db-result-not-connected,
+#bistrosol-db-settings-form #bistrosol-db-settings-form-error
+{
+  display: none;
+}
+
+#bistrosol-db-settings-form #test-db-result-connected
+{
+  color: #008000;
+}
+
+#bistrosol-db-settings-form #test-db-result-not-connected,
+#bistrosol-db-settings-form #bistrosol-db-settings-form-error
+{
+  color: #ff0000;
+}
+
+#bistrosol-db-settings-form .required label:before
+{
+  content: '*';
+}
+
+#bistrosol-db-settings-form .error label
+{
+  color: #ff0000;
+}
