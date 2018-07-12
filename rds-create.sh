@@ -18,9 +18,9 @@ readonly DB_QA_DATABASE=${DB_INSTANCE_IDENTIFIER}_qa
 readonly DB_QA_USER=${DB_INSTANCE_IDENTIFIER}_qa
 readonly DB_QA_PASSWORD=$(get_password)
 
-readonly DB_LIVE_DATABASE=${DB_INSTANCE_IDENTIFIER}_live
-readonly DB_LIVE_USER=${DB_INSTANCE_IDENTIFIER}_live
-readonly DB_LIVE_PASSWORD=$(get_password)
+readonly DB_MASTER_DATABASE=${DB_INSTANCE_IDENTIFIER}_master
+readonly DB_MASTER_USER=${DB_INSTANCE_IDENTIFIER}_master
+readonly DB_MASTER_PASSWORD=$(get_password)
 
 # Dev database and user
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
@@ -89,34 +89,34 @@ echo Created qa database backup ${DB_QA_DATABASE}_backup
 # Live database and user
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
-  -e "DROP DATABASE IF EXISTS $DB_LIVE_DATABASE;"
+  -e "DROP DATABASE IF EXISTS $DB_MASTER_DATABASE;"
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
-  -e "CREATE DATABASE $DB_LIVE_DATABASE;"
+  -e "CREATE DATABASE $DB_MASTER_DATABASE;"
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
-  -e "CREATE USER IF NOT EXISTS '$DB_LIVE_USER'@'%' IDENTIFIED BY '$DB_LIVE_PASSWORD';"
+  -e "CREATE USER IF NOT EXISTS '$DB_MASTER_USER'@'%' IDENTIFIED BY '$DB_MASTER_PASSWORD';"
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
-  -e "ALTER USER '$DB_LIVE_USER'@'%' IDENTIFIED BY '$DB_LIVE_PASSWORD';"
+  -e "ALTER USER '$DB_MASTER_USER'@'%' IDENTIFIED BY '$DB_MASTER_PASSWORD';"
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
-  -e "GRANT ALL PRIVILEGES ON $DB_LIVE_DATABASE.* TO '$DB_LIVE_USER'@'%';"
+  -e "GRANT ALL PRIVILEGES ON $DB_MASTER_DATABASE.* TO '$DB_MASTER_USER'@'%';"
 
-echo Created live database $DB_LIVE_DATABASE
+echo Created master database $DB_MASTER_DATABASE
 
 # Live backup
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
-  -e "DROP DATABASE IF EXISTS ${DB_LIVE_DATABASE}_backup;"
+  -e "DROP DATABASE IF EXISTS ${DB_MASTER_DATABASE}_backup;"
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
-  -e "CREATE DATABASE ${DB_LIVE_DATABASE}_backup;"
+  -e "CREATE DATABASE ${DB_MASTER_DATABASE}_backup;"
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
   -p$MASTER_USER_PASSWORD -P$RDS_PORT \
-  -e "GRANT ALL PRIVILEGES ON ${DB_LIVE_DATABASE}_backup.* TO '$DB_LIVE_USER'@'%';"
+  -e "GRANT ALL PRIVILEGES ON ${DB_MASTER_DATABASE}_backup.* TO '$DB_MASTER_USER'@'%';"
 
-echo Created live database backup ${DB_LIVE_DATABASE}_backup
+echo Created master database backup ${DB_MASTER_DATABASE}_backup
 
 # Flush privileges
 no_pw_warning mysql -h$RDS_ENDPOINT -u$MASTER_USERNAME \
@@ -154,9 +154,9 @@ echo "{
   },
   \"master\": {
     \"endpoint\": \"$RDS_ENDPOINT\",
-    \"database\": \"$DB_LIVE_DATABASE\",
-    \"user\": \"$DB_LIVE_USER\",
-    \"password\": \"$DB_LIVE_PASSWORD\",
+    \"database\": \"$DB_MASTER_DATABASE\",
+    \"user\": \"$DB_MASTER_USER\",
+    \"password\": \"$DB_MASTER_PASSWORD\",
     \"port\": \"$RDS_PORT\"
   }
 }" > ./db.json
