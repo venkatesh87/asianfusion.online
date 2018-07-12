@@ -192,4 +192,4 @@ function hide_plugins() {
   }
 }
 
-//add_action('pre_current_active_plugins', 'hide_plugins');
+add_action('pre_current_active_plugins', 'hide_plugins');
