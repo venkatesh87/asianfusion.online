@@ -36,6 +36,9 @@ class Bistro_Solutions_Deactivator {
     if (isset($menu_page_check->ID)) {
       wp_delete_post($menu_page_check->ID, true);
     }
+
+    remove_role( 'bistrosol_admin' );
+    remove_role( 'bistrosol_manager' );
 	}
 
 }

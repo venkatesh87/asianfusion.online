@@ -105,15 +105,18 @@ class Bistro_Solutions_Admin {
   public function add_menu() {
     // Todo: add icon URL
     // https://developer.wordpress.org/reference/functions/add_menu_page/
-    add_menu_page( 'Bistro Solutions', 'Bistro Solutions', 'manage_options', 'bistrosol' );
+    add_menu_page( 'Bistro Solutions', 'Bistro Solutions', 'bistrosol_user', 'bistrosol' );
 
-    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Overview', 'Overview', 'manage_options', 'bistrosol' );
+    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Overview', 'Overview', 'bistrosol_view_dashboard', 'bistrosol', array($this, 'dashboard_page'));
 
-    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Settings', 'Settings', 'manage_options', 'bistrosol-settings', array($this, 'settings_page') );
+    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Settings', 'Settings', 'bistrosol_edit_settings', 'bistrosol-settings', array($this, 'settings_page') );
 
-    add_submenu_page( 'bistrosol', 'Bistro Solutions - Orders', 'Orders', 'manage_options', 'bistrosol-orders' );
+    add_submenu_page( 'bistrosol', 'Bistro Solutions - Orders', 'Orders', 'bistrosol_view_orders', 'bistrosol-orders', array($this, 'orders_page'));
 
-    add_submenu_page( 'bistrosol', 'Bistro Solutions - Customers', 'Customers', 'manage_options', 'bistrosol-customers' );
+    add_submenu_page( 'bistrosol', 'Bistro Solutions - Customers', 'Customers', 'bistrosol_view_customers', 'bistrosol-customers', array($this, 'customers_page') );
+
+    add_submenu_page( 'bistrosol', 'Bistro Solutions - Reports', 'Reports', 'bistrosol_view_reports', 'bistrosol-reports', array($this, 'reports_page') );
+
   }
 
   public function init_settings(  ) {
@@ -215,7 +218,12 @@ class Bistro_Solutions_Admin {
   }
 
   public function settings_page(  ) { 
-
+    /*
+    if (!(is_admin() || current_user_can('bistrosol_edit_settings'))) {
+      echo '<p>' . __( 'Permission denied.', BISTRO_SOLUTIONS_TEXTDOMAIN ) . '</p>';
+      return false;
+    }
+     */
     ?>
     <form enctype='multipart/form-data' id='bistrosol-db-settings-form' action='options.php' method='post' autocomplete='off'>
 
@@ -343,4 +351,19 @@ class Bistro_Solutions_Admin {
     exit;
   }
 
+  public function dashboard_page() {
+    echo '<h2>Dashboard</h2>'; 
+  }
+
+  public function orders_page() {
+    echo '<h2>Orders</h2>'; 
+  }
+
+  public function customers_page() {
+    echo '<h2>Customers</h2>'; 
+  }
+
+  public function reports_page() {
+    echo '<h2>Reports</h2>'; 
+  }
 }
