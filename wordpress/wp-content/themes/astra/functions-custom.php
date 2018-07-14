@@ -110,10 +110,37 @@ function custom_dashboard_widget() {
 }
 
 function add_custom_dashboard_widget() {
-	wp_add_dashboard_widget('custom_dashboard_widget', 'Environment Info', 'custom_dashboard_widget');
+  if (current_user_can('administrator')) {
+    wp_add_dashboard_widget('custom_dashboard_widget', 'Environment Info', 'custom_dashboard_widget');
+  }
 }
 
 add_action('wp_dashboard_setup', 'add_custom_dashboard_widget');
+
+//
+// Remove admin bar logo
+//
+function remove_wp_logo( $wp_admin_bar ) {
+	$wp_admin_bar->remove_node( 'wp-logo' );
+}
+add_action( 'admin_bar_menu', 'remove_wp_logo', 999 );
+
+//
+// Remove footer link
+//
+function remove_footer_link ()
+{
+    echo '<span id="footer-thankyou"></span>';
+}
+add_filter('admin_footer_text', 'remove_footer_link' );
+
+//
+// Remove version from dashboard
+//
+function remove_footer_version() {
+    remove_filter( 'update_footer', 'core_update_footer' );
+}
+add_action( 'admin_menu', 'remove_footer_version' );
 
 //
 // Nice search - Redirects search results from /?s=query to /search/query/

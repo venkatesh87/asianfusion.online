@@ -51,7 +51,98 @@ class Bistro_Solutions_Activator {
       //update_post_meta($menu_page_id, '_wp_page_template', 'bistro-solutions-base.php');
 
     } else {
-      die( __( 'Menu page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
+      //die( __( 'Menu page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
     }
+
+    $wp_roles = new WP_Roles();
+    $base_role = $wp_roles->get_role('subscriber');
+    $base_caps = $base_role->capabilities;
+
+    $admin_role = $wp_roles->get_role('administrator');
+
+    // Define new roles and capabilities
+
+    add_role(
+        'bistrosol_admin',
+        __( 'Bistro Solutions Admin',  BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        array_merge(
+          $base_caps,
+          array(
+            'bistrosol_user' => true, // Bistro Solutions user's default permission
+            'bistrosol_edit_settings' => true,
+            'bistrosol_view_dashboard' => true,
+            'bistrosol_view_orders' => true,
+            'bistrosol_edit_orders' => true,
+            'bistrosol_view_reports' => true,
+            'bistrosol_view_customers' => true,
+            'bistrosol_edit_customers' => true,
+          )
+        )
+      );
+
+    add_role(
+        'bistrosol_boss',
+        __( 'Bistro Solutions Boss',  BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        array_merge(
+          $base_caps,
+          array(
+            'bistrosol_user' => true, // Bistro Solutions user's default permission
+            'bistrosol_edit_settings' => false,
+            'bistrosol_view_dashboard' => true,
+            'bistrosol_view_orders' => true,
+            'bistrosol_edit_orders' => true,
+            'bistrosol_view_reports' => true,
+            'bistrosol_view_customers' => true,
+            'bistrosol_edit_customers' => true,
+          )
+        )
+      );
+
+    add_role(
+        'bistrosol_manager',
+        __( 'Bistro Solutions Manager',  BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        array_merge(
+          $base_caps,
+          array(
+            'bistrosol_user' => true, // Bistro Solutions user's default permission
+            'bistrosol_edit_settings' => false,
+            'bistrosol_view_dashboard' => true,
+            'bistrosol_view_orders' => true,
+            'bistrosol_edit_orders' => true,
+            'bistrosol_view_reports' => true,
+            'bistrosol_view_customers' => true,
+            'bistrosol_edit_customers' => true,
+          )
+        )
+    );
+
+    add_role(
+        'bistrosol_staff',
+        __( 'Bistro Solutions Staff',  BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        array_merge(
+          $base_caps,
+          array(
+            'bistrosol_user' => true, // Bistro Solutions user's default permission
+            'bistrosol_edit_settings' => false,
+            'bistrosol_view_dashboard' => true,
+            'bistrosol_view_orders' => true,
+            'bistrosol_edit_orders' => false,
+            'bistrosol_view_reports' => false,
+            'bistrosol_view_customers' => true,
+            'bistrosol_edit_customers' => false,
+          )
+        )
+      );
+
+    // Add capabilities to admin role
+    $admin_role->add_cap('bistrosol_user');
+    $admin_role->add_cap('bistrosol_edit_settings');
+    $admin_role->add_cap('bistrosol_view_dashboard');
+    $admin_role->add_cap('bistrosol_view_orders');
+    $admin_role->add_cap('bistrosol_edit_orders');
+    $admin_role->add_cap('bistrosol_view_reports');
+    $admin_role->add_cap('bistrosol_view_customers');
+    $admin_role->add_cap('bistrosol_edit_customers');
+
   }
 }

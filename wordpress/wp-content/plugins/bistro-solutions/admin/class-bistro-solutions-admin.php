@@ -103,35 +103,44 @@ class Bistro_Solutions_Admin {
   }
 
   public function add_menu() {
-    // Todo: add icon URL
-    // https://developer.wordpress.org/reference/functions/add_menu_page/
-    add_menu_page( 'Bistro Solutions', 'Bistro Solutions', 'manage_options', 'bistrosol' );
+    
+    add_menu_page( 'Bistro Solutions', 'Bistro Solutions', 'bistrosol_user', 'bistrosol', '', 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MC40OCA3My4xNSI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNjNjljNmQ7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5Bc3NldCAxPC90aXRsZT48ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIj48ZyBpZD0iTGF5ZXJfMS0yIiBkYXRhLW5hbWU9IkxheWVyIDEiPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTY4LjQ3LDQ3Yy0uMy0uOS0uOC0xLjctMS4xLTIuN2ExMy4xOCwxMy4xOCwwLDAsMS0xLTMuOSwyNiwyNiwwLDAsMC0uNS0zLjksMTAuMTUsMTAuMTUsMCwwLDEsLjktNS40LDkuNTksOS41OSwwLDAsMCwuNy00LjEsNy42LDcuNiwwLDAsMC0uNi0yLjZjLS4xLS4zLS40LS43LS41LTFhMjguNzUsMjguNzUsMCwwLDAtNC4xLTUuOSwxOC43MSwxOC43MSwwLDAsMS0zLjYtNC4zYy0uNC0uNy0xLTEuNC0xLjQtMi4xYTEwLDEwLDAsMCwxLTEuMS01LjksNi4xNSw2LjE1LDAsMCwxLC4xLTEuMywxMC4yNCwxMC4yNCwwLDAsMSwxLTMuNGMuMS0uMywwLS41LS4zLS41YTcuMzIsNy4zMiwwLDAsMC0yLjUuOCw3LjcxLDcuNzEsMCwwLDAtMy4xLDMuMSwxNC40OSwxNC40OSwwLDAsMC0xLjIsMy41LDEwLjY2LDEwLjY2LDAsMCwwLC4xLDQuN2MwLC4xLjEuMS4xLjJzLS4xLjItLjEuMy0uMi4yLS4zLjEtLjItLjEtLjItLjJhMTEuMDUsMTEuMDUsMCwwLDEtLjktMy4xYy0uMS0uNC0uMS0uOC0uMi0xLjJhLjg1Ljg1LDAsMCwwLS4yLS42Yy0uMSwwLS4xLjEtLjIuMnMtLjEuMi0uMS4zYy0uMS43LS4yLDEuMy0uMywyLDAsLjEtLjEuMi0uMi40YS4zOC4zOCwwLDAsMS0uNiwwbC0uMy0uM2EzLjQxLDMuNDEsMCwwLDEsLjYtMy42cTEuNS0yLDMuMy0zLjloMGMxLTEuMi01LjktMi4zLTYuOC0yLjRhMjQuMDksMjQuMDksMCwwLDAtNy4xLS4xYy00LjMuNS05LjMsMS43LTEzLjEsNGExMC44NiwxMC44NiwwLDAsMC0yLjYsMi4yQTEwLjcsMTAuNywwLDAsMCwxOS42Nyw4Yy0uMS4yLS42LDItLjEsMS40YTguMTYsOC4xNiwwLDAsMSwzLjUtMS43LDEyLjIxLDEyLjIxLDAsMCwxLDUuNy4xLDE4LjM4LDE4LjM4LDAsMCwwLDYuMi40aDBjMS41LS4yLjguNy4xLDEuMmE3LjM1LDcuMzUsMCwwLDEtMywuN2MtMS44LjItMy44LDAtNS41LjQtMy4zLjgtNi43LDQuNS04LjgsN2EyMC43NCwyMC43NCwwLDAsMC0xLjksMy4yYy0uMS4zLTEuNCwyLjktMS43LDIuM2EuMzcuMzcsMCwwLDEtLjEtLjMsMTEuMDcsMTEuMDcsMCwwLDEsLjctMi42LDIyLjQsMjIuNCwwLDAsMSwzLjMtNS4zLDE3LjQxLDE3LjQxLDAsMCwwLDEuMi0xLjQsMS40NiwxLjQ2LDAsMCwwLC4zLS41LDEuMTksMS4xOSwwLDAsMC0uNi4yYy01LjIsMi40LTguNSw2LjYtMTIuMSwxMC45YTI5LjE2LDI5LjE2LDAsMCwwLTUuNSw5LjFjLTIuMyw2LjctMS42LDE1LjEsMS4zLDIxLjYsMCwwLDExLjEtMi4xLDIwLjcsOC43czI0LjEsOS43LDI0LjEsOS43Yy0xMS45LTEwLjktNi0zMi44LTYtMzIuOCwxLjguNiwzLjYsMS4yLDUuNCwxLjlhLjUyLjUyLDAsMCwxLC4zLjcsNC44NSw0Ljg1LDAsMCwwLC45LDQuNiwxMC4yMSwxMC4yMSwwLDAsMSwyLjIsNC43LDQuMTYsNC4xNiwwLDAsMS0uMiwyLjIsMzQsMzQsMCwwLDAtMS4yLDMuNCwyLjUzLDIuNTMsMCwwLDAsMSwyLjcsMTAuNTksMTAuNTksMCwwLDEsMS4yLDEsMTAuMjgsMTAuMjgsMCwwLDAsMi45LDIuMSwxLjQ1LDEuNDUsMCwwLDAsLjcuMmMuNy4xLjgtLjEuOS0uOGExMy4yOCwxMy4yOCwwLDAsMC0uNC00YzAtLjMtLjEtLjYtLjEtLjksMC0uOC4yLTEsMS4xLTFhMS41OCwxLjU4LDAsMCwxLDEuOCwxLjZjLjEuOS4xLDEuNy4yLDIuNiwwLDEuMi0uMSwyLjMsMCwzLjVhMy4zOCwzLjM4LDAsMCwwLDMuMywzLjIuNzYuNzYsMCwwLDAsLjUtLjJjLjItLjQuNC0uOC42LTEuMy4xLS4zLjEtLjYuMi0xYTcuMTEsNy4xMSwwLDAsMSwzLjItNC43Yy45LS43LDEuOS0xLjMsMi44LTIuMWE0LDQsMCwwLDAsMS43LTMuNiwxNi4xNCwxNi4xNCwwLDAsMC0uNy00LjlBMTYuMzEsMTYuMzEsMCwwLDEsNjguNDcsNDdaIi8+PC9nPjwvZz48L3N2Zz4=', 2 );
 
-    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Overview', 'Overview', 'manage_options', 'bistrosol' );
+    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Overview', 'Overview', 'bistrosol_view_dashboard', 'bistrosol', array($this, 'dashboard_page'));
 
-    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Settings', 'Settings', 'manage_options', 'bistrosol-settings', array($this, 'settings_page') );
+    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Settings', 'Settings', 'bistrosol_edit_settings', 'bistrosol-settings', array($this, 'settings_page') );
 
-    add_submenu_page( 'bistrosol', 'Bistro Solutions - Orders', 'Orders', 'manage_options', 'bistrosol-orders' );
+    add_submenu_page( 'bistrosol', 'Bistro Solutions - Orders', 'Orders', 'bistrosol_view_orders', 'bistrosol-orders', array($this, 'orders_page'));
 
-    add_submenu_page( 'bistrosol', 'Bistro Solutions - Customers', 'Customers', 'manage_options', 'bistrosol-customers' );
+    add_submenu_page( 'bistrosol', 'Bistro Solutions - Customers', 'Customers', 'bistrosol_view_customers', 'bistrosol-customers', array($this, 'customers_page') );
+
+    add_submenu_page( 'bistrosol', 'Bistro Solutions - Reports', 'Reports', 'bistrosol_view_reports', 'bistrosol-reports', array($this, 'reports_page') );
+
   }
 
   public function init_settings(  ) {
 
-    register_setting( 'bistrosol_settings_page', 'bistrosol_settings' );
+    register_setting( 'bistrosol_settings_group', 'bistrosol_settings' );
+
+    // Add capability for the setting group
+    add_filter( 'option_page_capability_bistrosol_settings_group', 'bistrosol_edit_settings');
+
+    function bistrosol_edit_settings() {
+      return 'bistrosol_edit_settings';
+    }
 
     add_settings_section(
       'database_section',
       __( 'Database', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_section_callback'),
-      'bistrosol_settings_page'
+      'bistrosol_settings_group'
     );
 
     add_settings_field(
       'database_host',
       __( 'Host', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_host_render'),
-      'bistrosol_settings_page',
+      'bistrosol_settings_group',
       'database_section',
       array(
         'label_for' => 'database_host',
@@ -143,7 +152,7 @@ class Bistro_Solutions_Admin {
       'database_name',
       __( 'Name', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_name_render'),
-      'bistrosol_settings_page',
+      'bistrosol_settings_group',
       'database_section',
       array(
         'label_for' => 'database_name',
@@ -155,7 +164,7 @@ class Bistro_Solutions_Admin {
       'database_user',
       __( 'User', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_user_render'),
-      'bistrosol_settings_page',
+      'bistrosol_settings_group',
       'database_section',
       array(
         'label_for' => 'database_user',
@@ -167,7 +176,7 @@ class Bistro_Solutions_Admin {
       'database_password',
       __( 'Password', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_password_render'),
-      'bistrosol_settings_page',
+      'bistrosol_settings_group',
       'database_section',
       array(
         'label_for' => 'database_password',
@@ -179,7 +188,7 @@ class Bistro_Solutions_Admin {
       'database_port',
       __( 'Port', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_port_render'),
-      'bistrosol_settings_page',
+      'bistrosol_settings_group',
       'database_section',
       array(
         'label_for' => 'database_port',
@@ -192,7 +201,7 @@ class Bistro_Solutions_Admin {
       'database_ca',
       __( 'ca.pem', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_ca_render'),
-      'bistrosol_settings_page',
+      'bistrosol_settings_group',
       'database_section'
     );
 
@@ -200,7 +209,7 @@ class Bistro_Solutions_Admin {
       'database_client_cert',
       __( 'client-cert.pem', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_client_cert_render'),
-      'bistrosol_settings_page',
+      'bistrosol_settings_group',
       'database_section'
     );
 
@@ -208,22 +217,21 @@ class Bistro_Solutions_Admin {
       'database_client_key',
       __( 'client-key.pem', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_client_key_render'),
-      'bistrosol_settings_page',
+      'bistrosol_settings_group',
       'database_section'
     );
      */
   }
 
   public function settings_page(  ) { 
-
     ?>
     <form enctype='multipart/form-data' id='bistrosol-db-settings-form' action='options.php' method='post' autocomplete='off'>
 
       <h2>Bistro Solutions</h2>
 
       <?php
-      settings_fields( 'bistrosol_settings_page' );
-      do_settings_sections( 'bistrosol_settings_page' );
+      settings_fields( 'bistrosol_settings_group' );
+      do_settings_sections( 'bistrosol_settings_group' );
       $this->test_db_connection_button();
       submit_button();
       ?>
@@ -343,4 +351,19 @@ class Bistro_Solutions_Admin {
     exit;
   }
 
+  public function dashboard_page() {
+    echo '<h2>Dashboard</h2>'; 
+  }
+
+  public function orders_page() {
+    echo '<h2>Orders</h2>'; 
+  }
+
+  public function customers_page() {
+    echo '<h2>Customers</h2>'; 
+  }
+
+  public function reports_page() {
+    echo '<h2>Reports</h2>'; 
+  }
 }
