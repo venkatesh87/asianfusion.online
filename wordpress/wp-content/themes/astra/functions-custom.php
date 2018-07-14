@@ -110,7 +110,9 @@ function custom_dashboard_widget() {
 }
 
 function add_custom_dashboard_widget() {
-	wp_add_dashboard_widget('custom_dashboard_widget', 'Environment Info', 'custom_dashboard_widget');
+  if (is_admin()) {
+    wp_add_dashboard_widget('custom_dashboard_widget', 'Environment Info', 'custom_dashboard_widget');
+  }
 }
 
 add_action('wp_dashboard_setup', 'add_custom_dashboard_widget');
