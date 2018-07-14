@@ -123,6 +123,19 @@ class Bistro_Solutions_Public {
     ) );
   }
 
+  public function add_shortcodes() {
+    add_shortcode( 'menu', 'render_menu' );
+  }
+
+  function render_menu( $atts ) {
+    $a = shortcode_atts( array(
+        'foo' => 'something',
+        'bar' => 'something else',
+    ), $atts );
+
+    return "foo = {$a['foo']}";
+  }
+
   public function permission_check( $request ) {
     return true;
   }
