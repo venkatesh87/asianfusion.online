@@ -144,7 +144,7 @@ class Bistro_Solutions_Admin {
     $args = array(
         'id' => 'checkout',
         'title' => '<span class="ab-icon"></span><span>Checkout</a>', 
-        'href' => '/cart', 
+        'href' => '/checkout', 
         'meta' => array(
             'title' => 'Checkout'
             )

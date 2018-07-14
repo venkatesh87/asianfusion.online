@@ -49,7 +49,7 @@ class Bistro_Solutions_Activator {
         'post_type'     => 'page',
       );
 
-      //$menu_page_id = wp_insert_post( $menu_page );
+      $menu_page_id = wp_insert_post( $menu_page );
 
     } else {
       //die( __( 'Menu page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
@@ -69,6 +69,8 @@ class Bistro_Solutions_Activator {
         'post_type'     => 'page',
       );
 
+      $cart_page_id = wp_insert_post( $cart_page );
+
     } else {
       //die( __( 'Menu page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
     }
@@ -86,6 +88,8 @@ class Bistro_Solutions_Activator {
         'post_author'   => 1,
         'post_type'     => 'page',
       );
+
+      $checkout_page_id = wp_insert_post( $checkout_page );
 
     } else {
       //die( __( 'Menu page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
@@ -106,13 +110,13 @@ class Bistro_Solutions_Activator {
           $base_caps,
           array(
             'bistrosol_user' => true, // Bistro Solutions user's default permission
-            'bistrosol_edit_settings' => true,
-            'bistrosol_view_dashboard' => true,
-            'bistrosol_view_orders' => true,
-            'bistrosol_edit_orders' => true,
-            'bistrosol_view_reports' => true,
-            'bistrosol_view_customers' => true,
-            'bistrosol_edit_customers' => true,
+            'bistrosol_user_edit_settings' => true,
+            'bistrosol_user_view_dashboard' => true,
+            'bistrosol_user_view_orders' => true,
+            'bistrosol_user_edit_orders' => true,
+            'bistrosol_user_view_reports' => true,
+            'bistrosol_user_view_customers' => true,
+            'bistrosol_user_edit_customers' => true,
           )
         )
       );
@@ -124,13 +128,13 @@ class Bistro_Solutions_Activator {
           $base_caps,
           array(
             'bistrosol_user' => true, // Bistro Solutions user's default permission
-            'bistrosol_edit_settings' => false,
-            'bistrosol_view_dashboard' => true,
-            'bistrosol_view_orders' => true,
-            'bistrosol_edit_orders' => true,
-            'bistrosol_view_reports' => true,
-            'bistrosol_view_customers' => true,
-            'bistrosol_edit_customers' => true,
+            'bistrosol_user_edit_settings' => false,
+            'bistrosol_user_view_dashboard' => true,
+            'bistrosol_user_view_orders' => true,
+            'bistrosol_user_edit_orders' => true,
+            'bistrosol_user_view_reports' => true,
+            'bistrosol_user_view_customers' => true,
+            'bistrosol_user_edit_customers' => true,
           )
         )
       );
@@ -142,13 +146,13 @@ class Bistro_Solutions_Activator {
           $base_caps,
           array(
             'bistrosol_user' => true, // Bistro Solutions user's default permission
-            'bistrosol_edit_settings' => false,
-            'bistrosol_view_dashboard' => true,
-            'bistrosol_view_orders' => true,
-            'bistrosol_edit_orders' => true,
-            'bistrosol_view_reports' => true,
-            'bistrosol_view_customers' => true,
-            'bistrosol_edit_customers' => true,
+            'bistrosol_user_edit_settings' => false,
+            'bistrosol_user_view_dashboard' => true,
+            'bistrosol_user_view_orders' => true,
+            'bistrosol_user_edit_orders' => true,
+            'bistrosol_user_view_reports' => true,
+            'bistrosol_user_view_customers' => true,
+            'bistrosol_user_edit_customers' => true,
           )
         )
     );
@@ -160,13 +164,13 @@ class Bistro_Solutions_Activator {
           $base_caps,
           array(
             'bistrosol_user' => true, // Bistro Solutions user's default permission
-            'bistrosol_edit_settings' => false,
-            'bistrosol_view_dashboard' => true,
-            'bistrosol_view_orders' => true,
-            'bistrosol_edit_orders' => false,
-            'bistrosol_view_reports' => false,
-            'bistrosol_view_customers' => true,
-            'bistrosol_edit_customers' => false,
+            'bistrosol_user_edit_settings' => false,
+            'bistrosol_user_view_dashboard' => true,
+            'bistrosol_user_view_orders' => true,
+            'bistrosol_user_edit_orders' => false,
+            'bistrosol_user_view_reports' => false,
+            'bistrosol_user_view_customers' => true,
+            'bistrosol_user_edit_customers' => false,
           )
         )
       );
