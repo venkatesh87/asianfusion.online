@@ -110,7 +110,7 @@ function custom_dashboard_widget() {
 }
 
 function add_custom_dashboard_widget() {
-  if (is_admin()) {
+  if (current_user_can('administrator')) {
     wp_add_dashboard_widget('custom_dashboard_widget', 'Environment Info', 'custom_dashboard_widget');
   }
 }
