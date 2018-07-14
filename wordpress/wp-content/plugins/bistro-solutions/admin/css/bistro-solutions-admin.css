@@ -35,3 +35,13 @@
 {
   color: #ff0000;
 }
+
+#wpadminbar #wp-admin-bar-view-cart .ab-icon:before {
+  content: '\f174';
+  top: 3px;
+}
+
+#wpadminbar #wp-admin-bar-checkout .ab-icon:before {
+  content: '\f147';
+  top: 3px;
+}

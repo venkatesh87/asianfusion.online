@@ -41,6 +41,7 @@ class Bistro_Solutions_Deactivator {
     remove_role( 'bistrosol_boss' );
     remove_role( 'bistrosol_manager' );
     remove_role( 'bistrosol_staff' );
+    remove_role( 'bistrosol_customer' );
 	}
 
 }
