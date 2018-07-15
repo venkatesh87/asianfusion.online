@@ -93,8 +93,8 @@ function custom_dashboard_widget() {
   echo "<li><strong>Database Name:</strong> " . DB_NAME . "</li>";
   echo "<li><strong>Server Settings:</strong></li>";
   echo "<ul class=\"dashboard-info\">";
-  echo "<li><strong>PHP version: " . phpversion() . "</li>";
-  echo "<li><strong>MySQL version: " . $wpdb->db_version() . "</li>";
+  echo "<li><strong>PHP version:</strong> " . phpversion() . "</li>";
+  echo "<li><strong>MySQL version:</strong> " . $wpdb->db_version() . "</li>";
   echo "</ul>";
   echo "<li><strong>PHP Settings:</strong></li>";
   echo "<ul class=\"dashboard-info\">";
