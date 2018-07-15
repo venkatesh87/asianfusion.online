@@ -91,11 +91,6 @@ function run_bistro_solutions() {
 
 }
 
-function modify_footer_link () {
-    echo '<span id="footer-thankyou">Developed by Bistro Solutions. All Rights Reserved 2017 - 2018.</span>';
-}
-
-add_filter('admin_footer_text', 'modify_footer_link' );
-show_admin_bar(false);
+global $bdb;
 
 run_bistro_solutions();

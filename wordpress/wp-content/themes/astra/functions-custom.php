@@ -130,9 +130,14 @@ add_action( 'admin_bar_menu', 'remove_wp_logo', 999 );
 //
 function remove_footer_link ()
 {
-    echo '<span id="footer-thankyou"></span>';
+  echo '<span id="footer-thankyou">Developed by Bistro Solutions. All Rights Reserved 2017 - 2018.</span>';
 }
 add_filter('admin_footer_text', 'remove_footer_link' );
+
+//
+// Disable admin bar on frontend
+//
+show_admin_bar(false);
 
 //
 // Remove version from dashboard

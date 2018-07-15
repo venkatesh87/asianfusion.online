@@ -258,10 +258,10 @@ class Bistro_Solutions_Admin {
   }
 
   public function settings_page(  ) { 
-    ?>
-    <form enctype='multipart/form-data' id='bistrosol-db-settings-form' action='options.php' method='post' autocomplete='off'>
+?>
+    <h2>Settings</h2>
 
-      <h2>Bistro Solutions</h2>
+    <form enctype='multipart/form-data' id='bistrosol-db-settings-form' action='options.php' method='post' autocomplete='off'>
 
       <?php
       settings_fields( 'bistrosol_settings_group' );
@@ -356,9 +356,6 @@ class Bistro_Solutions_Admin {
   public function test_db_connection_ajax() {
     //var_dump($_POST);
     //var_dump($_FILES);
-    define( 'WP_DEBUG_DISPLAY', false );
-    define( 'WP_DEBUG', true );
-    define( 'WP_DEBUG_LOG', true );
     
     $response = array('success' => false);
 
@@ -368,14 +365,14 @@ class Bistro_Solutions_Admin {
     $db_password = $_POST['database_password'];
     $db_port = $_POST['database_port'];
     
-    $bistrosol_db = new wpdb( $db_user, $db_password, $db_name, $db_host . ':' . $db_port );
+    $bdb = new wpdb( $db_user, $db_password, $db_name, $db_host . ':' . $db_port );
 
-    if ($bistrosol_db && $bistrosol_db->error) {
+    if ($bdb && $bdb->error) {
       echo json_encode($response);
       exit;
     }
 
-    $server_id = $bistrosol_db->get_var('SELECT @@server_id');
+    $server_id = $bdb->get_var('SELECT @@server_id');
     if ($server_id == '1000') {
       $response['success'] = true;
     }
@@ -385,8 +382,94 @@ class Bistro_Solutions_Admin {
     exit;
   }
 
+  public function init_bdb() {
+    global $bdb;
+
+    ini_set('mysql.connect_timeout', 5);
+    ini_set('default_socket_timeout', 5);
+
+    if (!$bdb && !empty($this->options['database_name'])
+      && !empty($this->options['database_host'])
+      && !empty($this->options['database_user'])
+      && !empty($this->options['database_password'])
+      && !empty($this->options['database_port'])) {
+      $bdb = new wpdb( $this->options['database_user'],
+        $this->options['database_password'],
+        $this->options['database_name'],
+        $this->options['database_host']
+        . ':' . $this->options['database_port'] );
+    }
+    
+    if (current_user_can('bistrosol_user_edit_settings')) {
+      add_action( 'wp_dashboard_setup', array($this, 'master_database_info_widget_setup') );
+    }
+  }
+
+  public function master_database_info_widget_setup() {
+    	wp_add_dashboard_widget(
+          'master_database_info_widget',
+          'Master Database Info',
+          array( $this, 'master_database_info_widget_render')
+        );
+
+  // Globalize the metaboxes array, this holds all the widgets for wp-admin
+
+ 	global $wp_meta_boxes;
+
+ 	// Get the regular dashboard widgets array
+ 	// (which has our new widget already but at the end)
+
+ 	$normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+
+ 	// Backup and delete our new dashboard widget from the end of the array
+
+ 	$master_database_info_widget_backup = array( 'master_database_info_widget' => $normal_dashboard['master_database_info_widget'] );
+ 	unset( $normal_dashboard['master_database_info_widget'] );
+
+ 	// Merge the two arrays together so our widget is at the beginning
+
+ 	$sorted_dashboard = array_merge( $master_database_info_widget_backup, $normal_dashboard );
+
+ 	// Save the sorted array back into the original metaboxes
+
+ 	$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
+  }
+
+  public function master_database_info_widget_render() {
+    //echo '<pre>';
+    //var_dump($bdb->error);
+    //echo '</pre>';
+
+    $db_error = $this->get_db_connect_error();
+
+    if (!$db_error) {
+      echo '<div>Database is connected</div>';
+    } else {
+      echo '<div>Master database error: ' . $db_error . '</div>';
+    }
+  }
+
+  public function get_db_connect_error() {
+    global $bdb;
+
+    $db_error = null;
+
+    if ($bdb->error && $bdb->error->errors) {
+      $db_errors = $bdb->error->errors;
+      if ($db_errors['db_connect_fail'][0]) {
+        $db_error = $db_errors['db_connect_fail'][0];
+        $db_error = 'Error establishing a database connection';
+      } else if ($db_errors['db_select_fail'][0]) {
+        $db_error = $db_errors['db_select_fail'][0];
+        $db_error = 'Can’t select database';
+      }
+    }
+
+    return $db_error;
+  }
+
   public function dashboard_page() {
-    echo '<h2>Dashboard</h2>'; 
+    global $bdb;
   }
 
   public function orders_page() {
