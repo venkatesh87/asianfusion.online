@@ -84,12 +84,13 @@ add_action('admin_head', 'hide_update_noticee_to_all_but_admin_users', 1);
 //
 // Custom dashboard
 //
-function custom_dashboard_widget() {
+function wordpress_env_info_dashboard_widget() {
   global $wpdb;
   echo "<style>.dashboard-info { display: block; border: 1px solid #c0c0c0; padding: 10px; border-radius: 5px; margin: 10px 0; }</style>";
   echo "<ul>";
   echo "<li><strong>Site URL:</strong> " . WP_HOME . "</li>";
   echo "<li><strong>Database Host:</strong> " . DB_HOST . "</li>";
+  echo "<li><strong>Database User:</strong> " . DB_USER . "</li>";
   echo "<li><strong>Database Name:</strong> " . DB_NAME . "</li>";
   echo "<li><strong>Server Settings:</strong></li>";
   echo "<ul class=\"dashboard-info\">";
@@ -109,13 +110,13 @@ function custom_dashboard_widget() {
   echo "</ul>";
 }
 
-function add_custom_dashboard_widget() {
+function add_wordpress_env_info_dashboard_widget() {
   if (current_user_can('administrator')) {
-    wp_add_dashboard_widget('custom_dashboard_widget', 'Environment Info', 'custom_dashboard_widget');
+    wp_add_dashboard_widget('wordpress_env_info_dashboard_widget', 'WordPress Environment Info', 'wordpress_env_info_dashboard_widget');
   }
 }
 
-add_action('wp_dashboard_setup', 'add_custom_dashboard_widget');
+add_action('wp_dashboard_setup', 'add_wordpress_env_info_dashboard_widget');
 
 //
 // Remove admin bar logo
