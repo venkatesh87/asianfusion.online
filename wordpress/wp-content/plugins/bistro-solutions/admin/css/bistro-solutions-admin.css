@@ -3,35 +3,41 @@
  * included in this file.
  */
 
-#bistrosol-db-settings-form
+#bistrosol-database-settings-form
 {
 }
 
-#bistrosol-db-settings-form #test-db-spinner,
-#bistrosol-db-settings-form #test-db-result-connected,
-#bistrosol-db-settings-form #test-db-result-not-connected,
-#bistrosol-db-settings-form #bistrosol-db-settings-form-error
+#bistrosol-account-settings-form
+{
+}
+
+#bistrosol-account-settings-form #bistrosol-account-settings-form-error,
+#bistrosol-database-settings-form #bistrosol-database-settings-form-error,
+#bistrosol-database-settings-form #test-db-spinner,
+#bistrosol-database-settings-form #test-db-result-connected,
+#bistrosol-database-settings-form #test-db-result-not-connected
 {
   display: none;
 }
 
-#bistrosol-db-settings-form #test-db-result-connected
+#bistrosol-database-settings-form #test-db-result-connected
 {
   color: #008000;
 }
 
-#bistrosol-db-settings-form #test-db-result-not-connected,
-#bistrosol-db-settings-form #bistrosol-db-settings-form-error
+#bistrosol-database-settings-form #test-db-result-not-connected,
+#bistrosol-database-settings-form #bistrosol-database-settings-form-error
 {
   color: #ff0000;
 }
 
-#bistrosol-db-settings-form .required label:before
+#bistrosol-account-settings-form .required label:before,
+#bistrosol-database-settings-form .required label:before
 {
   content: '*';
 }
 
-#bistrosol-db-settings-form .error label
+#bistrosol-database-settings-form .error label
 {
   color: #ff0000;
 }
