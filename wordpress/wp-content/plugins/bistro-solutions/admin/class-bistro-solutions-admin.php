@@ -153,10 +153,18 @@ class Bistro_Solutions_Admin {
     $wp_admin_bar->add_node($args);
   }
 
+  public function sanitize($input) {
+    foreach ($input as $key => $value) {
+      $value = sanitize_text_field($value);
+      $output[$key] = $value;
+    }
+    return $output;
+  }
+
   public function init_settings(  ) {
 
-    register_setting( 'bistrosol_database_settings_group', 'bistrosol_database_settings' );
-    register_setting( 'bistrosol_account_settings_group', 'bistrosol_account_settings' );
+    register_setting( 'bistrosol_database_settings_group', 'bistrosol_database_settings', array('sanitize_callback' => array($this, 'sanitize')) );
+    register_setting( 'bistrosol_account_settings_group', 'bistrosol_account_settings', array('sanitize_callback' => array($this, 'sanitize')) );
 
     // Add capability for the database setting group
     add_filter( 'option_page_capability_bistrosol_database_settings_group', 'bistrosol_user_edit_settings');
@@ -281,11 +289,22 @@ class Bistro_Solutions_Admin {
   }
 
   public function settings_page(  ) { 
+    // https://code.tutsplus.com/tutorials/the-wordpress-settings-api-part-5-tabbed-navigation-for-settings--wp-24971
+    $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'account';
 ?>
+    <div class="wrap">
     <h2>Settings</h2>
 
-    <form enctype='multipart/form-data' id='bistrosol-account-settings-form' action='options.php' method='post' autocomplete='off'>
+    <?=settings_errors()?>
 
+    <h2 class="nav-tab-wrapper">
+        <a href="?page=bistrosol-settings&tab=account" class="nav-tab<?=$active_tab == 'account' ? ' nav-tab-active' : ''?>">Account</a>
+        <a href="?page=bistrosol-settings&tab=database" class="nav-tab<?=$active_tab == 'database' ? ' nav-tab-active' : ''?>">Database</a>
+    </h2>
+
+    <?php if ($active_tab == 'account') { ?>
+
+    <form enctype='multipart/form-data' id='bistrosol-account-settings-form' action='options.php' method='post' autocomplete='off'>
       <?php
       settings_fields( 'bistrosol_account_settings_group' );
       do_settings_sections( 'bistrosol_account_settings_group' );
@@ -294,12 +313,12 @@ class Bistro_Solutions_Admin {
       <span id="bistrosol-account-settings-form-error">
         <?=__( 'Highlighted fields are required.', BISTRO_SOLUTIONS_TEXTDOMAIN )?>
       </span> 
-
     </form>
 
-    <form enctype='multipart/form-data' id='bistrosol-database-settings-form' action='options.php' method='post' autocomplete='off'>
+    <?php } else if ($active_tab == 'database') { ?>
 
-      <?php
+    <form enctype='multipart/form-data' id='bistrosol-database-settings-form' action='options.php' method='post' autocomplete='off'>
+    <?php
       settings_fields( 'bistrosol_database_settings_group' );
       do_settings_sections( 'bistrosol_database_settings_group' );
       $this->test_db_connection_button();
@@ -308,10 +327,10 @@ class Bistro_Solutions_Admin {
       <span id="bistrosol-database-settings-form-error">
         <?=__( 'Highlighted fields are required.', BISTRO_SOLUTIONS_TEXTDOMAIN )?>
       </span> 
-
     </form>
+    <?php } ?>
+    </div>
     <?php
-
   }
 
   public function account_section_callback(  ) { 
