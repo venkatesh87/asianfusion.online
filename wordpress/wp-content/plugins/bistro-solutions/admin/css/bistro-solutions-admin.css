@@ -3,7 +3,7 @@
  * included in this file.
  */
 
-.dashboard-info {
+.bistrosol-dashboard-info {
   display: block;
   border: 1px solid #c0c0c0;
   border-radius: 5px;
@@ -11,8 +11,26 @@
   margin: 0;
 }
 
-.dashboard-info pre {
+.bistrosol-dashboard-info pre {
   margin: 0;
+}
+
+.bistrosol-loading-indicator {
+  animation: bistrosol-blinker 1s linear infinite;
+}
+
+@keyframes bistrosol-blinker {
+  50% { opacity: 0; }
+}
+
+#bistrosol-release-news .bistrosol-release-title {
+  display: inline-block;
+  text-decoration: underline;
+}
+
+#bistrosol-release-news .bistrosol-release-date {
+  display: inline-block;
+  padding-left: 20px;
 }
 
 #bistrosol-database-settings-form

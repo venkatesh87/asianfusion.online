@@ -417,7 +417,7 @@ class Bistro_Solutions_Admin {
       <span id="test-db-result-not-connected">
         <?=__( 'Database is not connected.', BISTRO_SOLUTIONS_TEXTDOMAIN )?>
       </span>
-      <span id="test-db-spinner">Please wait...</span>
+      <span id="test-db-spinner" class="bistrosol-loading-indicator">Please wait...</span>
     <?php
   }
 
@@ -470,37 +470,83 @@ class Bistro_Solutions_Admin {
     
     if (current_user_can('bistrosol_user_edit_settings')) {
       add_action( 'wp_dashboard_setup', array($this, 'master_database_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'release_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'account_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'support_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'terminal_info_widget_setup') );
     }
   }
 
+  public function release_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'release_info_widget',
+        'Bistro Solutions Release Info',
+        array( $this, 'release_info_widget_render')
+      );
+  }
+
+  public function release_info_widget_render() {
+    echo '<div>Current version is: <span id="bistrosol-release-version"><span class="bistrosol-loading-indicator">Loading...</span></span></div>';
+    echo '<div>Release news:</div>';
+    echo '<div id="bistrosol-release-news"><span class="bistrosol-loading-indicator">Loading...</span></div>';
+  }
+
+  public function account_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'account_info_widget',
+        'Bistro Solutions Account Info',
+        array( $this, 'account_info_widget_render')
+      );
+  }
+
+  public function account_info_widget_render() {
+  }
+
+  public function support_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'support_info_widget',
+        'Bistro Solutions Support Info',
+        array( $this, 'support_info_widget_render')
+      );
+  }
+
+  public function support_info_widget_render() {
+  }
+
+  public function terminal_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'terminal_info_widget',
+        'Bistro Solutions Terminal Info',
+        array( $this, 'terminal_info_widget_render')
+      );
+  }
+
+  public function terminal_info_widget_render() {
+  }
+
   public function master_database_info_widget_setup() {
-    	wp_add_dashboard_widget(
-          'master_database_info_widget',
-          'Bistro Solutions Master Database Info',
-          array( $this, 'master_database_info_widget_render')
-        );
+    wp_add_dashboard_widget(
+        'master_database_info_widget',
+        'Bistro Solutions Master Database Info',
+        array( $this, 'master_database_info_widget_render')
+      );
 
-  // Globalize the metaboxes array, this holds all the widgets for wp-admin
+    // Globalize the metaboxes array, this holds all the widgets for wp-admin
+    global $wp_meta_boxes;
 
- 	global $wp_meta_boxes;
+    // Get the regular dashboard widgets array
+    // (which has our new widget already but at the end)
+    $normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
 
- 	// Get the regular dashboard widgets array
- 	// (which has our new widget already but at the end)
+    // Backup and delete our new dashboard widget from the end of the array
+    $master_database_info_widget_backup = array( 'master_database_info_widget' => $normal_dashboard['master_database_info_widget'] );
+    unset( $normal_dashboard['master_database_info_widget'] );
 
- 	$normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+    // Merge the two arrays together so our widget is at the beginning
+    $sorted_dashboard = array_merge( $master_database_info_widget_backup, $normal_dashboard );
 
- 	// Backup and delete our new dashboard widget from the end of the array
-
- 	$master_database_info_widget_backup = array( 'master_database_info_widget' => $normal_dashboard['master_database_info_widget'] );
- 	unset( $normal_dashboard['master_database_info_widget'] );
-
- 	// Merge the two arrays together so our widget is at the beginning
-
- 	$sorted_dashboard = array_merge( $master_database_info_widget_backup, $normal_dashboard );
-
- 	// Save the sorted array back into the original metaboxes
-
- 	$wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
+    // Save the sorted array back into the original metaboxes
+    $wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
   }
 
   public function master_database_info_widget_render() {
@@ -523,7 +569,7 @@ class Bistro_Solutions_Admin {
     echo '<li><strong>Database Name:</strong> ' . $this->database_options['database_name'] . '</li>';
     echo '<li><strong>Uptime:</strong> ' . $this->get_db_uptime() . '</li>';
     echo '<li><strong>Connections:</strong></li>';
-    echo '<ul class="dashboard-info">';
+    echo '<ul class="bistrosol-dashboard-info">';
     echo '<pre>';
     foreach ($this->get_db_connections() as $user => $hosts) {
       echo '<strong>' . $user . "</strong>\n";

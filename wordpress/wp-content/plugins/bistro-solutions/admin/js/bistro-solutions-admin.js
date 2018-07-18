@@ -3,6 +3,48 @@
 
   $(window).ready(function() {
 
+    //
+    // Dashboard
+    //
+
+    if ($('#release_info_widget').length) {
+      var release_news_url = 'https://www.bistrosol.co/wp-json/wp/v2/release?per_page=5&filter[orderby]=date&order=desc';
+      var release_version_url = 'https://www.bistrosol.co/wp-json/acf/v3/release?per_page=1&filter[orderby]=date&order=desc';
+
+      $.getJSON(release_news_url, function( data ) {
+        var items = [];
+        
+        $.each(data, function(index, item) {
+          var title = item.title.rendered;
+          var link = item.link;
+          var date = item.date;
+          items.push( '<li><a href="' + link + '" target="_blank"><span class="bistrosol-release-title">' + title + '</span></a><span class="bistrosol-release-date">' + date + '</span></li>');
+        });
+       
+        $('<ul/>', {
+          'class': 'bistrosol-dashboard-info',
+          html: items.join('')
+        }).replaceAll($('#bistrosol-release-news').children());
+      }).fail(function() {
+          $('#bistrosol-release-news').html('<span>Fail to load release news, please try again later.</span>');
+      });
+
+      $.getJSON(release_version_url, function( data ) {
+        var name = data[0].acf['name'];
+        var version = data[0].acf['version'];
+
+        $('#bistrosol-release-version').html(name + ' ' + version);
+
+      }).fail(function() {
+          $('#bistrosol-release-version').html('<span>Fail to load release version, please try again later.</span>');
+      });
+
+    }
+
+    //
+    // Database settings form
+    //
+
     var db_fields = ['host', 'name', 'user', 'password', 'port'];
 
     function check_db_settings() {
