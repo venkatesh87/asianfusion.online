@@ -152,12 +152,16 @@ class Bistro_Solutions {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Bistro_Solutions_Admin( $this->get_plugin_name(), $this->get_version() );
+    $plugin_admin = new Bistro_Solutions_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
     $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
     $this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
     $this->loader->add_action( 'admin_init', $plugin_admin, 'init_settings' );
+
+    // Initialize master database connection
+    $this->loader->add_action( 'admin_init', $plugin_admin, 'init_bdb' );
+
     $this->loader->add_action( 'wp_ajax_test_db_connection', $plugin_admin, 'test_db_connection_ajax' );
 
 	}

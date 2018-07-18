@@ -131,9 +131,9 @@ sudo openssl verify -CAfile /var/lib/mysql/ca.pem /var/lib/mysql/server-cert.pem
 
 MYSQL_CERT_TEMP_DIR=/tmp/mysql-certs
 mkdir ${MYSQL_CERT_TEMP_DIR}
-sudo mv /var/lib/mysql/ca.pem ${MYSQL_CERT_TEMP_DIR}
-sudo mv /var/lib/mysql/client-cert.pem ${MYSQL_CERT_TEMP_DIR}
-sudo mv /var/lib/mysql/client-key.pem ${MYSQL_CERT_TEMP_DIR}
+sudo cp /var/lib/mysql/ca.pem ${MYSQL_CERT_TEMP_DIR}
+sudo cp /var/lib/mysql/client-cert.pem ${MYSQL_CERT_TEMP_DIR}
+sudo cp /var/lib/mysql/client-key.pem ${MYSQL_CERT_TEMP_DIR}
 sudo chown -R ec2-user:ec2-user ${MYSQL_CERT_TEMP_DIR}
 
 # Restart

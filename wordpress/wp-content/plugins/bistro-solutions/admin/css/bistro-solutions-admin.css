@@ -3,35 +3,84 @@
  * included in this file.
  */
 
-#bistrosol-db-settings-form
+.bistrosol-dashboard-info {
+  display: block;
+  border: 1px solid #c0c0c0;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 0;
+}
+
+.bistrosol-dashboard-info pre {
+  margin: 0;
+}
+
+.bistrosol-loading-indicator {
+  animation: bistrosol-blinker 1s linear infinite;
+}
+
+@keyframes bistrosol-blinker {
+  50% { opacity: 0; }
+}
+
+.bistrosol-feed-error {
+  background-color: #ff0000;
+  color: #ffffff;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+#bistrosol-feed-error {
+  display: none;
+}
+
+#bistrosol-news .bistrosol-announcment-title,
+#bistrosol-releases .bistrosol-release-title {
+  display: inline-block;
+  text-decoration: underline;
+}
+
+#bistrosol-news .bistrosol-news-date,
+#bistrosol-releases .bistrosol-release-date {
+  display: inline-block;
+  padding-left: 20px;
+}
+
+#bistrosol-database-settings-form
 {
 }
 
-#bistrosol-db-settings-form #test-db-spinner,
-#bistrosol-db-settings-form #test-db-result-connected,
-#bistrosol-db-settings-form #test-db-result-not-connected,
-#bistrosol-db-settings-form #bistrosol-db-settings-form-error
+#bistrosol-account-settings-form
+{
+}
+
+#bistrosol-account-settings-form #bistrosol-account-settings-form-error,
+#bistrosol-database-settings-form #bistrosol-database-settings-form-error,
+#bistrosol-database-settings-form #test-db-spinner,
+#bistrosol-database-settings-form #test-db-result-connected,
+#bistrosol-database-settings-form #test-db-result-not-connected
 {
   display: none;
 }
 
-#bistrosol-db-settings-form #test-db-result-connected
+#bistrosol-database-settings-form #test-db-result-connected
 {
   color: #008000;
 }
 
-#bistrosol-db-settings-form #test-db-result-not-connected,
-#bistrosol-db-settings-form #bistrosol-db-settings-form-error
+#bistrosol-database-settings-form #test-db-result-not-connected,
+#bistrosol-database-settings-form #bistrosol-database-settings-form-error
 {
   color: #ff0000;
 }
 
-#bistrosol-db-settings-form .required label:before
+#bistrosol-account-settings-form .required label:before,
+#bistrosol-database-settings-form .required label:before
 {
   content: '*';
 }
 
-#bistrosol-db-settings-form .error label
+#bistrosol-database-settings-form .error label
 {
   color: #ff0000;
 }

@@ -63,35 +63,35 @@ no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
   -e "CREATE DATABASE $BISTROSOL_DB_DATABASE;"
 
-# Create user 1
+# Create replication user
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
   -e "CREATE USER IF NOT EXISTS '$BISTROSOL_DB_USER'@'%' IDENTIFIED BY '$BISTROSOL_DB_PASSWORD' REQUIRE SSL;"
 
-# Update user 1 password
+# Update replication user password
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
   -e "ALTER USER '$BISTROSOL_DB_USER'@'%' IDENTIFIED BY '$BISTROSOL_DB_PASSWORD' REQUIRE SSL;"
 
-# Grant privileges to user 1
+# Grant privileges to replication user
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
   -e "GRANT ALL PRIVILEGES ON $BISTROSOL_DB_DATABASE.* TO '$BISTROSOL_DB_USER'@'%';"
 
-# Create user 2
+# Create web user
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
   -e "CREATE USER IF NOT EXISTS '$BISTROSOL_DB_USER2'@'%' IDENTIFIED BY '$BISTROSOL_DB_PASSWORD2';"
 
-# Update user 2 password
+# Update web user password
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
   -e "ALTER USER '$BISTROSOL_DB_USER2'@'%' IDENTIFIED BY '$BISTROSOL_DB_PASSWORD2';"
 
-# Grant privileges to user 2
+# Grant privileges to web user (web user has root privileges except GRANT)
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
   -p$ROOT_DB_PASSWORD -P$ROOT_DB_PORT \
-  -e "GRANT ALL PRIVILEGES ON $BISTROSOL_DB_DATABASE.* TO '$BISTROSOL_DB_USER2'@'%';"
+  -e "GRANT ALL PRIVILEGES ON *.* TO '$BISTROSOL_DB_USER2'@'%';"
 
 # Flush privileges
 no_pw_warning mysql -h$ROOT_DB_HOST -u$ROOT_DB_USER \
