@@ -128,7 +128,6 @@ class Bistro_Solutions_Admin {
     if (current_user_can('bistrosol_customer')) {
       add_action('admin_bar_menu', array($this, 'add_customer_admin_bar_links'), 999);
     }
-
   }
 
   public function add_customer_admin_bar_links($wp_admin_bar) {
@@ -471,40 +470,70 @@ class Bistro_Solutions_Admin {
     if (current_user_can('bistrosol_user_edit_settings')) {
       add_action( 'wp_dashboard_setup', array($this, 'master_database_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'release_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'news_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'account_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'support_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'terminal_info_widget_setup') );
     }
   }
 
+  public function news_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_news_widget',
+        'Bistro Solutions News',
+        array( $this, 'news_widget_render')
+      );
+  }
+
+  public function news_widget_render() {
+    echo '<span id="bistrosol-feed-error">';
+    echo 'Error loading feed, try again later.';
+    echo '</span>';
+
+    echo '<div id="bistrosol-news">';
+    echo '<span class="bistrosol-loading-indicator">Loading...</span>';
+    echo '</div>';
+  }
+
+
   public function release_info_widget_setup() {
     wp_add_dashboard_widget(
-        'release_info_widget',
+        'bistrosol_release_info_widget',
         'Bistro Solutions Release Info',
         array( $this, 'release_info_widget_render')
       );
   }
 
   public function release_info_widget_render() {
-    echo '<div>Current version is: <span id="bistrosol-release-version"><span class="bistrosol-loading-indicator">Loading...</span></span></div>';
-    echo '<div>Release news:</div>';
-    echo '<div id="bistrosol-release-news"><span class="bistrosol-loading-indicator">Loading...</span></div>';
+    echo '<div>Current version is: ';
+    echo '<span id="bistrosol-release-version">';
+    echo '<span class="bistrosol-loading-indicator">Loading...</span>';
+    echo '</span>';
+    echo '</div>';
+
+    echo '<div>Releases:</div>';
+    echo '<div id="bistrosol-releases">';
+    echo '<span class="bistrosol-loading-indicator">Loading...</span>';
+    echo '</div>';
   }
 
   public function account_info_widget_setup() {
     wp_add_dashboard_widget(
-        'account_info_widget',
+        'bistrosol_account_info_widget',
         'Bistro Solutions Account Info',
         array( $this, 'account_info_widget_render')
       );
   }
 
   public function account_info_widget_render() {
+    echo '<ul>';
+    echo '<li><strong>Name:</strong> ' . $this->account_options['account_name'] . '</li>';
+    echo '</ul>';
   }
 
   public function support_info_widget_setup() {
     wp_add_dashboard_widget(
-        'support_info_widget',
+        'bistrosol_support_info_widget',
         'Bistro Solutions Support Info',
         array( $this, 'support_info_widget_render')
       );
@@ -515,7 +544,7 @@ class Bistro_Solutions_Admin {
 
   public function terminal_info_widget_setup() {
     wp_add_dashboard_widget(
-        'terminal_info_widget',
+        'bistrosol_terminal_info_widget',
         'Bistro Solutions Terminal Info',
         array( $this, 'terminal_info_widget_render')
       );
@@ -526,7 +555,7 @@ class Bistro_Solutions_Admin {
 
   public function master_database_info_widget_setup() {
     wp_add_dashboard_widget(
-        'master_database_info_widget',
+        'bistrosol_master_database_info_widget',
         'Bistro Solutions Master Database Info',
         array( $this, 'master_database_info_widget_render')
       );

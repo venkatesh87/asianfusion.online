@@ -23,12 +23,25 @@
   50% { opacity: 0; }
 }
 
-#bistrosol-release-news .bistrosol-release-title {
+.bistrosol-feed-error {
+  background-color: #ff0000;
+  color: #ffffff;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+#bistrosol-feed-error {
+  display: none;
+}
+
+#bistrosol-news .bistrosol-announcment-title,
+#bistrosol-releases .bistrosol-release-title {
   display: inline-block;
   text-decoration: underline;
 }
 
-#bistrosol-release-news .bistrosol-release-date {
+#bistrosol-news .bistrosol-news-date,
+#bistrosol-releases .bistrosol-release-date {
   display: inline-block;
   padding-left: 20px;
 }
