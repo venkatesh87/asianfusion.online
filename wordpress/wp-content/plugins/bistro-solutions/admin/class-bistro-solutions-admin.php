@@ -52,7 +52,8 @@ class Bistro_Solutions_Admin {
 		$this->plugin_name = $plugin_name;
     $this->version = $version;
 
-    $this->options = get_option( 'bistrosol_settings' );
+    $this->database_options = get_option( 'bistrosol_database_settings' );
+    $this->account_options = get_option( 'bistrosol_account_settings' );
 
 	}
 
@@ -127,7 +128,6 @@ class Bistro_Solutions_Admin {
     if (current_user_can('bistrosol_customer')) {
       add_action('admin_bar_menu', array($this, 'add_customer_admin_bar_links'), 999);
     }
-
   }
 
   public function add_customer_admin_bar_links($wp_admin_bar) {
@@ -152,29 +152,59 @@ class Bistro_Solutions_Admin {
     $wp_admin_bar->add_node($args);
   }
 
+  public function sanitize($input) {
+    foreach ($input as $key => $value) {
+      $value = sanitize_text_field($value);
+      $output[$key] = $value;
+    }
+    return $output;
+  }
+
   public function init_settings(  ) {
 
-    register_setting( 'bistrosol_settings_group', 'bistrosol_settings' );
+    register_setting( 'bistrosol_database_settings_group', 'bistrosol_database_settings', array('sanitize_callback' => array($this, 'sanitize')) );
+    register_setting( 'bistrosol_account_settings_group', 'bistrosol_account_settings', array('sanitize_callback' => array($this, 'sanitize')) );
 
-    // Add capability for the setting group
-    add_filter( 'option_page_capability_bistrosol_settings_group', 'bistrosol_user_edit_settings');
+    // Add capability for the database setting group
+    add_filter( 'option_page_capability_bistrosol_database_settings_group', 'bistrosol_user_edit_settings');
+    // Add capability for the account setting group
+    add_filter( 'option_page_capability_bistrosol_account_settings_group', 'bistrosol_user_edit_settings');
 
     function bistrosol_user_edit_settings() {
       return 'bistrosol_user_edit_settings';
     }
 
     add_settings_section(
+      'account_section',
+      __( 'Account', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+      array($this, 'account_section_callback'),
+      'bistrosol_account_settings_group'
+    );
+
+    add_settings_field(
+      'account_name',
+      __( 'Name', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+      array($this, 'account_name_render'),
+      'bistrosol_account_settings_group',
+      'account_section',
+      array(
+        'label_for' => 'account_name',
+        'class' => 'account_name_field required'
+      )
+    );
+
+    add_settings_section(
       'database_section',
       __( 'Database', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_section_callback'),
-      'bistrosol_settings_group'
+      'bistrosol_database_settings_group'
     );
 
     add_settings_field(
       'database_host',
       __( 'Host', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_host_render'),
-      'bistrosol_settings_group',
+      'bistrosol_database_settings_group',
       'database_section',
       array(
         'label_for' => 'database_host',
@@ -186,7 +216,7 @@ class Bistro_Solutions_Admin {
       'database_name',
       __( 'Name', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_name_render'),
-      'bistrosol_settings_group',
+      'bistrosol_database_settings_group',
       'database_section',
       array(
         'label_for' => 'database_name',
@@ -198,7 +228,7 @@ class Bistro_Solutions_Admin {
       'database_user',
       __( 'User', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_user_render'),
-      'bistrosol_settings_group',
+      'bistrosol_database_settings_group',
       'database_section',
       array(
         'label_for' => 'database_user',
@@ -210,7 +240,7 @@ class Bistro_Solutions_Admin {
       'database_password',
       __( 'Password', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_password_render'),
-      'bistrosol_settings_group',
+      'bistrosol_database_settings_group',
       'database_section',
       array(
         'label_for' => 'database_password',
@@ -222,7 +252,7 @@ class Bistro_Solutions_Admin {
       'database_port',
       __( 'Port', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_port_render'),
-      'bistrosol_settings_group',
+      'bistrosol_database_settings_group',
       'database_section',
       array(
         'label_for' => 'database_port',
@@ -235,7 +265,7 @@ class Bistro_Solutions_Admin {
       'database_ca',
       __( 'ca.pem', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_ca_render'),
-      'bistrosol_settings_group',
+      'bistrosol_database_settings_group',
       'database_section'
     );
 
@@ -243,7 +273,7 @@ class Bistro_Solutions_Admin {
       'database_client_cert',
       __( 'client-cert.pem', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_client_cert_render'),
-      'bistrosol_settings_group',
+      'bistrosol_database_settings_group',
       'database_section'
     );
 
@@ -251,29 +281,66 @@ class Bistro_Solutions_Admin {
       'database_client_key',
       __( 'client-key.pem', BISTRO_SOLUTIONS_TEXTDOMAIN ),
       array($this, 'database_client_key_render'),
-      'bistrosol_settings_group',
+      'bistrosol_database_settings_group',
       'database_section'
     );
      */
   }
 
   public function settings_page(  ) { 
-    ?>
-    <form enctype='multipart/form-data' id='bistrosol-db-settings-form' action='options.php' method='post' autocomplete='off'>
+    // https://code.tutsplus.com/tutorials/the-wordpress-settings-api-part-5-tabbed-navigation-for-settings--wp-24971
+    $active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'account';
+?>
+    <div class="wrap">
+    <h2>Settings</h2>
 
-      <h2>Bistro Solutions</h2>
+    <?=settings_errors()?>
 
+    <h2 class="nav-tab-wrapper">
+        <a href="?page=bistrosol-settings&tab=account" class="nav-tab<?=$active_tab == 'account' ? ' nav-tab-active' : ''?>">Account</a>
+        <a href="?page=bistrosol-settings&tab=database" class="nav-tab<?=$active_tab == 'database' ? ' nav-tab-active' : ''?>">Database</a>
+    </h2>
+
+    <?php if ($active_tab == 'account') { ?>
+
+    <form enctype='multipart/form-data' id='bistrosol-account-settings-form' action='options.php' method='post' autocomplete='off'>
       <?php
-      settings_fields( 'bistrosol_settings_group' );
-      do_settings_sections( 'bistrosol_settings_group' );
-      $this->test_db_connection_button();
-      submit_button();
+      settings_fields( 'bistrosol_account_settings_group' );
+      do_settings_sections( 'bistrosol_account_settings_group' );
+      submit_button('Save', 'primary', 'save-account-changes', true, array('id' => 'save-account-changes'));
       ?>
-      <span id="bistrosol-db-settings-form-error">
+      <span id="bistrosol-account-settings-form-error">
         <?=__( 'Highlighted fields are required.', BISTRO_SOLUTIONS_TEXTDOMAIN )?>
-      <span> 
-
+      </span> 
     </form>
+
+    <?php } else if ($active_tab == 'database') { ?>
+
+    <form enctype='multipart/form-data' id='bistrosol-database-settings-form' action='options.php' method='post' autocomplete='off'>
+    <?php
+      settings_fields( 'bistrosol_database_settings_group' );
+      do_settings_sections( 'bistrosol_database_settings_group' );
+      $this->test_db_connection_button();
+      submit_button('Save', 'primary', 'save-database-changes', true, array('id' => 'save-database-changes'));
+      ?>
+      <span id="bistrosol-database-settings-form-error">
+        <?=__( 'Highlighted fields are required.', BISTRO_SOLUTIONS_TEXTDOMAIN )?>
+      </span> 
+    </form>
+    <?php } ?>
+    </div>
+    <?php
+  }
+
+  public function account_section_callback(  ) { 
+
+    echo __( 'Enter Bistro Solutions account information below.', BISTRO_SOLUTIONS_TEXTDOMAIN );
+
+  }
+
+  public function account_name_render(  ) { 
+    ?>
+    <input type='text' id='account_name' name='bistrosol_account_settings[account_name]' value='<?=$this->account_options['account_name']; ?>'>
     <?php
 
   }
@@ -286,56 +353,56 @@ class Bistro_Solutions_Admin {
 
   public function database_host_render(  ) { 
     ?>
-    <input type='text' id='database_host' name='bistrosol_settings[database_host]' value='<?=$this->options['database_host']; ?>'>
+    <input type='text' id='database_host' name='bistrosol_database_settings[database_host]' value='<?=$this->database_options['database_host']; ?>'>
     <?php
 
   }
 
   public function database_name_render(  ) { 
     ?>
-    <input type='text' id='database_name' name='bistrosol_settings[database_name]' value='<?=$this->options['database_name']; ?>'>
+    <input type='text' id='database_name' name='bistrosol_database_settings[database_name]' value='<?=$this->database_options['database_name']; ?>'>
     <?php
 
   }
 
   public function database_user_render(  ) { 
     ?>
-    <input type='text' id='database_user' name='bistrosol_settings[database_user]' value='<?=$this->options['database_user']; ?>'>
+    <input type='text' id='database_user' name='bistrosol_database_settings[database_user]' value='<?=$this->database_options['database_user']; ?>'>
     <?php
 
   }
 
   public function database_password_render(  ) { 
     ?>
-    <input type='password' id='database_password' name='bistrosol_settings[database_password]' value='<?=$this->options['database_password']; ?>'>
+    <input type='password' id='database_password' name='bistrosol_database_settings[database_password]' value='<?=$this->database_options['database_password']; ?>'>
     <?php
 
   }
 
   public function database_port_render(  ) { 
     ?>
-    <input type='text' id='database_port' name='bistrosol_settings[database_port]' value='<?=$this->options['database_port'] ? $this->options['database_port'] : '3306'; ?>'>
+    <input type='text' id='database_port' name='bistrosol_database_settings[database_port]' value='<?=$this->database_options['database_port'] ? $this->database_options['database_port'] : '3306'; ?>'>
     <?php
 
   }
 
   public function database_ca_render(  ) { 
     ?>
-    <input type='file' accept='.pem' id='database_ca' name='bistrosol_settings[database_ca]' value='<?=$this->options['database_ca']; ?>'>
+    <input type='file' accept='.pem' id='database_ca' name='bistrosol_database_settings[database_ca]' value='<?=$this->database_options['database_ca']; ?>'>
     <?php
 
   }
 
   public function database_client_cert_render(  ) { 
     ?>
-    <input type='file' accept='.pem' id='database_client_cert' name='bistrosol_settings[database_client_cert]' value='<?=$this->options['database_client_cert']; ?>'>
+    <input type='file' accept='.pem' id='database_client_cert' name='bistrosol_database_settings[database_client_cert]' value='<?=$this->database_options['database_client_cert']; ?>'>
     <?php
 
   }
 
   public function database_client_key_render(  ) { 
     ?>
-    <input type='file' accept='.pem' id='database_client_key' name='bistrosol_settings[database_client_key]' value='<?=$this->options['database_client_key']; ?>'>
+    <input type='file' accept='.pem' id='database_client_key' name='bistrosol_database_settings[database_client_key]' value='<?=$this->database_options['database_client_key']; ?>'>
     <?php
 
   }
@@ -349,16 +416,13 @@ class Bistro_Solutions_Admin {
       <span id="test-db-result-not-connected">
         <?=__( 'Database is not connected.', BISTRO_SOLUTIONS_TEXTDOMAIN )?>
       </span>
-      <span id="test-db-spinner">Please wait...</span>
+      <span id="test-db-spinner" class="bistrosol-loading-indicator">Please wait...</span>
     <?php
   }
 
   public function test_db_connection_ajax() {
     //var_dump($_POST);
     //var_dump($_FILES);
-    define( 'WP_DEBUG_DISPLAY', false );
-    define( 'WP_DEBUG', true );
-    define( 'WP_DEBUG_LOG', true );
     
     $response = array('success' => false);
 
@@ -368,14 +432,14 @@ class Bistro_Solutions_Admin {
     $db_password = $_POST['database_password'];
     $db_port = $_POST['database_port'];
     
-    $bistrosol_db = new wpdb( $db_user, $db_password, $db_name, $db_host . ':' . $db_port );
+    $bdb = new wpdb( $db_user, $db_password, $db_name, $db_host . ':' . $db_port );
 
-    if ($bistrosol_db && $bistrosol_db->error) {
+    if ($bdb && $bdb->error) {
       echo json_encode($response);
       exit;
     }
 
-    $server_id = $bistrosol_db->get_var('SELECT @@server_id');
+    $server_id = $bdb->get_var('SELECT @@server_id');
     if ($server_id == '1000') {
       $response['success'] = true;
     }
@@ -385,8 +449,240 @@ class Bistro_Solutions_Admin {
     exit;
   }
 
+  public function init_bdb() {
+    global $bdb;
+
+    ini_set('mysql.connect_timeout', 5);
+    ini_set('default_socket_timeout', 5);
+
+    if (!$bdb && !empty($this->database_options['database_name'])
+      && !empty($this->database_options['database_host'])
+      && !empty($this->database_options['database_user'])
+      && !empty($this->database_options['database_password'])
+      && !empty($this->database_options['database_port'])) {
+      $bdb = new wpdb( $this->database_options['database_user'],
+        $this->database_options['database_password'],
+        $this->database_options['database_name'],
+        $this->database_options['database_host']
+        . ':' . $this->database_options['database_port'] );
+    }
+    
+    if (current_user_can('bistrosol_user_edit_settings')) {
+      add_action( 'wp_dashboard_setup', array($this, 'master_database_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'release_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'news_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'account_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'support_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'terminal_info_widget_setup') );
+    }
+  }
+
+  public function news_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_news_widget',
+        'Bistro Solutions News',
+        array( $this, 'news_widget_render')
+      );
+  }
+
+  public function news_widget_render() {
+    echo '<span id="bistrosol-feed-error">';
+    echo 'Error loading feed, try again later.';
+    echo '</span>';
+
+    echo '<div id="bistrosol-news">';
+    echo '<span class="bistrosol-loading-indicator">Loading...</span>';
+    echo '</div>';
+  }
+
+
+  public function release_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_release_info_widget',
+        'Bistro Solutions Release Info',
+        array( $this, 'release_info_widget_render')
+      );
+  }
+
+  public function release_info_widget_render() {
+    echo '<div>Current version is: ';
+    echo '<span id="bistrosol-release-version">';
+    echo '<span class="bistrosol-loading-indicator">Loading...</span>';
+    echo '</span>';
+    echo '</div>';
+
+    echo '<div>Releases:</div>';
+    echo '<div id="bistrosol-releases">';
+    echo '<span class="bistrosol-loading-indicator">Loading...</span>';
+    echo '</div>';
+  }
+
+  public function account_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_account_info_widget',
+        'Bistro Solutions Account Info',
+        array( $this, 'account_info_widget_render')
+      );
+  }
+
+  public function account_info_widget_render() {
+    echo '<ul>';
+    echo '<li><strong>Name:</strong> ' . $this->account_options['account_name'] . '</li>';
+    echo '</ul>';
+  }
+
+  public function support_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_support_info_widget',
+        'Bistro Solutions Support Info',
+        array( $this, 'support_info_widget_render')
+      );
+  }
+
+  public function support_info_widget_render() {
+  }
+
+  public function terminal_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_terminal_info_widget',
+        'Bistro Solutions Terminal Info',
+        array( $this, 'terminal_info_widget_render')
+      );
+  }
+
+  public function terminal_info_widget_render() {
+  }
+
+  public function master_database_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_master_database_info_widget',
+        'Bistro Solutions Master Database Info',
+        array( $this, 'master_database_info_widget_render')
+      );
+
+    // Globalize the metaboxes array, this holds all the widgets for wp-admin
+    global $wp_meta_boxes;
+
+    // Get the regular dashboard widgets array
+    // (which has our new widget already but at the end)
+    $normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+
+    // Backup and delete our new dashboard widget from the end of the array
+    $master_database_info_widget_backup = array( 'master_database_info_widget' => $normal_dashboard['master_database_info_widget'] );
+    unset( $normal_dashboard['master_database_info_widget'] );
+
+    // Merge the two arrays together so our widget is at the beginning
+    $sorted_dashboard = array_merge( $master_database_info_widget_backup, $normal_dashboard );
+
+    // Save the sorted array back into the original metaboxes
+    $wp_meta_boxes['dashboard']['normal']['core'] = $sorted_dashboard;
+  }
+
+  public function master_database_info_widget_render() {
+    //echo '<pre>';
+    //var_dump($bdb->error);
+    //echo '</pre>';
+
+    $db_error = $this->get_db_connect_error();
+
+    if (!$db_error) {
+      echo '<div>Database is connected</div>';
+    } else {
+      echo '<div>Master database error: ' . $db_error . '</div>';
+    }
+
+    echo '<ul>';
+    echo '<li><strong>Database Version:</strong> ' . $this->get_db_version() . '</li>';
+    echo '<li><strong>Database Host:</strong> ' . $this->database_options['database_host'] . '</li>';
+    echo '<li><strong>Database User:</strong> ' . $this->database_options['database_user'] . '</li>';
+    echo '<li><strong>Database Name:</strong> ' . $this->database_options['database_name'] . '</li>';
+    echo '<li><strong>Uptime:</strong> ' . $this->get_db_uptime() . '</li>';
+    echo '<li><strong>Connections:</strong></li>';
+    echo '<ul class="bistrosol-dashboard-info">';
+    echo '<pre>';
+    foreach ($this->get_db_connections() as $user => $hosts) {
+      echo '<strong>' . $user . "</strong>\n";
+      foreach ($hosts as $host) {
+        echo "\t" . $host . "\n";
+      }
+    }
+    echo '</pre>';
+    echo '</ul>';
+    echo '</ul>';
+  }
+
+  public function get_db_connect_error() {
+    global $bdb;
+
+    $db_error = null;
+
+    if ($bdb->error && $bdb->error->errors) {
+      $db_errors = $bdb->error->errors;
+      if ($db_errors['db_connect_fail'][0]) {
+        $db_error = $db_errors['db_connect_fail'][0];
+        $db_error = 'Error establishing a database connection';
+      } else if ($db_errors['db_select_fail'][0]) {
+        $db_error = $db_errors['db_select_fail'][0];
+        $db_error = 'Can’t select database';
+      }
+    }
+
+    return $db_error;
+  }
+
+  public function get_db_version() {
+    global $bdb;
+
+    $version = $bdb->get_var('SELECT @@innodb_version');
+    return $version;
+  }
+
+  public function get_db_uptime() {
+    global $bdb;
+
+    $uptime_sec = $bdb->get_var("SELECT VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME = 'Uptime'");
+
+    function sec_to_time($seconds) {
+      $dtF = new \DateTime('@0');
+      $dtT = new \DateTime("@$seconds");
+      return $dtF->diff($dtT)->format('%a days, %h hours, %i minutes and %s seconds');
+    }
+
+    return sec_to_time($uptime_sec);
+  }
+
+  public function get_db_users() {
+    global $bdb;
+
+    $users = array();
+
+    $query = "SELECT DISTINCT(User) FROM mysql.user WHERE User NOT IN ('root', 'mysql.infoschema', 'mysql.session', 'mysql.sys')";
+    $results = $bdb->get_results($query, ARRAY_A);
+    
+    foreach ($results as $result) {
+      $users[] = $result['User'];
+    }
+
+    return $users;
+  }
+
+  public function get_db_connections() {
+    global $bdb;
+
+    $connections = array();
+
+    $query = "SELECT USER, HOST FROM information_schema.PROCESSLIST WHERE USER IN ('" . implode("','", $this->get_db_users()) . "') AND DB = '" . $this->database_options['database_name'] . "'";
+    $results = $bdb->get_results($query, ARRAY_A);
+
+    foreach ($results as $result) {
+      $connections[$result['USER']][] = $result['HOST'];
+    }
+
+    return $connections;
+  }
+
   public function dashboard_page() {
-    echo '<h2>Dashboard</h2>'; 
+    global $bdb;
   }
 
   public function orders_page() {

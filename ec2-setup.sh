@@ -26,6 +26,7 @@ sudo sed -i -e "s/;date.timezone =/date.timezone = America\/New_York/g" /etc/php
 # Allow outside access to MySQL
 # Lower password policy - https://dev.mysql.com/doc/refman/8.0/en/validate-password-options-variables.html
 # https://mysqlserverteam.com/upgrading-to-mysql-8-0-default-authentication-plugin-considerations/
+# Also change MySQL 8 password authentication to mysql_native_password for compatibility
 sudo sed -i -e "s/\[mysqld\]/\[mysqld\]\nbind-address = 0.0.0.0\n#validate_password.policy=LOW\ndefault-authentication-plugin=mysql_native_password\n/g" /etc/my.cnf
 
 # Server configs

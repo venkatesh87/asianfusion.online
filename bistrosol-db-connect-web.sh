@@ -16,5 +16,3 @@ readonly PASSWORD=$(jq -r ".${DB_USER}.password" ${DB_CONFIG_FILE})
 readonly PORT=$(jq -r ".${DB_USER}.port" ${DB_CONFIG_FILE})
 
 mysql -h$HOST -u$USER -p$PASSWORD -P$PORT -D$DATABASE
-
-#--ssl-ca=ca.pem --ssl-cert=client-cert.pem --ssl-key=client-key.pem

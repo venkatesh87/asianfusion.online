@@ -1,7 +1,6 @@
 #!/bin/bash
 
-source ./variables.sh
-
+readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" ./app.json)
 readonly LOCAL_SQL_PATH=../bistrosolutions-suite/db
 readonly LOCAL_SQL_FILE=bistrosolutions.sql
 readonly S3_SQL_PATH=s3://bistrosolutions/databases
