@@ -523,8 +523,15 @@ class Bistro_Solutions_Admin {
     echo '<li><strong>Database Name:</strong> ' . $this->database_options['database_name'] . '</li>';
     echo '<li><strong>Uptime:</strong> ' . $this->get_db_uptime() . '</li>';
     echo '<li><strong>Connections:</strong></li>';
-    echo '<ul>';
-    var_dump($this->get_db_connections());
+    echo '<ul class="dashboard-info">';
+    echo '<pre>';
+    foreach ($this->get_db_connections() as $user => $hosts) {
+      echo '<strong>' . $user . "</strong>\n";
+      foreach ($hosts as $host) {
+        echo "\t" . $host . "\n";
+      }
+    }
+    echo '</pre>';
     echo '</ul>';
     echo '</ul>';
   }
@@ -572,18 +579,31 @@ class Bistro_Solutions_Admin {
   public function get_db_users() {
     global $bdb;
 
-    $users = $bdb->get_results("SELECT DISTINCT(User) FROM mysql.user WHERE User NOT IN ('root', 'mysql.infoschema', 'mysql.session', 'mysql.sys')");
+    $users = array();
 
-    var_dump($users);
+    $query = "SELECT DISTINCT(User) FROM mysql.user WHERE User NOT IN ('root', 'mysql.infoschema', 'mysql.session', 'mysql.sys')";
+    $results = $bdb->get_results($query, ARRAY_A);
+    
+    foreach ($results as $result) {
+      $users[] = $result['User'];
+    }
+
     return $users;
   }
 
   public function get_db_connections() {
     global $bdb;
 
-    $connections = $bdb->get_results("SELECT HOST FROM information_schema.PROCESSLIST WHERE USER IN ('" . implode("',", $this->get_db_users) . "') AND DB = '" . $this->database_options['database_name'] . "'");
+    $connections = array();
 
-    var_dump($connections);
+    $query = "SELECT USER, HOST FROM information_schema.PROCESSLIST WHERE USER IN ('" . implode("','", $this->get_db_users()) . "') AND DB = '" . $this->database_options['database_name'] . "'";
+    $results = $bdb->get_results($query, ARRAY_A);
+
+    foreach ($results as $result) {
+      $connections[$result['USER']][] = $result['HOST'];
+    }
+
+    return $connections;
   }
 
   public function dashboard_page() {

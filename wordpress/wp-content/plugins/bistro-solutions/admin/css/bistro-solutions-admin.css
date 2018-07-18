@@ -3,6 +3,18 @@
  * included in this file.
  */
 
+.dashboard-info {
+  display: block;
+  border: 1px solid #c0c0c0;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 0;
+}
+
+.dashboard-info pre {
+  margin: 0;
+}
+
 #bistrosol-database-settings-form
 {
 }
