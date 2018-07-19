@@ -175,6 +175,33 @@ function js_to_footer() {
 }
 add_action('wp_enqueue_scripts', 'js_to_footer');
 
+
+//
+// Remove comment from admin menu
+//
+function remove_comment_from_admin_menus() {
+    remove_menu_page( 'edit-comments.php' );
+}
+add_action( 'admin_menu', 'remove_comment_from_admin_menus' );
+
+//
+// Remove comment from post and pages
+//
+function remove_comment_support() {
+    remove_post_type_support( 'post', 'comments' );
+    remove_post_type_support( 'page', 'comments' );
+}
+add_action('init', 'remove_comment_support', 100);
+
+//
+// Remove comment from admin bar
+//
+function remove_comment_from_admin_bar() {
+    global $wp_admin_bar;
+    $wp_admin_bar->remove_menu('comments');
+}
+add_action( 'wp_before_admin_bar_render', 'remove_comment_from_admin_bar' );
+
 //
 // Disable users REST API
 //
