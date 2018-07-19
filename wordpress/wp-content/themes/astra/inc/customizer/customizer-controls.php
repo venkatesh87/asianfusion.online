@@ -20,6 +20,7 @@ require $control_dir . '/typography/class-astra-control-typography.php';
 require $control_dir . '/spacing/class-astra-control-spacing.php';
 require $control_dir . '/responsive-spacing/class-astra-control-responsive-spacing.php';
 require $control_dir . '/divider/class-astra-control-divider.php';
+require $control_dir . '/heading/class-astra-control-heading.php';
 require $control_dir . '/color/class-astra-control-color.php';
 require $control_dir . '/description/class-astra-control-description.php';
 require $control_dir . '/background/class-astra-control-background.php';

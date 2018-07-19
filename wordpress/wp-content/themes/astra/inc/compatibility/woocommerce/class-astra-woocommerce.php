@@ -69,7 +69,7 @@ if ( ! class_exists( 'Astra_Woocommerce' ) ) :
 			add_action( 'wp', array( $this, 'shop_customization' ), 5 );
 			add_action( 'wp_head', array( $this, 'single_product_customization' ), 5 );
 			add_action( 'wp', array( $this, 'woocommerce_init' ), 1 );
-			add_action( 'init', array( $this, 'woocommerce_checkout' ) );
+			add_action( 'wp', array( $this, 'woocommerce_checkout' ) );
 			add_action( 'wp', array( $this, 'shop_meta_option' ), 1 );
 			add_action( 'wp', array( $this, 'cart_page_upselles' ) );
 
@@ -544,6 +544,10 @@ if ( ! class_exists( 'Astra_Woocommerce' ) ) :
 		 */
 		function woocommerce_checkout() {
 
+			if ( is_admin() ) {
+				return;
+			}
+
 			if ( ! apply_filters( 'astra_woo_shop_product_structure_override', false ) ) {
 
 				/**
@@ -974,7 +978,7 @@ if ( ! class_exists( 'Astra_Woocommerce' ) ) :
 						do_action( 'astra_woo_header_cart_icons_before' );
 
 						if ( apply_filters( 'astra_woo_default_header_cart_icon', true ) ) {
-						?>
+							?>
 							<div class="ast-cart-menu-wrap">
 								<span class="count"> 
 									<?php
@@ -984,14 +988,14 @@ if ( ! class_exists( 'Astra_Woocommerce' ) ) :
 									?>
 								</span>
 							</div>
-						<?php
+							<?php
 						}
 
 						do_action( 'astra_woo_header_cart_icons_after' );
 
 						?>
 			</a>
-		<?php
+			<?php
 		}
 
 		/**
