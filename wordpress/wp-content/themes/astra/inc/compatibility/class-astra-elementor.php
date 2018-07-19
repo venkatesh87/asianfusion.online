@@ -125,7 +125,7 @@ if ( ! class_exists( 'Astra_Elementor' ) ) :
 			?>
 			<style type="text/css" id="ast-elementor-overlay-css">
 				.elementor-editor-active .elementor-element > .elementor-element-overlay {
-					z-index: 100;
+					z-index: 9999;
 				}
 			</style>
 
