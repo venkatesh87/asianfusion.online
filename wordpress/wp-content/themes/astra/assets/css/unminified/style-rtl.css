@@ -2503,8 +2503,8 @@ body {
 
 .main-header-menu li:hover > ul,
 .main-header-menu li.focus > ul {
-  display: block;
   left: auto;
+  right: 0;
 }
 
 @media (min-width: 769px) {
@@ -2517,7 +2517,7 @@ body {
 .main-header-menu ul {
   width: 240px;
   background: #ffffff;
-  display: none;
+  right: -999em;
   position: absolute;
   top: 100%;
   z-index: 99999;
