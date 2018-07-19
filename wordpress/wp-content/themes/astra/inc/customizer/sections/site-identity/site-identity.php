@@ -36,6 +36,47 @@ if ( ! defined( 'ABSPATH' ) ) {
 	);
 
 	/**
+	 * Option: Inherit Desktop logo
+	 */
+	$wp_customize->add_setting(
+		ASTRA_THEME_SETTINGS . '[different-mobile-logo]', array(
+			'default'           => false,
+			'type'              => 'option',
+			'sanitize_callback' => array( 'Astra_Customizer_Sanitizes', 'sanitize_checkbox' ),
+		)
+	);
+	$wp_customize->add_control(
+		ASTRA_THEME_SETTINGS . '[different-mobile-logo]', array(
+			'section'  => 'title_tagline',
+			'label'    => __( 'Different Logo for mobile devices?', 'astra' ),
+			'priority' => 5,
+			'type'     => 'checkbox',
+		)
+	);
+
+	/**
+	 * Option: Mobile header logo
+	 */
+	$wp_customize->add_setting(
+		ASTRA_THEME_SETTINGS . '[mobile-header-logo]', array(
+			'default'           => astra_get_option( 'mobile-header-logo' ),
+			'type'              => 'option',
+			'sanitize_callback' => 'esc_url_raw',
+		)
+	);
+
+	$wp_customize->add_control(
+		new WP_Customize_Image_Control(
+			$wp_customize, ASTRA_THEME_SETTINGS . '[mobile-header-logo]', array(
+				'section'        => 'title_tagline',
+				'priority'       => 5,
+				'label'          => __( 'Mobile Logo (optional)', 'astra' ),
+				'library_filter' => array( 'gif', 'jpg', 'jpeg', 'png', 'ico' ),
+			)
+		)
+	);
+
+	/**
 	 * Option: Logo Width
 	 */
 	$wp_customize->add_setting(
