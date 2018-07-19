@@ -209,7 +209,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 			 * Check to see if we are supposed to output the code at all
 			 */
 			if ( get_post_meta( get_the_ID(), '_llms_display_reviews', true ) ) {
-			?>
+				?>
 				<div id="old_reviews">
 				<h3><?php echo apply_filters( 'lifterlms_reviews_section_title', _e( 'What Others Have Said', 'astra' ) ); ?></h3>
 				<?php
@@ -275,7 +275,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 				 * If we are not, check to see if we have written a review already.
 				 */
 				if ( get_post_meta( get_the_ID(), '_llms_multiple_reviews_disabled', true ) && $posts_array ) {
-				?>
+					?>
 					<div id="thank_you_box">
 						<h2><?php echo apply_filters( 'llms_review_thank_you_text', __( 'Thank you for your review!', 'astra' ) ); ?></h2>
 					</div>
