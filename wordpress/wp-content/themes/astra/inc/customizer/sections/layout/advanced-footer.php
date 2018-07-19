@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				$wp_customize, ASTRA_THEME_SETTINGS . '[ast-footer-widget-more-feature-divider]', array(
 					'type'     => 'ast-divider',
 					'section'  => 'section-footer-adv',
-					'priority' => 20,
+					'priority' => 999,
 					'settings' => array(),
 				)
 			)
@@ -68,7 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				$wp_customize, ASTRA_THEME_SETTINGS . '[ast-footer-widget-more-feature-description]', array(
 					'type'     => 'ast-description',
 					'section'  => 'section-footer-adv',
-					'priority' => 20,
+					'priority' => 999,
 					'label'    => '',
 					'help'     => '<p>' . __( 'More Options Available for Footer Widgets in Astra Pro!', 'astra' ) . '</p><a href="' . astra_get_pro_url( 'https://wpastra.com/docs/footer-widgets-astra-pro/', 'customizer', 'learn-more', 'upgrade-to-pro' ) . '" class="button button-primary"  target="_blank" rel="noopener">' . __( 'Learn More', 'astra' ) . '</a>',
 					'settings' => array(),

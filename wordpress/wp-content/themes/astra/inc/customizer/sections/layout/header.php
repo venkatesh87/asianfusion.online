@@ -37,20 +37,20 @@ $header_rt_sections = array(
 			$wp_customize, ASTRA_THEME_SETTINGS . '[header-layouts]', array(
 				'section'  => 'section-header',
 				'priority' => 5,
-				'label'    => __( 'Header', 'astra' ),
+				'label'    => __( 'Header Layout', 'astra' ),
 				'type'     => 'ast-radio-image',
 				'choices'  => array(
 					'header-main-layout-1' => array(
 						'label' => __( 'Logo Left', 'astra' ),
-						'path'  => ASTRA_THEME_URI . '/assets/images/header-layout-1-60x60.png',
+						'path'  => ASTRA_THEME_URI . '/assets/images/header-layout-1-76x48.png',
 					),
 					'header-main-layout-2' => array(
 						'label' => __( 'Logo Center', 'astra' ),
-						'path'  => ASTRA_THEME_URI . '/assets/images/header-layout-2-60x60.png',
+						'path'  => ASTRA_THEME_URI . '/assets/images/header-layout-2-76x48.png',
 					),
 					'header-main-layout-3' => array(
 						'label' => __( 'Logo Right', 'astra' ),
-						'path'  => ASTRA_THEME_URI . '/assets/images/header-layout-3-60x60.png',
+						'path'  => ASTRA_THEME_URI . '/assets/images/header-layout-3-76x48.png',
 					),
 				),
 			)
@@ -77,7 +77,7 @@ $header_rt_sections = array(
 	);
 
 	/**
-	 * Option: Custom Menu Item
+	 * Option: Last Item in Menu
 	 */
 	$wp_customize->add_setting(
 		ASTRA_THEME_SETTINGS . '[header-main-rt-section]', array(
@@ -91,7 +91,7 @@ $header_rt_sections = array(
 			'type'     => 'select',
 			'section'  => 'section-header',
 			'priority' => 5,
-			'label'    => __( 'Custom Menu Item', 'astra' ),
+			'label'    => __( 'Last Item in Menu', 'astra' ),
 			'choices'  => $header_rt_sections,
 		)
 	);
@@ -108,7 +108,7 @@ $header_rt_sections = array(
 			'type'     => 'select',
 			'section'  => 'section-header',
 			'priority' => 5,
-			'label'    => __( 'Custom Menu Item', 'astra' ),
+			'label'    => __( 'Last Item in Menu', 'astra' ),
 			'choices'  => apply_filters(
 				'astra_header_section_elements',
 				array(
@@ -121,26 +121,6 @@ $header_rt_sections = array(
 			),
 		)
 	);
-
-	/**
-	 * Option: Display outside menu
-	 */
-	$wp_customize->add_setting(
-		ASTRA_THEME_SETTINGS . '[header-display-outside-menu]', array(
-			'default'           => astra_get_option( 'header-display-outside-menu' ),
-			'type'              => 'option',
-			'sanitize_callback' => array( 'Astra_Customizer_Sanitizes', 'sanitize_checkbox' ),
-		)
-	);
-	$wp_customize->add_control(
-		ASTRA_THEME_SETTINGS . '[header-display-outside-menu]', array(
-			'type'     => 'checkbox',
-			'section'  => 'section-header',
-			'label'    => __( 'Take custom menu item outside', 'astra' ),
-			'priority' => 5,
-		)
-	);
-
 
 	/**
 	 * Option: Right Section Text / HTML
@@ -211,6 +191,7 @@ $header_rt_sections = array(
 	$wp_customize->add_control(
 		new WP_Customize_Color_Control(
 			$wp_customize, ASTRA_THEME_SETTINGS . '[header-main-sep-color]', array(
+				'type'     => 'ast-color',
 				'section'  => 'section-header',
 				'priority' => 30,
 				'label'    => __( 'Bottom Border Color', 'astra' ),
@@ -241,17 +222,44 @@ $header_rt_sections = array(
 		)
 	);
 
-
 	/**
 	 * Option: Mobile Menu Label Divider
 	 */
 	$wp_customize->add_control(
-		new Astra_Control_Divider(
+		new Astra_Control_Heading(
 			$wp_customize, ASTRA_THEME_SETTINGS . '[header-main-menu-label-divider]', array(
-				'type'     => 'ast-divider',
+				'type'     => 'ast-heading',
 				'section'  => 'section-header',
-				'priority' => 55,
+				'priority' => 35,
+				'label'    => __( 'Mobile Header', 'astra' ),
 				'settings' => array(),
+			)
+		)
+	);
+
+	/**
+	 * Option: Mobile Header Breakpoint
+	 */
+	$wp_customize->add_setting(
+		ASTRA_THEME_SETTINGS . '[mobile-header-breakpoint]', array(
+			'default'           => '',
+			'type'              => 'option',
+			'sanitize_callback' => array( 'Astra_Customizer_Sanitizes', 'sanitize_number_n_blank' ),
+		)
+	);
+	$wp_customize->add_control(
+		new Astra_Control_Slider(
+			$wp_customize, ASTRA_THEME_SETTINGS . '[mobile-header-breakpoint]', array(
+				'type'        => 'ast-slider',
+				'section'     => 'section-header',
+				'priority'    => 40,
+				'label'       => __( 'Menu Breakpoint', 'astra' ),
+				'suffix'      => '',
+				'input_attrs' => array(
+					'min'  => 100,
+					'step' => 1,
+					'max'  => 1921,
+				),
 			)
 		)
 	);
@@ -270,9 +278,48 @@ $header_rt_sections = array(
 	$wp_customize->add_control(
 		ASTRA_THEME_SETTINGS . '[header-main-menu-label]', array(
 			'section'  => 'section-header',
-			'priority' => 60,
+			'priority' => 45,
 			'label'    => __( 'Menu Label on Small Devices', 'astra' ),
 			'type'     => 'text',
+		)
+	);
+
+	/**
+	 * Option: Hide Last item in Menu on mobile device
+	 */
+	$wp_customize->add_setting(
+		ASTRA_THEME_SETTINGS . '[hide-custom-menu-mobile]', array(
+			'default'           => astra_get_option( 'hide-custom-menu-mobile' ),
+			'type'              => 'option',
+			'sanitize_callback' => array( 'Astra_Customizer_Sanitizes', 'sanitize_checkbox' ),
+		)
+	);
+	$wp_customize->add_control(
+		ASTRA_THEME_SETTINGS . '[hide-custom-menu-mobile]', array(
+			'type'        => 'checkbox',
+			'section'     => 'section-header',
+			'label'       => __( 'Hide Last item in Menu on mobile', 'astra' ),
+			'priority'    => 45,
+			'description' => __( 'This setting is only applied to the devices below 544px width ', 'astra' ),
+		)
+	);
+
+	/**
+	 * Option: Display outside menu
+	 */
+	$wp_customize->add_setting(
+		ASTRA_THEME_SETTINGS . '[header-display-outside-menu]', array(
+			'default'           => astra_get_option( 'header-display-outside-menu' ),
+			'type'              => 'option',
+			'sanitize_callback' => array( 'Astra_Customizer_Sanitizes', 'sanitize_checkbox' ),
+		)
+	);
+	$wp_customize->add_control(
+		ASTRA_THEME_SETTINGS . '[header-display-outside-menu]', array(
+			'type'     => 'checkbox',
+			'section'  => 'section-header',
+			'label'    => __( 'Take Last item in Menu outside menu', 'astra' ),
+			'priority' => 45,
 		)
 	);
 
@@ -287,14 +334,130 @@ $header_rt_sections = array(
 		)
 	);
 	$wp_customize->add_control(
-		ASTRA_THEME_SETTINGS . '[header-main-menu-align]', array(
-			'type'     => 'select',
+		new Astra_Control_Radio_Image(
+			$wp_customize, ASTRA_THEME_SETTINGS . '[header-main-menu-align]', array(
+				'type'        => 'ast-radio-image',
+				'choices'     => array(
+					'inline' => array(
+						'label' => __( 'Inline', 'astra' ),
+						'path'  => ASTRA_THEME_URI . '/assets/images/mobile-inline-layout-76x48.png',
+					),
+					'stack'  => array(
+						'label' => __( 'Stack', 'astra' ),
+						'path'  => ASTRA_THEME_URI . '/assets/images/mobile-stack-layout-76x48.png',
+					),
+				),
+				'section'     => 'section-header',
+				'priority'    => 50,
+				'label'       => __( 'Mobile Header Alignment', 'astra' ),
+				'description' => __( 'This setting is only applied to the devices below 544px width ', 'astra' ),
+			)
+		)
+	);
+
+	// Learn More link if Astra Pro is not activated.
+	if ( ! defined( 'ASTRA_EXT_VER' ) ) {
+
+		/**
+		 * Option: Divider
+		 */
+		$wp_customize->add_control(
+			new Astra_Control_Divider(
+				$wp_customize, ASTRA_THEME_SETTINGS . '[mobile-header-more-feature-divider]', array(
+					'type'     => 'ast-divider',
+					'section'  => 'section-header',
+					'priority' => 999,
+					'settings' => array(),
+				)
+			)
+		);
+		/**
+		 * Option: Learn More about Mobile Header
+		 */
+		$wp_customize->add_control(
+			new Astra_Control_Description(
+				$wp_customize, ASTRA_THEME_SETTINGS . '[mobile-header-more-feature-description]', array(
+					'type'     => 'ast-description',
+					'section'  => 'section-header',
+					'priority' => 999,
+					'label'    => '',
+					'help'     => '<p>' . __( 'More Options Available for Mobile Header in Astra Pro!', 'astra' ) . '</p><a href="' . astra_get_pro_url( 'https://wpastra.com/docs/mobile-header-with-astra/', 'customizer', 'learn-more', 'upgrade-to-pro' ) . '" class="button button-primary"  target="_blank" rel="noopener">' . __( 'Learn More', 'astra' ) . '</a>',
+					'settings' => array(),
+				)
+			)
+		);
+	}
+
+	/**
+	 * Option: Toggle Button Style
+	 */
+	$wp_customize->add_setting(
+		ASTRA_THEME_SETTINGS . '[mobile-header-toggle-btn-style]', array(
+			'default'           => astra_get_option( 'mobile-header-toggle-btn-style' ),
+			'type'              => 'option',
+			'transport'         => 'postMessage',
+			'sanitize_callback' => array( 'Astra_Customizer_Sanitizes', 'sanitize_choices' ),
+		)
+	);
+	$wp_customize->add_control(
+		ASTRA_THEME_SETTINGS . '[mobile-header-toggle-btn-style]', array(
 			'section'  => 'section-header',
-			'priority' => 65,
-			'label'    => __( 'Mobile Header Alignment', 'astra' ),
+			'label'    => __( 'Toggle Button Style', 'astra' ),
+			'type'     => 'select',
+			'priority' => 42,
 			'choices'  => array(
-				'inline' => __( 'Inline', 'astra' ),
-				'stack'  => __( 'Stack', 'astra' ),
+				'fill'    => __( 'Fill', 'astra' ),
+				'outline' => __( 'Outline', 'astra' ),
+				'minimal' => __( 'Minimal', 'astra' ),
 			),
+		)
+	);
+
+	/**
+	 * Option: Toggle Button Color
+	 */
+	$wp_customize->add_setting(
+		ASTRA_THEME_SETTINGS . '[mobile-header-toggle-btn-style-color]', array(
+			'default'           => astra_get_option( 'mobile-header-toggle-btn-style-color' ),
+			'type'              => 'option',
+			'sanitize_callback' => array( 'Astra_Customizer_Sanitizes', 'sanitize_alpha_color' ),
+		)
+	);
+	$wp_customize->add_control(
+		new Astra_Control_Color(
+			$wp_customize, ASTRA_THEME_SETTINGS . '[mobile-header-toggle-btn-style-color]', array(
+				'type'     => 'ast-color',
+				'label'    => __( 'Toggle Button Color', 'astra' ),
+				'section'  => 'section-header',
+				'priority' => 42,
+			)
+		)
+	);
+
+		/**
+	 * Option: Border Radius
+	 */
+	$wp_customize->add_setting(
+		ASTRA_THEME_SETTINGS . '[mobile-header-toggle-btn-border-radius]', array(
+			'default'           => astra_get_option( 'mobile-header-toggle-btn-border-radius' ),
+			'type'              => 'option',
+			'transport'         => 'postMessage',
+			'sanitize_callback' => array( 'Astra_Customizer_Sanitizes', 'sanitize_number' ),
+		)
+	);
+	$wp_customize->add_control(
+		new Astra_Control_Slider(
+			$wp_customize, ASTRA_THEME_SETTINGS . '[mobile-header-toggle-btn-border-radius]', array(
+				'type'        => 'ast-slider',
+				'section'     => 'section-header',
+				'label'       => __( 'Border Radius', 'astra' ),
+				'priority'    => 42,
+				'suffix'      => '',
+				'input_attrs' => array(
+					'min'  => 0,
+					'step' => 1,
+					'max'  => 100,
+				),
+			)
 		)
 	);

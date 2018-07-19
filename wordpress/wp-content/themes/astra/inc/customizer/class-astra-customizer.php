@@ -62,8 +62,8 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 		 * @return void
 		 */
 		public function print_footer_scripts() {
-			$output      = '<script type="text/javascript">';
-				$output .= '
+			$output  = '<script type="text/javascript">';
+			$output .= '
 	        	wp.customize.bind(\'ready\', function() {
 	            	wp.customize.control.each(function(ctrl, i) {
 	                	var desc = ctrl.container.find(".customize-control-description");
@@ -79,8 +79,8 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 	            	});
 	        	});';
 
-				$output .= Astra_Fonts_Data::js();
-			$output     .= '</script>';
+			$output .= Astra_Fonts_Data::js();
+			$output .= '</script>';
 
 			echo $output;
 		}
@@ -113,6 +113,7 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 			$wp_customize->register_control_type( 'Astra_Control_Spacing' );
 			$wp_customize->register_control_type( 'Astra_Control_Responsive_Spacing' );
 			$wp_customize->register_control_type( 'Astra_Control_Divider' );
+			$wp_customize->register_control_type( 'Astra_Control_Heading' );
 			$wp_customize->register_control_type( 'Astra_Control_Color' );
 			$wp_customize->register_control_type( 'Astra_Control_Description' );
 			$wp_customize->register_control_type( 'Astra_Control_Background' );
@@ -265,7 +266,14 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 				$dir        = 'unminified';
 			}
 
-			wp_enqueue_script( 'astra-customizer-preview-js', ASTRA_THEME_URI . 'assets/js/' . $dir . '/customizer-preview' . $js_prefix, array( 'customize-preview' ), null, ASTRA_THEME_VERSION );
+			wp_register_script( 'astra-customizer-preview-js', ASTRA_THEME_URI . 'assets/js/' . $dir . '/customizer-preview' . $js_prefix, array( 'customize-preview' ), null, ASTRA_THEME_VERSION );
+
+			$localize_array = array(
+				'headerBreakpoint' => astra_header_break_point(),
+			);
+
+			wp_localize_script( 'astra-customizer-preview-js', 'astraCustomizer', $localize_array );
+			wp_enqueue_script( 'astra-customizer-preview-js' );
 		}
 
 		/**
@@ -303,7 +311,7 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 
 			$logo_width = astra_get_option( 'ast-header-responsive-logo-width' );
 
-			if ( is_array( $sizes ) && ( '' != $logo_width['desktop'] || '' != $logo_width['tablet'] | '' != $logo_width['mobile'] ) ) {
+			if ( is_array( $sizes ) && '' != $logo_width['desktop'] ) {
 				$max_value              = max( $logo_width );
 				$sizes['ast-logo-size'] = array(
 					'width'  => (int) $max_value,
@@ -330,6 +338,10 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 					$fullsizepath = get_attached_file( $image->ID );
 
 					if ( false !== $fullsizepath || file_exists( $fullsizepath ) ) {
+
+						if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+							require_once ABSPATH . 'wp-admin/includes/image.php';
+						}
 
 						$metadata = wp_generate_attachment_metadata( $image->ID, $fullsizepath );
 
