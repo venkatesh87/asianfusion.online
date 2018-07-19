@@ -142,7 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				$wp_customize, ASTRA_THEME_SETTINGS . '[ast-blog-single-more-feature-divider]', array(
 					'type'     => 'ast-divider',
 					'section'  => 'section-blog-single',
-					'priority' => 25,
+					'priority' => 999,
 					'settings' => array(),
 				)
 			)
@@ -155,7 +155,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				$wp_customize, ASTRA_THEME_SETTINGS . '[ast-blog-single-more-feature-description]', array(
 					'type'     => 'ast-description',
 					'section'  => 'section-blog-single',
-					'priority' => 25,
+					'priority' => 999,
 					'label'    => '',
 					'help'     => '<p>' . __( 'More Options Available for Single Post in Astra Pro!', 'astra' ) . '</p><a href="' . astra_get_pro_url( 'https://wpastra.com/docs/single-post-blog-pro/', 'customizer', 'learn-more', 'upgrade-to-pro' ) . '" class="button button-primary"  target="_blank" rel="noopener">' . __( 'Learn More', 'astra' ) . '</a>',
 					'settings' => array(),

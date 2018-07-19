@@ -165,7 +165,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				$wp_customize, ASTRA_THEME_SETTINGS . '[ast-blog-more-feature-divider]', array(
 					'type'     => 'ast-divider',
 					'section'  => 'section-blog',
-					'priority' => 125,
+					'priority' => 999,
 					'settings' => array(),
 				)
 			)
@@ -178,7 +178,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				$wp_customize, ASTRA_THEME_SETTINGS . '[ast-blog-more-feature-description]', array(
 					'type'     => 'ast-description',
 					'section'  => 'section-blog',
-					'priority' => 125,
+					'priority' => 999,
 					'label'    => '',
 					'help'     => __( 'More Options Available for Blog in Astra Pro!', 'astra' ) . '<a href="' . astra_get_pro_url( 'https://wpastra.com/docs/blog-archive-blog-pro/', 'customizer', 'learn-more', 'upgrade-to-pro' ) . '" class="button button-primary"  target="_blank" rel="noopener">' . __( 'Learn More', 'astra' ) . '</a>',
 					'settings' => array(),

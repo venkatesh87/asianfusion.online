@@ -197,7 +197,6 @@
 			{
 				controls: [
 					'astra-settings[header-main-menu-label]',
-					'astra-settings[header-main-menu-label-divider]',
 				],
 				callback: function( custom_menu ) {
 					var menu = api( 'astra-settings[disable-primary-nav]' ).get();
@@ -209,7 +208,7 @@
 			},
 			{
 				controls: [
-					'astra-settings[header-display-outside-menu]',
+					'astra-settings[hide-custom-menu-mobile]',
 				],
 				callback: function( custom_menu ) {
 					
@@ -218,7 +217,38 @@
 					}
 					return false;
 				}
-			}
+			},
+			{
+				controls: [
+					'astra-settings[header-display-outside-menu]',
+				],
+				callback: function( custom_menu ) {
+					
+					var hide_custom_menu = api( 'astra-settings[hide-custom-menu-mobile]' ).get();
+
+					if ( 'none' !=  custom_menu && ! hide_custom_menu ) {
+						return true;
+					}
+					return false;
+				}
+			},
+		],
+
+		'astra-settings[hide-custom-menu-mobile]' :
+		[
+			{
+				controls: [
+					'astra-settings[header-display-outside-menu]',
+				],
+				callback: function( hide_custom_menu ) {
+					
+					var last_item = api( 'astra-settings[header-main-rt-section]' ).get();
+					if ( ! hide_custom_menu && 'none' != last_item ) {
+						return true;
+					}
+					return false;
+				}
+			},
 		],
 
 		/**
@@ -456,7 +486,6 @@
 			{
 				controls: [
 					'astra-settings[header-main-menu-label]',
-					'astra-settings[header-main-menu-label-divider]',
 				],
 				callback: function( menu ) {
 					var custom_menu = api( 'astra-settings[header-main-rt-section]' ).get();
@@ -506,5 +535,36 @@
 				}
 			}
 		],
+		'astra-settings[mobile-header-logo]' :
+		[
+			{
+				controls: [
+					'astra-settings[mobile-header-logo-width]'
+				],
+				callback: function( mobile_logo ) {
+
+					if ( mobile_logo ) {
+						return true;
+					}
+					return false;
+				}
+			}
+		],
+		'astra-settings[different-mobile-logo]' :
+		[
+			{
+				controls: [
+					'astra-settings[mobile-header-logo]'
+				],
+				callback: function( different_mobile_logo ) {
+
+					if ( different_mobile_logo ) {
+						return true;
+					}
+					return false;
+				}
+			}
+		],
 	};
+
 } )( jQuery );
