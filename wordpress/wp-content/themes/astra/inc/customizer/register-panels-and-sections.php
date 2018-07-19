@@ -38,16 +38,69 @@
 		)
 	);
 
+	/*
+	 * Header section
+	 *
+	 * @since 1.4.0
+	 */
+	$wp_customize->add_section(
+		new Astra_WP_Customize_Section(
+			$wp_customize, 'section-header-group',
+			array(
+				'priority' => 20,
+				'title'    => __( 'Header', 'astra' ),
+				'panel'    => 'panel-layout',
+			)
+		)
+	);
+
+	/*
+	 * Update the Site Identity section inside Layout -> Header
+	 *
+	 * @since 1.4.0
+	 */
+	$wp_customize->add_section(
+		new Astra_WP_Customize_Section(
+			$wp_customize, 'title_tagline',
+			array(
+				'priority' => 5,
+				'title'    => __( 'Site Identity', 'astra' ),
+				'panel'    => 'panel-layout',
+				'section'  => 'section-header-group',
+			)
+		)
+	);
+
+	/*
+	 * Update the Primary Header section
+	 *
+	 * @since 1.4.0
+	 */
 	$wp_customize->add_section(
 		new Astra_WP_Customize_Section(
 			$wp_customize, 'section-header',
-			apply_filters(
-				'astra_customizer_primary_header_layout',
-				array(
-					'title'    => __( 'Primary Header', 'astra' ),
-					'panel'    => 'panel-layout',
-					'priority' => 20,
-				)
+			array(
+				'priority' => 15,
+				'title'    => __( 'Primary Header', 'astra' ),
+				'panel'    => 'panel-layout',
+				'section'  => 'section-header-group',
+			)
+		)
+	);
+
+	/*
+	 * Mobile Header section
+	 *
+	 * @since 1.4.0
+	 */
+	$wp_customize->add_section(
+		new Astra_WP_Customize_Section(
+			$wp_customize, 'section-mobile-header',
+			array(
+				'priority' => 40,
+				'title'    => __( 'Menu Breakpoint', 'astra' ),
+				'panel'    => 'panel-layout',
+				'section'  => 'section-header-group',
 			)
 		)
 	);
@@ -257,18 +310,51 @@
 	);
 
 	$wp_customize->add_section(
-		'section-archive-typo', array(
-			'title'    => __( 'Blog / Archive', 'astra' ),
-			'panel'    => 'panel-typography',
-			'priority' => 40,
+		new Astra_WP_Customize_Section(
+			$wp_customize, 'section-primary-header-typo',
+			apply_filters(
+				'astra_customizer_primary_header_typo',
+				array(
+					'title'    => __( 'Primary Header', 'astra' ),
+					'panel'    => 'panel-typography',
+					'priority' => 21,
+				)
+			)
 		)
 	);
 
 	$wp_customize->add_section(
-		'section-single-typo', array(
-			'title'    => __( 'Single Page / Post', 'astra' ),
-			'panel'    => 'panel-typography',
-			'priority' => 45,
+		new Astra_WP_Customize_Section(
+			$wp_customize, 'section-blog-typo-group',
+			array(
+				'priority' => 40,
+				'title'    => __( 'Blog', 'astra' ),
+				'panel'    => 'panel-typography',
+			)
+		)
+	);
+
+	$wp_customize->add_section(
+		new Astra_WP_Customize_Section(
+			$wp_customize, 'section-archive-typo',
+			array(
+				'priority' => 5,
+				'title'    => __( 'Blog / Archive', 'astra' ),
+				'panel'    => 'panel-typography',
+				'section'  => 'section-blog-typo-group',
+			)
+		)
+	);
+
+	$wp_customize->add_section(
+		new Astra_WP_Customize_Section(
+			$wp_customize, 'section-single-typo',
+			array(
+				'priority' => 10,
+				'title'    => __( 'Single Post', 'astra' ),
+				'panel'    => 'panel-typography',
+				'section'  => 'section-blog-typo-group',
+			)
 		)
 	);
 
