@@ -6,7 +6,35 @@
     //
     // Dashboards
     //
-   
+
+    // Account
+    if ($('#bistrosol_account_info_widget').length) {
+      var account_name = $('#bistrosol-account-name').val();
+      var secret_token = $('#bistrosol-secret-token').val();
+      var account_url = 'https://www.bistrosol.co/wp-json/bistrosol/v2/account/' + account_name + '/' + secret_token + '/account_info';
+
+      $.getJSON(account_url, function( data ) {
+        var items = [];
+       
+        if (data.alert_text != '') {
+          items.push('<li id="bistrosol-alert-text">' + data.alert_text + '</li>');
+        }
+
+        if (data.success_text != '') {
+          items.push('<li id="bistrosol-success-text">' + data.success_text + '</li>');
+        }
+
+        $('<ul/>', {
+          'class': '',
+          html: items.join('')
+        }).replaceAll($('#bistrosol-account').children());
+       
+      }).fail(function() {
+          $('#bistrosol-account').html('<span class="bistrosol-feed-error">' + $('#bistrosol-feed-error').html() + '</span>');
+      });
+    }
+
+    // News
     if ($('#bistrosol_news_widget').length) {
       var news_url = 'https://www.bistrosol.co/wp-json/wp/v2/news?per_page=5&filter[orderby]=date&order=desc';
 
@@ -29,6 +57,7 @@
       });
     }
 
+    // Releases
     if ($('#bistrosol_release_info_widget').length) {
       var release_news_url = 'https://www.bistrosol.co/wp-json/wp/v2/release?per_page=5&filter[orderby]=date&order=desc';
       var release_version_url = 'https://www.bistrosol.co/wp-json/acf/v3/release?per_page=1&filter[orderby]=date&order=desc';
@@ -144,6 +173,29 @@
         $('#test-db-connection').removeAttr('disabled');
       });
     });
+
+    //
+    // Account settings form
+    //
+
+    $('#copy_secret_token').on('click', function() {
+      $('#secret_token').select();
+      document.execCommand('copy');
+    });
+
+    $('#generate_secret_token').on('click', function() {
+      $('#secret_token').val(get_secret_token(20));
+    });
+
+    function get_secret_token(length) {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for (var i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+    }
   });
 
 })( jQuery );
