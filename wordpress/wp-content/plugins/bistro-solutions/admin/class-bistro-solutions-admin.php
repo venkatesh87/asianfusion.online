@@ -193,6 +193,18 @@ class Bistro_Solutions_Admin {
       )
     );
 
+    add_settings_field(
+      'secret_token',
+      __( 'Secret Token', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+      array($this, 'secret_token_render'),
+      'bistrosol_account_settings_group',
+      'account_section',
+      array(
+        'label_for' => 'secret_token',
+        'class' => 'secret_token_field required'
+      )
+    );
+
     add_settings_section(
       'database_section',
       __( 'Database', BISTRO_SOLUTIONS_TEXTDOMAIN ),
@@ -341,6 +353,15 @@ class Bistro_Solutions_Admin {
   public function account_name_render(  ) { 
     ?>
     <input type='text' id='account_name' name='bistrosol_account_settings[account_name]' value='<?=$this->account_options['account_name']; ?>'>
+    <?php
+
+  }
+
+  public function secret_token_render(  ) { 
+    ?>
+    <input type='text' id='secret_token' name='bistrosol_account_settings[secret_token]' value='<?=$this->account_options['secret_token']; ?>'>
+    <input type='button' class='button button-secondary' id='generate_secret_token' name='generate_secret_token' value='Generate'/>
+    <input type='button' class='button button-secondary' id='copy_secret_token' name='copy_secret_token' value='Copy'/>  
     <?php
 
   }
@@ -526,9 +547,16 @@ class Bistro_Solutions_Admin {
   }
 
   public function account_info_widget_render() {
+    $token = base64_encode(gmdate('Y-m-d-H') . $this->account_options['secret_token']);
+    
     echo '<ul>';
     echo '<li><strong>Name:</strong> ' . $this->account_options['account_name'] . '</li>';
     echo '</ul>';
+    echo '<input type="hidden" id="bistrosol-account-name" value="' . $this->account_options['account_name'] . '"/>';
+    echo '<input type="hidden" id="bistrosol-secret-token" value="' . $token . '"/>';
+    echo '<div id="bistrosol-account">';
+    echo '<span class="bistrosol-loading-indicator">Loading...</span>';
+    echo '</div>';
   }
 
   public function support_info_widget_setup() {
