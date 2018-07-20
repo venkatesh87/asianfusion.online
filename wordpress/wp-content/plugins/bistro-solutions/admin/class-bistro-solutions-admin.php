@@ -547,9 +547,13 @@ class Bistro_Solutions_Admin {
   }
 
   public function account_info_widget_render() {
+    $token = base64_encode(gmdate('Y-m-d-H') . $this->account_options['secret_token']);
+    
     echo '<ul>';
     echo '<li><strong>Name:</strong> ' . $this->account_options['account_name'] . '</li>';
     echo '</ul>';
+    echo '<input type="hidden" id="bistrosol-account-name" value="' . $this->account_options['account_name'] . '"/>';
+    echo '<input type="hidden" id="bistrosol-secret-token" value="' . $token . '"/>';
     echo '<div id="bistrosol-account">';
     echo '<span class="bistrosol-loading-indicator">Loading...</span>';
     echo '</div>';
