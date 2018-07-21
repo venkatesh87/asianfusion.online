@@ -46,6 +46,83 @@
   padding-left: 20px;
 }
 
+#bistrosol-terminals {
+}
+
+#bistrosol-terminals .bistrosol-location-name {
+  font-weight: 600;
+  margin-top: 20px;
+  background-color: #c0c0c0;
+  padding: 5px;
+}
+
+#bistrosol-terminals .bistrosol-terminal-status-online {
+  color: green;
+}
+
+#bistrosol-terminals .bistrosol-terminal-status-offline {
+  color: #ff0000;
+}
+
+#bistrosol-terminals .bistrosol-terminal-name-label,
+#bistrosol-terminals .bistrosol-terminal-ip-label,
+#bistrosol-terminals .bistrosol-terminal-server-id-label,
+#bistrosol-terminals .bistrosol-terminal-status-label {
+  display: inline-block;
+  font-weight: 600;
+  text-align: left;
+  padding: 5px;
+  background-color: #e6e6e6;
+  box-sizing: border-box;
+  border: 1px solid #fff;
+  font-size: 80%;
+}
+
+#bistrosol-terminals .bistrosol-terminal-name,
+#bistrosol-terminals .bistrosol-terminal-ip,
+#bistrosol-terminals .bistrosol-terminal-server-id,
+#bistrosol-terminals .bistrosol-terminal-status {
+  display: inline-block;
+  text-align: left;
+  padding: 5px;
+  box-sizing: border-box;
+}
+
+#bistrosol-terminals .bistrosol-terminal-feature {
+  margin-left: 10px;
+  background-color: green;
+  font-size: 80%;
+  color: #fff;
+  padding: 5px;
+  border-radius: 20px;
+}
+
+#bistrosol-terminals .bistrosol-terminal-name-label,
+#bistrosol-terminals .bistrosol-terminal-name {
+  width: 50%;
+}
+
+#bistrosol-terminals .bistrosol-terminal-ip-label,
+#bistrosol-terminals .bistrosol-terminal-ip {
+  width: 20%;
+}
+
+#bistrosol-terminals .bistrosol-terminal-server-id-label,
+#bistrosol-terminals .bistrosol-terminal-server-id {
+  width: 15%;
+}
+
+#bistrosol-terminals .bistrosol-terminal-status-label,
+#bistrosol-terminals .bistrosol-terminal-status {
+  width: 15%;
+}
+
+#bistrosol-terminals #bistrosol-terminal-status-note {
+  font-style: italic;
+  font-size: 80%;
+  text-align: right;
+}
+
 #bistrosol-database-settings-form
 {
 }
