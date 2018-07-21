@@ -495,6 +495,7 @@ class Bistro_Solutions_Admin {
       add_action( 'wp_dashboard_setup', array($this, 'account_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'support_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'terminal_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'cart_info_widget_setup') );
     }
   }
 
@@ -570,6 +571,18 @@ class Bistro_Solutions_Admin {
   public function support_info_widget_render() {
   }
 
+  public function cart_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_cart_info_widget',
+        'Bistro Solutions Cart Info',
+        array( $this, 'cart_info_widget_render')
+      );
+  }
+
+  public function cart_info_widget_render() {
+    echo 'Active cart ';
+  }
+
   public function terminal_info_widget_setup() {
     wp_add_dashboard_widget(
         'bistrosol_terminal_info_widget',
@@ -579,6 +592,58 @@ class Bistro_Solutions_Admin {
   }
 
   public function terminal_info_widget_render() {
+    global $bdb;
+
+    // Get upward replication interval
+    $query = "SELECT global_config_value_int.value FROM global_configs JOIN global_config_value_int ON (global_configs.id = global_config_value_int.configId) WHERE global_configs.section = 'database' AND global_configs.subsection = 'replication' AND global_configs.name = 'Upward Replication Frequency (Seconds)'";
+    $replication_interval = (int)$bdb->get_var($query);
+
+
+    // 1. Terminals check online status every 10 seconds (hardcode)
+    // 2. Upward replication interval
+    // 3. Replication lag formular = replication interval x 1
+    $online_diff = 10 + $replication_interval + ($replication_interval * 1);
+
+    $query = 'SELECT terminals.id AS terminal_id, terminals.name AS terminal_name, terminals.feature, terminals.ipv4, terminals.serverId, TIMESTAMPDIFF(second, terminals.lastOnlineCheck, NOW()) AS last_online_check_time_diff, locations.id AS location_id, locations.name AS location_name FROM terminals JOIN locations ON terminals.locationId = locations.id WHERE locations.active = 1 AND terminals.active = 1 ORDER BY locations.name ASC, terminals.name ASC';
+
+    $results = $bdb->get_results($query, ARRAY_A);
+
+    $terminals = [];
+    $locations = [];
+    foreach ($results as $result) {
+      $locations[$result['location_id']] = $result['location_name'];
+      $terminals[$result['location_id']][] = $result;
+    }
+
+    echo '<div id="bistrosol-terminals">';
+    foreach ($locations as $location_id => $location_name) {
+      $location_terminals = $terminals[$location_id];
+      echo '<div class="bistrosol-location-name">' . $location_name . '</div>';
+      echo '<div>';
+      echo '<span class="bistrosol-terminal-name-label">Name</span>';
+      echo '<span class="bistrosol-terminal-ip-label">IP</span>';
+      echo '<span class="bistrosol-terminal-server-id-label">Server ID</span>';
+      echo '<span class="bistrosol-terminal-status-label">Status*</span>';
+      echo '</div>';
+      foreach ($location_terminals as $terminal) {
+        $status = ($terminal['last_online_check_time_diff'] && $terminal['last_online_check_time_diff'] < $online_diff) ? '<span class="bistrosol-terminal-status-online">Online</span>' : '<span class="bistrosol-terminal-status-offline">Offline</span>';
+
+        echo '<div>';
+        echo '<span class="bistrosol-terminal-name">';
+        echo $terminal['terminal_name'];
+        if (!empty($terminal['feature'])) {
+          echo '<span class="bistrosol-terminal-feature">' . $terminal['feature'] . '</span>';
+        }
+        echo '</span>';
+        echo '<span class="bistrosol-terminal-ip">' . $terminal['ipv4'] . '</span>';
+        echo '<span class="bistrosol-terminal-server-id">' . $terminal['serverId'] . '</span>';
+        echo '<span class="bistrosol-terminal-status">' . $status . '</span>';
+        echo '</div>';
+      }
+    }
+
+    echo '<div id="bistrosol-terminal-status-note">*Status report is delayed roughly by ' . $online_diff . ' seconds</div>';
+    echo '</div>';
   }
 
   public function master_database_info_widget_setup() {

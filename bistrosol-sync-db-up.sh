@@ -1,5 +1,6 @@
 #!/bin/bash
 
+readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 readonly AWS_PROFILE=$(jq -r ".aws.${APP_BRANCH}.profile" ./app.json)
 readonly LOCAL_SQL_PATH=../bistrosolutions-suite/db
 readonly LOCAL_SQL_FILE=bistrosolutions.sql
