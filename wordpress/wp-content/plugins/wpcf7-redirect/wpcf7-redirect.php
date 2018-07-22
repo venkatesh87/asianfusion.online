@@ -3,7 +3,7 @@
  * Plugin Name:  Contact Form 7 Redirection
  * Plugin URI:   http://querysol.com/blog/product/contact-form-7-redirection/
  * Description:  Contact Form 7 Add-on - Redirect after mail sent.
- * Version:      1.2.6
+ * Version:      1.2.7
  * Author:       Query Solutions
  * Author URI:   http://querysol.com
  * Contributors: querysolutions, yuvalsabar
@@ -31,7 +31,7 @@ class WPCF7_Redirect {
 	public function __construct() {
 		$this->plugin_url       = plugin_dir_url( __FILE__ );
 		$this->plugin_path      = plugin_dir_path( __FILE__ );
-		$this->version          = '1.2.6';
+		$this->version          = '1.2.7';
 		$this->add_actions();
 	}
 
@@ -168,7 +168,7 @@ class WPCF7_Redirect {
 						break;
 
 					case 'textarea':
-						$value = sanitize_textarea_field( $value );
+						$value = htmlspecialchars( $value );
 						break;
 
 					case 'number':
@@ -196,6 +196,8 @@ class WPCF7_Redirect {
 		);
 		$query = new WP_Query( $args );
 
+		$forms = array();
+		
 		if ( $query->have_posts() ) :
 
 			$fields = $this->get_plugin_fields();
@@ -208,16 +210,14 @@ class WPCF7_Redirect {
 					$forms[ $post_id ][ $field['name'] ] = get_post_meta( $post_id, '_wpcf7_redirect_' . $field['name'], true );
 
 					if ( $field['type'] == 'textarea' ) {
-						$forms[ $post_id ][ $field['name'] ] = sanitize_text_field( $forms[ $post_id ][ $field['name'] ] );
+						$forms[ $post_id ][ $field['name'] ] = $forms[ $post_id ][ $field['name'] ];
 					}
 				}
 
 				// Thank you page URL is a little bit different...
 				$forms[ $post_id ]['thankyou_page_url'] = $forms[ $post_id ]['page_id'] ? get_permalink( $forms[ $post_id ]['page_id'] ) : '';
-
 			endwhile;
 			wp_reset_postdata();
-
 		endif;
 
 		return $forms;
@@ -311,8 +311,8 @@ class WPCF7_Redirect {
 				}
 
 				// Open link in a new tab
-				if ( isset( $this->redirect_url ) && $this->redirect_url ){
-					if ( $this->fields['open_in_new_tab'] == 'on' ){
+				if ( isset( $this->redirect_url ) && $this->redirect_url ) {
+					if ( $this->fields['open_in_new_tab'] == 'on' ) {
 						$this->enqueue_new_tab_script = true;
 					} else {
 						wp_redirect( $this->redirect_url );
