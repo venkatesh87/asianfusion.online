@@ -360,8 +360,6 @@ class Bistro_Solutions_Admin {
   public function secret_token_render(  ) { 
     ?>
     <input type='text' id='secret_token' name='bistrosol_account_settings[secret_token]' value='<?=$this->account_options['secret_token']; ?>'>
-    <input type='button' class='button button-secondary' id='generate_secret_token' name='generate_secret_token' value='Generate'/>
-    <input type='button' class='button button-secondary' id='copy_secret_token' name='copy_secret_token' value='Copy'/>  
     <?php
 
   }
@@ -495,6 +493,7 @@ class Bistro_Solutions_Admin {
       add_action( 'wp_dashboard_setup', array($this, 'account_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'support_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'terminal_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'quick_serve_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'cart_info_widget_setup') );
     }
   }
@@ -598,11 +597,10 @@ class Bistro_Solutions_Admin {
     $query = "SELECT global_config_value_int.value FROM global_configs JOIN global_config_value_int ON (global_configs.id = global_config_value_int.configId) WHERE global_configs.section = 'database' AND global_configs.subsection = 'replication' AND global_configs.name = 'Upward Replication Frequency (Seconds)'";
     $replication_interval = (int)$bdb->get_var($query);
 
-
     // 1. Terminals check online status every 10 seconds (hardcode)
     // 2. Upward replication interval
     // 3. Replication lag formular = replication interval x 1
-    $online_diff = 10 + $replication_interval + ($replication_interval * 1);
+    $this->online_diff = 10 + $replication_interval + ($replication_interval * 1);
 
     $query = 'SELECT terminals.id AS terminal_id, terminals.name AS terminal_name, terminals.feature, terminals.ipv4, terminals.serverId, TIMESTAMPDIFF(second, terminals.lastOnlineCheck, NOW()) AS last_online_check_time_diff, locations.id AS location_id, locations.name AS location_name FROM terminals JOIN locations ON terminals.locationId = locations.id WHERE locations.active = 1 AND terminals.active = 1 ORDER BY locations.name ASC, terminals.name ASC';
 
@@ -626,9 +624,9 @@ class Bistro_Solutions_Admin {
       echo '<span class="bistrosol-terminal-status-label">Status*</span>';
       echo '</div>';
       foreach ($location_terminals as $terminal) {
-        $status = ($terminal['last_online_check_time_diff'] && $terminal['last_online_check_time_diff'] < $online_diff) ? '<span class="bistrosol-terminal-status-online">Online</span>' : '<span class="bistrosol-terminal-status-offline">Offline</span>';
+        $status = ($terminal['last_online_check_time_diff'] && $terminal['last_online_check_time_diff'] < $this->online_diff) ? '<span class="bistrosol-terminal-status-online">Online</span>' : '<span class="bistrosol-terminal-status-offline">Offline</span>';
 
-        echo '<div>';
+        echo '<div class="bistrosol-terminal-row">';
         echo '<span class="bistrosol-terminal-name">';
         echo $terminal['terminal_name'];
         if (!empty($terminal['feature'])) {
@@ -642,7 +640,60 @@ class Bistro_Solutions_Admin {
       }
     }
 
-    echo '<div id="bistrosol-terminal-status-note">*Status report is delayed roughly by ' . $online_diff . ' seconds</div>';
+    echo '<div id="bistrosol-terminal-status-note">*Status report can be delayed by ' . $this->online_diff . ' seconds</div>';
+    echo '</div>';
+  }
+
+  public function quick_serve_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_quick_serve_info_widget',
+        'Bistro Solutions Quick Serve Info',
+        array( $this, 'quick_serve_info_widget_render')
+      );
+  }
+
+  public function quick_serve_info_widget_render() {
+    global $bdb;
+
+    $query = 'SELECT quick_serve.id AS quick_serve_id, quick_serve.name AS quick_serve_name, quick_serve.feature, quick_serve.ip, quick_serve.model, TIMESTAMPDIFF(second, quick_serve.lastOnlineCheck, NOW()) AS last_online_check_time_diff, locations.id AS location_id, locations.name AS location_name FROM quick_serve JOIN locations ON quick_serve.locationId = locations.id WHERE locations.active = 1 AND quick_serve.active = 1 ORDER BY locations.name ASC, quick_serve.name ASC';
+
+    $results = $bdb->get_results($query, ARRAY_A);
+
+    $quick_serve = [];
+    $locations = [];
+    foreach ($results as $result) {
+      $locations[$result['location_id']] = $result['location_name'];
+      $quick_serve[$result['location_id']][] = $result;
+    }
+
+    echo '<div id="bistrosol-quick-serve">';
+    foreach ($locations as $location_id => $location_name) {
+      $location_quick_serve = $quick_serve[$location_id];
+      echo '<div class="bistrosol-location-name">' . $location_name . '</div>';
+      echo '<div>';
+      echo '<span class="bistrosol-quick-serve-name-label">Name</span>';
+      echo '<span class="bistrosol-quick-serve-ip-label">IP</span>';
+      echo '<span class="bistrosol-quick-serve-model-label">Model</span>';
+      echo '<span class="bistrosol-quick-serve-status-label">Status*</span>';
+      echo '</div>';
+      foreach ($location_quick_serve as $quick_serve) {
+        $status = ($quick_serve['last_online_check_time_diff'] && $quick_serve['last_online_check_time_diff'] < $this->online_diff) ? '<span class="bistrosol-quick-serve-status-online">In Use*</span>' : '<span class="bistrosol-quick-serve-status-offline">Not in Use*</span>';
+
+        echo '<div class="bistrosol-quick-serve-row">';
+        echo '<span class="bistrosol-quick-serve-name">';
+        echo $quick_serve['quick_serve_name'];
+        if (!empty($quick_serve['feature'])) {
+          echo '<span class="bistrosol-quick-serve-feature">' . $quick_serve['feature'] . '</span>';
+        }
+        echo '</span>';
+        echo '<span class="bistrosol-quick-serve-ip">' . $quick_serve['ip'] . '</span>';
+        echo '<span class="bistrosol-quick-serve-model">' . $quick_serve['model'] . '</span>';
+        echo '<span class="bistrosol-quick-serve-status">' . $status . '</span>';
+        echo '</div>';
+      }
+    }
+
+    echo '<div id="bistrosol-quick-serve-status-note">*Status report can be delayed by ' . $this->online_diff . ' seconds. <br/>*QuickServe app needs to run in foreground to be consider as In Use.</div>';
     echo '</div>';
   }
 
