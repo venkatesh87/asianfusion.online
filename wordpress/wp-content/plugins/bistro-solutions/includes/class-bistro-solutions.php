@@ -156,14 +156,21 @@ class Bistro_Solutions {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
     $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+    // Add menus
     $this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu' );
+
+    // Form fields etc
     $this->loader->add_action( 'admin_init', $plugin_admin, 'init_settings' );
 
     // Initialize master database connection
     $this->loader->add_action( 'admin_init', $plugin_admin, 'init_bdb' );
 
-    $this->loader->add_action( 'wp_ajax_test_db_connection', $plugin_admin, 'test_db_connection_ajax' );
+    // Add dashboard widgets
+    $this->loader->add_action( 'admin_init', $plugin_admin, 'add_dashboard_widgets' );
 
+    // Admin AJAX target 
+    $this->loader->add_action( 'wp_ajax_test_db_connection', $plugin_admin, 'test_db_connection_ajax' );
 	}
 
 	/**
@@ -179,7 +186,11 @@ class Bistro_Solutions {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
     $this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+
+    // REST API routes 
     $this->loader->add_action( 'rest_api_init', $plugin_public, 'register_routes' );
+
+    // Add shortcodes
     $plugin_public->add_shortcodes();
 	}
 
