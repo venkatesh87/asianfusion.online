@@ -4,7 +4,7 @@ MAINTAINER Alan Zhao <alanzhaonys@yahoo.com>
 # Install packages
 RUN yum update -y
 RUN amazon-linux-extras install php7.2 -y
-RUN yum install vim jq php-xml httpd mod_php -y
+RUN yum install vim jq php-xml php-mbstring httpd mod_php -y
 
 # Change Apache server name
 RUN sed -i -e "s/#ServerName www.example.com:80/ServerName localhost/g" /etc/httpd/conf/httpd.conf

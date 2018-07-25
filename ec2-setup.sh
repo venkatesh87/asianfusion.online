@@ -2,7 +2,7 @@
 
 # Install packages
 sudo yum update -y
-sudo amazon-linux-extras install php7.2 -y
+sudo amazon-linux-extras install php7.2 php-mbstring -y
 sudo yum install jq httpd mod_php mod_ssl -y
 
 # MySQL 8 - https://dev.mysql.com/doc/refman/8.0/en/linux-installation-yum-repo.html
