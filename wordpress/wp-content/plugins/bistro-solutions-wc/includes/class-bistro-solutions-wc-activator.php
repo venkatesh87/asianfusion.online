@@ -30,7 +30,23 @@ class Bistro_Solutions_Wc_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
+    $wp_roles = new WP_Roles();
+    $base_role = $wp_roles->get_role('subscriber');
+    $base_caps = $base_role->capabilities;
 
+    $admin_role = $wp_roles->get_role('administrator');
+    $admin_caps = $admin_role->capabilities;
+
+    // Define new roles and capabilities
+
+    add_role(
+        'bistrosol_wc_sync',
+        __( 'BSWC Sync',  BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        array_merge(
+          $admin_caps,
+          array('bistrosol_wc_sync' => true)
+        )
+      );
 	}
 
 }

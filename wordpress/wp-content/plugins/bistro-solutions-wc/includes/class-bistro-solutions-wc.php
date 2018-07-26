@@ -67,8 +67,8 @@ class Bistro_Solutions_Wc {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'PLUGIN_NAME_VERSION' ) ) {
-			$this->version = PLUGIN_NAME_VERSION;
+		if ( defined( 'BISTRO_SOLUTIONS_PLUGIN_VERSION' ) ) {
+			$this->version = BISTRO_SOLUTIONS_PLUGIN_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
@@ -155,7 +155,10 @@ class Bistro_Solutions_Wc {
 		$plugin_admin = new Bistro_Solutions_Wc_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+    $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+    $this->loader->add_action( 'admin_init', $plugin_admin, 'disable_product_edit' );
+    $this->loader->add_action( 'admin_init', $plugin_admin, 'add_test_products' );
 
 	}
 

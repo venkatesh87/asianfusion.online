@@ -98,6 +98,87 @@ class Bistro_Solutions_Wc_Admin {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/bistro-solutions-wc-admin.js', array( 'jquery' ), $this->version, false );
 
-	}
+  }
+
+  public function disable_product_edit() {
+  }
+
+  public function add_test_products() {
+    // https://lukasznowicki.info/insert-new-woocommerce-product-programmatically/
+    // https://wordpress.stackexchange.com/questions/137501/how-to-add-product-in-woocommerce-with-php-code
+    // https://stackoverflow.com/questions/24087886/how-to-create-order-manually-in-woocommerce
+
+    $create_user_id = 1;
+    $bswc_user = get_user_by('login', 'bistrosol_wc_sync');
+    if ($bswc_user) {
+      $create_user_id = $bswc_user->ID;
+    }
+
+    $unique_id = date( 'Ymdhis' );
+
+    $test_simple_product = array(
+      'name'          => 'Test simple product ' . $unique_id,
+      'sku'           => 'test-simple-product-' . $unique_id,
+      'description'   => 'test simple product description',
+      'regular_price' => '9.99',
+      'sale_price'    => '5.99',
+      'manage_stock'  => 'yes',
+      'stock'         => '999',
+      'post_type'     => 'product',
+      'product_type'  => 'simple'
+    );
+    
+    $test_simple_product_id = wp_insert_post( array(
+        'post_author'   => $create_user_id,
+        'post_title'    => $test_simple_product['name'],
+        'post_content'  => $test_simple_product['description'],
+        'regular_price' => $test_simple_product['regular_price'],
+        'sale_price'    => $test_simple_product['sale_price'],
+        'manage_stock'  => $test_simple_product['manage_stock'],
+        'stock'         => $test_simple_product['stock'],
+        'post_status'   => 'publish',
+        'post_parent'   => '',
+        'post_type'     => $test_simple_product['post_type'],
+      ), true );
+
+    if ( !$test_simple_product_id ) {
+      var_dump( $test_simple_product_id );
+      exit;
+    }
+
+    // Set product type
+    wp_set_object_terms( $test_simple_product_id, $test_simple_product['product_type'], 'product_type' );
+
+    // Assign product to category @todo
+    wp_set_object_terms( $test_simple_product_id, 16, 'product_cat' );
+
+    // Assign product image
+    //$attach_id = get_post_meta( $test_simple_product_id, '_thumbnail_id', true );
+    //add_post_meta( $post_id, '_thumbnail_id', $attach_id );
+
+    update_post_meta( $test_simple_product_id, '_visibility', 'visible' );
+    update_post_meta( $test_simple_product_id, '_stock_status', 'instock');
+    update_post_meta( $test_simple_product_id, 'total_sales', '0' );
+    update_post_meta( $test_simple_product_id, '_downloadable', 'no' );
+    // For downloadable product, set to `yes`
+    update_post_meta( $test_simple_product_id, '_virtual', 'no' );
+    update_post_meta( $test_simple_product_id, '_price', $test_simple_product['regular_price'] );
+    update_post_meta( $test_simple_product_id, '_regular_price', $test_simple_product['regular_price'] );
+    update_post_meta( $test_simple_product_id, '_sale_price', $test_simple_product['sale_price'] );
+    update_post_meta( $test_simple_product_id, '_purchase_note', '' );
+    update_post_meta( $test_simple_product_id, '_featured', 'no' );
+    update_post_meta( $test_simple_product_id, '_weight', '' );
+    update_post_meta( $test_simple_product_id, '_length', '' );
+    update_post_meta( $test_simple_product_id, '_width', '' );
+    update_post_meta( $test_simple_product_id, '_height', '' );
+    update_post_meta( $test_simple_product_id, '_sku', $test_simple_product['sku'] );
+    update_post_meta( $test_simple_product_id, '_product_attributes', array() );
+    update_post_meta( $test_simple_product_id, '_sale_price_dates_from', '' );
+    update_post_meta( $test_simple_product_id, '_sale_price_dates_to', '' );
+    update_post_meta( $test_simple_product_id, '_sold_individually', '' );
+    update_post_meta( $test_simple_product_id, '_manage_stock', $test_simple_product['manage_stock'] );
+    update_post_meta( $test_simple_product_id, '_stock', $test_simple_product['stock'] );
+    update_post_meta( $test_simple_product_id, '_backorders', 'no' );
+  }
 
 }
