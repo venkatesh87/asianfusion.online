@@ -49,25 +49,40 @@
 #bistrosol-terminals {
 }
 
-#bistrosol-terminals .bistrosol-location-name {
+#bistrosol-quick-serve {
+}
+
+#bistrosol-terminals .bistrosol-terminal-row,
+#bistrosol-quick-serve .bistrosol-quick-serve-row {
+  border-bottom: 1px solid #efefef;
+}
+
+#bistrosol-terminals .bistrosol-location-name,
+#bistrosol-quick-serve .bistrosol-location-name {
   font-weight: 600;
   margin-top: 20px;
   background-color: #c0c0c0;
   padding: 5px;
 }
 
-#bistrosol-terminals .bistrosol-terminal-status-online {
+#bistrosol-terminals .bistrosol-terminal-status-online,
+#bistrosol-quick-serve .bistrosol-quick-serve-status-online {
   color: green;
 }
 
-#bistrosol-terminals .bistrosol-terminal-status-offline {
+#bistrosol-terminals .bistrosol-terminal-status-offline,
+#bistrosol-quick-serve .bistrosol-quick-serve-status-offline {
   color: #ff0000;
 }
 
 #bistrosol-terminals .bistrosol-terminal-name-label,
 #bistrosol-terminals .bistrosol-terminal-ip-label,
 #bistrosol-terminals .bistrosol-terminal-server-id-label,
-#bistrosol-terminals .bistrosol-terminal-status-label {
+#bistrosol-terminals .bistrosol-terminal-status-label,
+#bistrosol-quick-serve .bistrosol-quick-serve-name-label,
+#bistrosol-quick-serve .bistrosol-quick-serve-ip-label,
+#bistrosol-quick-serve .bistrosol-quick-serve-model-label,
+#bistrosol-quick-serve .bistrosol-quick-serve-status-label {
   display: inline-block;
   font-weight: 600;
   text-align: left;
@@ -81,14 +96,19 @@
 #bistrosol-terminals .bistrosol-terminal-name,
 #bistrosol-terminals .bistrosol-terminal-ip,
 #bistrosol-terminals .bistrosol-terminal-server-id,
-#bistrosol-terminals .bistrosol-terminal-status {
+#bistrosol-terminals .bistrosol-terminal-status,
+#bistrosol-quick-serve .bistrosol-quick-serve-name,
+#bistrosol-quick-serve .bistrosol-quick-serve-ip,
+#bistrosol-quick-serve .bistrosol-quick-serve-model,
+#bistrosol-quick-serve .bistrosol-quick-serve-status {
   display: inline-block;
   text-align: left;
   padding: 5px;
   box-sizing: border-box;
 }
 
-#bistrosol-terminals .bistrosol-terminal-feature {
+#bistrosol-terminals .bistrosol-terminal-feature,
+#bistrosol-quick-serve .bistrosol-quick-serve-feature {
   margin-left: 10px;
   background-color: green;
   font-size: 80%;
@@ -117,7 +137,28 @@
   width: 15%;
 }
 
-#bistrosol-terminals #bistrosol-terminal-status-note {
+#bistrosol-quick-serve .bistrosol-quick-serve-name-label,
+#bistrosol-quick-serve .bistrosol-quick-serve-name {
+  width: 50%;
+}
+
+#bistrosol-quick-serve .bistrosol-quick-serve-ip-label,
+#bistrosol-quick-serve .bistrosol-quick-serve-ip {
+  width: 20%;
+}
+
+#bistrosol-quick-serve .bistrosol-quick-serve-model-label,
+#bistrosol-quick-serve .bistrosol-quick-serve-model {
+  width: 15%;
+}
+
+#bistrosol-quick-serve .bistrosol-quick-serve-status-label,
+#bistrosol-quick-serve .bistrosol-quick-serve-status {
+  width: 15%;
+}
+
+#bistrosol-terminals #bistrosol-terminal-status-note,
+#bistrosol-quick-serve #bistrosol-quick-serve-status-note {
   font-style: italic;
   font-size: 80%;
   text-align: right;

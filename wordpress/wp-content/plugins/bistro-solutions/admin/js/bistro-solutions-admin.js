@@ -174,28 +174,6 @@
       });
     });
 
-    //
-    // Account settings form
-    //
-
-    $('#copy_secret_token').on('click', function() {
-      $('#secret_token').select();
-      document.execCommand('copy');
-    });
-
-    $('#generate_secret_token').on('click', function() {
-      $('#secret_token').val(get_secret_token(20));
-    });
-
-    function get_secret_token(length) {
-      var text = "";
-      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-      for (var i = 0; i < length; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-      }
-      return text;
-    }
   });
 
 })( jQuery );

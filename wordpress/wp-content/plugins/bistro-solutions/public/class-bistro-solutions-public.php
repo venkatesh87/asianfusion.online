@@ -158,15 +158,65 @@ class Bistro_Solutions_Public {
   }
 
   public function add_shortcodes() {
-    add_shortcode( 'menu', 'render_menu' );
+    add_shortcode( 'bistrosol-render-menu', array($this, 'bistrosol_render_menu') );
+    add_shortcode( 'bistrosol-render-department', array($this, 'bistrosol_render_department') );
+    add_shortcode( 'bistrosol-render-category', array($this, 'bistrosol_render_category') );
+    add_shortcode( 'bistrosol-render-item', array($this, 'bistrosol_render_item') );
+    add_shortcode( 'bistrosol-render-cart', array($this, 'bistrosol_render_cart') );
+    add_shortcode( 'bistrosol-render-checkout', array($this, 'bistrosol_render_checkout') );
   }
 
-  function render_menu( $atts ) {
-    $a = shortcode_atts( array(
-        'foo' => 'something',
-        'bar' => 'something else',
-    ), $atts );
+  public function bistrosol_render_menu( $atts ) {
+    $atts = shortcode_atts( array(
+		  'foo' => 'no foo',
+		  'baz' => 'default baz'
+	  ), $atts, 'bistrosol-render-menu' );
 
-    return "foo = {$a['foo']}";
+    return 'menu';
+  }
+
+  public function bistrosol_render_department( $atts ) {
+    $atts = shortcode_atts( array(
+		  'foo' => 'no foo',
+		  'baz' => 'default baz'
+	  ), $atts, 'bistrosol-render-department' );
+    
+    return 'department';
+  }
+
+  public function bistrosol_render_category( $atts ) {
+    $atts = shortcode_atts( array(
+		  'foo' => 'no foo',
+		  'baz' => 'default baz'
+    ), $atts, 'bistrosol-render-category' );
+
+    return 'category';
+  }
+
+  public function bistrosol_render_item( $atts ) {
+    $atts = shortcode_atts( array(
+		  'foo' => 'no foo',
+		  'baz' => 'default baz'
+    ), $atts, 'bistrosol-render-item' );
+
+    return 'item';
+  }
+
+  public function bistrosol_render_cart( $atts ) {
+    $atts = shortcode_atts( array(
+		  'foo' => 'no foo',
+		  'baz' => 'default baz'
+	  ), $atts, 'bistrosol-render-cart' );
+
+    return 'cart';
+  }
+
+  public function bistrosol_render_checkout( $atts ) {
+    $atts = shortcode_atts( array(
+		  'foo' => 'no foo',
+		  'baz' => 'default baz'
+	  ), $atts, 'bistrosol-render-checkout' );
+
+    return 'checkout';
   }
 }

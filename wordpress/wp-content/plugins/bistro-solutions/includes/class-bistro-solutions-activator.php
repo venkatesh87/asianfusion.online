@@ -43,7 +43,7 @@ class Bistro_Solutions_Activator {
     if (!isset($menu_page_check->ID)) {
       $menu_page = array(
         'post_title'    => $menu_page_title,
-        'post_content'  => __( 'Menu', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        'post_content'  => __( '[bistrosol-render-menu]', BISTRO_SOLUTIONS_TEXTDOMAIN ),
         'post_status'   => 'publish',
         'post_author'   => 1,
         'post_type'     => 'page',
@@ -55,6 +55,66 @@ class Bistro_Solutions_Activator {
       //die( __( 'Menu page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
     }
 
+    // Department page
+    
+    $department_page_title = __( 'Department', BISTRO_SOLUTIONS_TEXTDOMAIN );
+    $department_page_check = get_page_by_title($department_page_title);
+
+    if (!isset($department_page_check->ID)) {
+      $department_page = array(
+        'post_title'    => $department_page_title,
+        'post_content'  => __( '[bistrosol-render-department]', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        'post_status'   => 'publish',
+        'post_author'   => 1,
+        'post_type'     => 'page',
+      );
+
+      $department_page_id = wp_insert_post( $department_page );
+
+    } else {
+      //die( __( 'Department page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
+    }
+
+    // Category page
+    
+    $category_page_title = __( 'Category', BISTRO_SOLUTIONS_TEXTDOMAIN );
+    $category_page_check = get_page_by_title($category_page_title);
+
+    if (!isset($category_page_check->ID)) {
+      $category_page = array(
+        'post_title'    => $category_page_title,
+        'post_content'  => __( '[bistrosol-render-category]', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        'post_status'   => 'publish',
+        'post_author'   => 1,
+        'post_type'     => 'page',
+      );
+
+      $category_page_id = wp_insert_post( $category_page );
+
+    } else {
+      //die( __( 'Category page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
+    }
+
+    // Item page
+    
+    $item_page_title = __( 'Item', BISTRO_SOLUTIONS_TEXTDOMAIN );
+    $item_page_check = get_page_by_title($item_page_title);
+
+    if (!isset($item_page_check->ID)) {
+      $item_page = array(
+        'post_title'    => $item_page_title,
+        'post_content'  => __( '[bistrosol-render-item]', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        'post_status'   => 'publish',
+        'post_author'   => 1,
+        'post_type'     => 'page',
+      );
+
+      $item_page_id = wp_insert_post( $item_page );
+
+    } else {
+      //die( __( 'Item page already exists.', BISTRO_SOLUTIONS_TEXTDOMAIN ) );
+    }
+
     // Cart page
     
     $cart_page_title = __( 'Cart', BISTRO_SOLUTIONS_TEXTDOMAIN );
@@ -63,7 +123,7 @@ class Bistro_Solutions_Activator {
     if (!isset($cart_page_check->ID)) {
       $cart_page = array(
         'post_title'    => $cart_page_title,
-        'post_content'  => __( 'Cart', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        'post_content'  => __( '[bistrosol-render-cart]', BISTRO_SOLUTIONS_TEXTDOMAIN ),
         'post_status'   => 'publish',
         'post_author'   => 1,
         'post_type'     => 'page',
@@ -83,7 +143,7 @@ class Bistro_Solutions_Activator {
     if (!isset($checkout_page_check->ID)) {
       $checkout_page = array(
         'post_title'    => $checkout_page_title,
-        'post_content'  => __( 'Checkout', BISTRO_SOLUTIONS_TEXTDOMAIN ),
+        'post_content'  => __( '[bistrosol-render-checkout]', BISTRO_SOLUTIONS_TEXTDOMAIN ),
         'post_status'   => 'publish',
         'post_author'   => 1,
         'post_type'     => 'page',
@@ -111,7 +171,6 @@ class Bistro_Solutions_Activator {
           array(
             'bistrosol_user' => true, // Bistro Solutions user's default permission
             'bistrosol_user_edit_settings' => true,
-            'bistrosol_user_view_dashboard' => true,
             'bistrosol_user_view_orders' => true,
             'bistrosol_user_edit_orders' => true,
             'bistrosol_user_view_reports' => true,
@@ -129,7 +188,6 @@ class Bistro_Solutions_Activator {
           array(
             'bistrosol_user' => true, // Bistro Solutions user's default permission
             'bistrosol_user_edit_settings' => false,
-            'bistrosol_user_view_dashboard' => true,
             'bistrosol_user_view_orders' => true,
             'bistrosol_user_edit_orders' => true,
             'bistrosol_user_view_reports' => true,
@@ -147,7 +205,6 @@ class Bistro_Solutions_Activator {
           array(
             'bistrosol_user' => true, // Bistro Solutions user's default permission
             'bistrosol_user_edit_settings' => false,
-            'bistrosol_user_view_dashboard' => true,
             'bistrosol_user_view_orders' => true,
             'bistrosol_user_edit_orders' => true,
             'bistrosol_user_view_reports' => true,
@@ -165,7 +222,6 @@ class Bistro_Solutions_Activator {
           array(
             'bistrosol_user' => true, // Bistro Solutions user's default permission
             'bistrosol_user_edit_settings' => false,
-            'bistrosol_user_view_dashboard' => true,
             'bistrosol_user_view_orders' => true,
             'bistrosol_user_edit_orders' => false,
             'bistrosol_user_view_reports' => false,
@@ -178,7 +234,6 @@ class Bistro_Solutions_Activator {
     // Add capabilities to admin role
     $admin_role->add_cap('bistrosol_user');
     $admin_role->add_cap('bistrosol_user_edit_settings');
-    $admin_role->add_cap('bistrosol_user_view_dashboard');
     $admin_role->add_cap('bistrosol_user_view_orders');
     $admin_role->add_cap('bistrosol_user_edit_orders');
     $admin_role->add_cap('bistrosol_user_view_reports');

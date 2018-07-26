@@ -31,8 +31,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
+ * Current plugin version.
  */
 define( 'BISTRO_SOLUTIONS_PLUGIN_VERSION', '1.0.0' );
 
@@ -42,8 +41,7 @@ define( 'BISTRO_SOLUTIONS_PLUGIN_VERSION', '1.0.0' );
 define( 'BISTRO_SOLUTIONS_PLUGIN_DIR', basename( dirname( __FILE__ ) ) );
 
 /**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
+ * Text domain.
  */
 define( 'BISTRO_SOLUTIONS_TEXTDOMAIN', 'bistrosol' );
 
