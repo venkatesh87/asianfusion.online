@@ -104,9 +104,10 @@ class Bistro_Solutions_Wc_Admin {
   }
 
   public function add_test_products() {
-    // https://lukasznowicki.info/insert-new-woocommerce-product-programmatically/
-    // https://wordpress.stackexchange.com/questions/137501/how-to-add-product-in-woocommerce-with-php-code
-    // https://stackoverflow.com/questions/24087886/how-to-create-order-manually-in-woocommerce
+    // Category: https://wordpress.stackexchange.com/questions/198411/programmatically-create-product-category-and-add-thumbnail-in-woocommerce
+    // Product: https://lukasznowicki.info/insert-new-woocommerce-product-programmatically/
+    // Product: https://wordpress.stackexchange.com/questions/137501/how-to-add-product-in-woocommerce-with-php-code
+    // Order: https://stackoverflow.com/questions/24087886/how-to-create-order-manually-in-woocommerce
 
     $create_user_id = 1;
     $bswc_user = get_user_by('login', 'bistrosol_wc_sync');
@@ -115,6 +116,40 @@ class Bistro_Solutions_Wc_Admin {
     }
 
     $unique_id = date( 'Ymdhis' );
+
+    //
+    // Category
+    //
+
+    $test_category = array(
+      'thumb'       => 'images/uploads/cat11.png',
+      'name'        => 'Category ' . $unique_id,
+      'description' => 'Category description',
+      'slug'        => 'category-' . $unique_id,
+      'parent'      => ''
+    );
+
+    $test_category_id = wp_insert_term(
+        $test_category['name'],
+        'product_cat',
+        array(
+            'description'=> $test_category['description'],
+            'slug' => $test_category['slug'],
+            'parent' => $test_category['parent']
+        )
+      );
+
+    if ( !$test_category_id ) {
+      var_dump( $test_category_id );
+      exit;
+    }
+
+    // Update category image
+    //update_woocommerce_term_meta( $cid['term_id'], 'thumbnail_id', absint( $thumb_id ) );
+
+    //
+    // Simple product
+    //
 
     $test_simple_product = array(
       'name'          => 'Test simple product ' . $unique_id,
@@ -150,9 +185,9 @@ class Bistro_Solutions_Wc_Admin {
     wp_set_object_terms( $test_simple_product_id, $test_simple_product['product_type'], 'product_type' );
 
     // Assign product to category @todo
-    wp_set_object_terms( $test_simple_product_id, 16, 'product_cat' );
+    wp_set_object_terms( $test_simple_product_id, $test_category_id, 'product_cat' );
 
-    // Assign product image
+    // Update product image
     //$attach_id = get_post_meta( $test_simple_product_id, '_thumbnail_id', true );
     //add_post_meta( $post_id, '_thumbnail_id', $attach_id );
 
