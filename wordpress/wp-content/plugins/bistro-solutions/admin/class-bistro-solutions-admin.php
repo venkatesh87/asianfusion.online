@@ -109,7 +109,7 @@ class Bistro_Solutions_Admin {
     
     add_menu_page( 'Bistro Solutions', 'Bistro Solutions', 'bistrosol_user', 'bistrosol', '', 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MC40OCA3My4xNSI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNjNjljNmQ7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5Bc3NldCAxPC90aXRsZT48ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIj48ZyBpZD0iTGF5ZXJfMS0yIiBkYXRhLW5hbWU9IkxheWVyIDEiPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTY4LjQ3LDQ3Yy0uMy0uOS0uOC0xLjctMS4xLTIuN2ExMy4xOCwxMy4xOCwwLDAsMS0xLTMuOSwyNiwyNiwwLDAsMC0uNS0zLjksMTAuMTUsMTAuMTUsMCwwLDEsLjktNS40LDkuNTksOS41OSwwLDAsMCwuNy00LjEsNy42LDcuNiwwLDAsMC0uNi0yLjZjLS4xLS4zLS40LS43LS41LTFhMjguNzUsMjguNzUsMCwwLDAtNC4xLTUuOSwxOC43MSwxOC43MSwwLDAsMS0zLjYtNC4zYy0uNC0uNy0xLTEuNC0xLjQtMi4xYTEwLDEwLDAsMCwxLTEuMS01LjksNi4xNSw2LjE1LDAsMCwxLC4xLTEuMywxMC4yNCwxMC4yNCwwLDAsMSwxLTMuNGMuMS0uMywwLS41LS4zLS41YTcuMzIsNy4zMiwwLDAsMC0yLjUuOCw3LjcxLDcuNzEsMCwwLDAtMy4xLDMuMSwxNC40OSwxNC40OSwwLDAsMC0xLjIsMy41LDEwLjY2LDEwLjY2LDAsMCwwLC4xLDQuN2MwLC4xLjEuMS4xLjJzLS4xLjItLjEuMy0uMi4yLS4zLjEtLjItLjEtLjItLjJhMTEuMDUsMTEuMDUsMCwwLDEtLjktMy4xYy0uMS0uNC0uMS0uOC0uMi0xLjJhLjg1Ljg1LDAsMCwwLS4yLS42Yy0uMSwwLS4xLjEtLjIuMnMtLjEuMi0uMS4zYy0uMS43LS4yLDEuMy0uMywyLDAsLjEtLjEuMi0uMi40YS4zOC4zOCwwLDAsMS0uNiwwbC0uMy0uM2EzLjQxLDMuNDEsMCwwLDEsLjYtMy42cTEuNS0yLDMuMy0zLjloMGMxLTEuMi01LjktMi4zLTYuOC0yLjRhMjQuMDksMjQuMDksMCwwLDAtNy4xLS4xYy00LjMuNS05LjMsMS43LTEzLjEsNGExMC44NiwxMC44NiwwLDAsMC0yLjYsMi4yQTEwLjcsMTAuNywwLDAsMCwxOS42Nyw4Yy0uMS4yLS42LDItLjEsMS40YTguMTYsOC4xNiwwLDAsMSwzLjUtMS43LDEyLjIxLDEyLjIxLDAsMCwxLDUuNy4xLDE4LjM4LDE4LjM4LDAsMCwwLDYuMi40aDBjMS41LS4yLjguNy4xLDEuMmE3LjM1LDcuMzUsMCwwLDEtMywuN2MtMS44LjItMy44LDAtNS41LjQtMy4zLjgtNi43LDQuNS04LjgsN2EyMC43NCwyMC43NCwwLDAsMC0xLjksMy4yYy0uMS4zLTEuNCwyLjktMS43LDIuM2EuMzcuMzcsMCwwLDEtLjEtLjMsMTEuMDcsMTEuMDcsMCwwLDEsLjctMi42LDIyLjQsMjIuNCwwLDAsMSwzLjMtNS4zLDE3LjQxLDE3LjQxLDAsMCwwLDEuMi0xLjQsMS40NiwxLjQ2LDAsMCwwLC4zLS41LDEuMTksMS4xOSwwLDAsMC0uNi4yYy01LjIsMi40LTguNSw2LjYtMTIuMSwxMC45YTI5LjE2LDI5LjE2LDAsMCwwLTUuNSw5LjFjLTIuMyw2LjctMS42LDE1LjEsMS4zLDIxLjYsMCwwLDExLjEtMi4xLDIwLjcsOC43czI0LjEsOS43LDI0LjEsOS43Yy0xMS45LTEwLjktNi0zMi44LTYtMzIuOCwxLjguNiwzLjYsMS4yLDUuNCwxLjlhLjUyLjUyLDAsMCwxLC4zLjcsNC44NSw0Ljg1LDAsMCwwLC45LDQuNiwxMC4yMSwxMC4yMSwwLDAsMSwyLjIsNC43LDQuMTYsNC4xNiwwLDAsMS0uMiwyLjIsMzQsMzQsMCwwLDAtMS4yLDMuNCwyLjUzLDIuNTMsMCwwLDAsMSwyLjcsMTAuNTksMTAuNTksMCwwLDEsMS4yLDEsMTAuMjgsMTAuMjgsMCwwLDAsMi45LDIuMSwxLjQ1LDEuNDUsMCwwLDAsLjcuMmMuNy4xLjgtLjEuOS0uOGExMy4yOCwxMy4yOCwwLDAsMC0uNC00YzAtLjMtLjEtLjYtLjEtLjksMC0uOC4yLTEsMS4xLTFhMS41OCwxLjU4LDAsMCwxLDEuOCwxLjZjLjEuOS4xLDEuNy4yLDIuNiwwLDEuMi0uMSwyLjMsMCwzLjVhMy4zOCwzLjM4LDAsMCwwLDMuMywzLjIuNzYuNzYsMCwwLDAsLjUtLjJjLjItLjQuNC0uOC42LTEuMy4xLS4zLjEtLjYuMi0xYTcuMTEsNy4xMSwwLDAsMSwzLjItNC43Yy45LS43LDEuOS0xLjMsMi44LTIuMWE0LDQsMCwwLDAsMS43LTMuNiwxNi4xNCwxNi4xNCwwLDAsMC0uNy00LjlBMTYuMzEsMTYuMzEsMCwwLDEsNjguNDcsNDdaIi8+PC9nPjwvZz48L3N2Zz4=', 2 );
 
-    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Overview', 'Overview', 'bistrosol_user_view_dashboard', 'bistrosol', array($this, 'dashboard_page'));
+    add_submenu_page( 'bistrosol' , 'Bistro Solutions - Overview', 'Overview', 'bistrosol_user', 'bistrosol', array($this, 'overview_page'));
 
     add_submenu_page( 'bistrosol' , 'Bistro Solutions - Settings', 'Settings', 'bistrosol_user_edit_settings', 'bistrosol-settings', array($this, 'settings_page') );
 
@@ -360,8 +360,6 @@ class Bistro_Solutions_Admin {
   public function secret_token_render(  ) { 
     ?>
     <input type='text' id='secret_token' name='bistrosol_account_settings[secret_token]' value='<?=$this->account_options['secret_token']; ?>'>
-    <input type='button' class='button button-secondary' id='generate_secret_token' name='generate_secret_token' value='Generate'/>
-    <input type='button' class='button button-secondary' id='copy_secret_token' name='copy_secret_token' value='Copy'/>  
     <?php
 
   }
@@ -487,6 +485,9 @@ class Bistro_Solutions_Admin {
         $this->database_options['database_host']
         . ':' . $this->database_options['database_port'] );
     }
+  }
+
+  public function add_dashboard_widgets() {
     
     if (current_user_can('bistrosol_user_edit_settings')) {
       add_action( 'wp_dashboard_setup', array($this, 'master_database_info_widget_setup') );
@@ -495,6 +496,7 @@ class Bistro_Solutions_Admin {
       add_action( 'wp_dashboard_setup', array($this, 'account_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'support_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'terminal_info_widget_setup') );
+      add_action( 'wp_dashboard_setup', array($this, 'quick_serve_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'cart_info_widget_setup') );
     }
   }
@@ -598,11 +600,10 @@ class Bistro_Solutions_Admin {
     $query = "SELECT global_config_value_int.value FROM global_configs JOIN global_config_value_int ON (global_configs.id = global_config_value_int.configId) WHERE global_configs.section = 'database' AND global_configs.subsection = 'replication' AND global_configs.name = 'Upward Replication Frequency (Seconds)'";
     $replication_interval = (int)$bdb->get_var($query);
 
-
     // 1. Terminals check online status every 10 seconds (hardcode)
     // 2. Upward replication interval
     // 3. Replication lag formular = replication interval x 1
-    $online_diff = 10 + $replication_interval + ($replication_interval * 1);
+    $this->online_diff = 10 + $replication_interval + ($replication_interval * 1);
 
     $query = 'SELECT terminals.id AS terminal_id, terminals.name AS terminal_name, terminals.feature, terminals.ipv4, terminals.serverId, TIMESTAMPDIFF(second, terminals.lastOnlineCheck, NOW()) AS last_online_check_time_diff, locations.id AS location_id, locations.name AS location_name FROM terminals JOIN locations ON terminals.locationId = locations.id WHERE locations.active = 1 AND terminals.active = 1 ORDER BY locations.name ASC, terminals.name ASC';
 
@@ -626,9 +627,9 @@ class Bistro_Solutions_Admin {
       echo '<span class="bistrosol-terminal-status-label">Status*</span>';
       echo '</div>';
       foreach ($location_terminals as $terminal) {
-        $status = ($terminal['last_online_check_time_diff'] && $terminal['last_online_check_time_diff'] < $online_diff) ? '<span class="bistrosol-terminal-status-online">Online</span>' : '<span class="bistrosol-terminal-status-offline">Offline</span>';
+        $status = ($terminal['last_online_check_time_diff'] && $terminal['last_online_check_time_diff'] < $this->online_diff) ? '<span class="bistrosol-terminal-status-online">Online</span>' : '<span class="bistrosol-terminal-status-offline">Offline</span>';
 
-        echo '<div>';
+        echo '<div class="bistrosol-terminal-row">';
         echo '<span class="bistrosol-terminal-name">';
         echo $terminal['terminal_name'];
         if (!empty($terminal['feature'])) {
@@ -642,7 +643,60 @@ class Bistro_Solutions_Admin {
       }
     }
 
-    echo '<div id="bistrosol-terminal-status-note">*Status report is delayed roughly by ' . $online_diff . ' seconds</div>';
+    echo '<div id="bistrosol-terminal-status-note">*Status report can be delayed by ' . $this->online_diff . ' seconds</div>';
+    echo '</div>';
+  }
+
+  public function quick_serve_info_widget_setup() {
+    wp_add_dashboard_widget(
+        'bistrosol_quick_serve_info_widget',
+        'Bistro Solutions Quick Serve Info',
+        array( $this, 'quick_serve_info_widget_render')
+      );
+  }
+
+  public function quick_serve_info_widget_render() {
+    global $bdb;
+
+    $query = 'SELECT quick_serve.id AS quick_serve_id, quick_serve.name AS quick_serve_name, quick_serve.feature, quick_serve.ip, quick_serve.model, TIMESTAMPDIFF(second, quick_serve.lastOnlineCheck, NOW()) AS last_online_check_time_diff, locations.id AS location_id, locations.name AS location_name FROM quick_serve JOIN locations ON quick_serve.locationId = locations.id WHERE locations.active = 1 AND quick_serve.active = 1 ORDER BY locations.name ASC, quick_serve.name ASC';
+
+    $results = $bdb->get_results($query, ARRAY_A);
+
+    $quick_serve = [];
+    $locations = [];
+    foreach ($results as $result) {
+      $locations[$result['location_id']] = $result['location_name'];
+      $quick_serve[$result['location_id']][] = $result;
+    }
+
+    echo '<div id="bistrosol-quick-serve">';
+    foreach ($locations as $location_id => $location_name) {
+      $location_quick_serve = $quick_serve[$location_id];
+      echo '<div class="bistrosol-location-name">' . $location_name . '</div>';
+      echo '<div>';
+      echo '<span class="bistrosol-quick-serve-name-label">Name</span>';
+      echo '<span class="bistrosol-quick-serve-ip-label">IP</span>';
+      echo '<span class="bistrosol-quick-serve-model-label">Model</span>';
+      echo '<span class="bistrosol-quick-serve-status-label">Status*</span>';
+      echo '</div>';
+      foreach ($location_quick_serve as $quick_serve) {
+        $status = ($quick_serve['last_online_check_time_diff'] && $quick_serve['last_online_check_time_diff'] < $this->online_diff) ? '<span class="bistrosol-quick-serve-status-online">In Use*</span>' : '<span class="bistrosol-quick-serve-status-offline">Not in Use*</span>';
+
+        echo '<div class="bistrosol-quick-serve-row">';
+        echo '<span class="bistrosol-quick-serve-name">';
+        echo $quick_serve['quick_serve_name'];
+        if (!empty($quick_serve['feature'])) {
+          echo '<span class="bistrosol-quick-serve-feature">' . $quick_serve['feature'] . '</span>';
+        }
+        echo '</span>';
+        echo '<span class="bistrosol-quick-serve-ip">' . $quick_serve['ip'] . '</span>';
+        echo '<span class="bistrosol-quick-serve-model">' . $quick_serve['model'] . '</span>';
+        echo '<span class="bistrosol-quick-serve-status">' . $status . '</span>';
+        echo '</div>';
+      }
+    }
+
+    echo '<div id="bistrosol-quick-serve-status-note">*Status report can be delayed by ' . $this->online_diff . ' seconds. <br/>*QuickServe app needs to run in foreground to be consider as In Use.</div>';
     echo '</div>';
   }
 
@@ -774,8 +828,8 @@ class Bistro_Solutions_Admin {
     return $connections;
   }
 
-  public function dashboard_page() {
-    global $bdb;
+  public function overview_page() {
+    echo '<h2>Overview</h2>'; 
   }
 
   public function orders_page() {
