@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Bistro Solutions
  * Plugin URI:        https://www.bistrosol.co
- * Description:       Bistro Solutions official WordPress plugin.
+ * Description:       Bistro Solutions client portal plugin.
  * Version:           1.0.0
  * Author:            Alan Zhao
  * Author URI:        https://www.bistrosol.co

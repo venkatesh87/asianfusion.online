@@ -30,7 +30,7 @@ class Bistro_Solutions_Wc_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-
+    remove_role( 'bistrosol_wc_sync' );
 	}
 
 }
