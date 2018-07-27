@@ -100,7 +100,15 @@ class Bistro_Solutions_Wc_Admin {
 
   }
 
+  public function woocommerce_customization() {
+    $this->disable_product_edit();
+    $this->hide_in_stock();
+  }
+
   public function disable_product_edit() {
+  }
+
+  public function hide_in_stock() {
   }
 
   public function add_test_products() {

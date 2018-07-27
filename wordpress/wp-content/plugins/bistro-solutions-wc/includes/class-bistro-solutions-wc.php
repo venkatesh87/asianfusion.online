@@ -157,7 +157,7 @@ class Bistro_Solutions_Wc {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
     $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-    $this->loader->add_action( 'admin_init', $plugin_admin, 'disable_product_edit' );
+    $this->loader->add_action( 'admin_init', $plugin_admin, 'woocommerce_customization' );
     $this->loader->add_action( 'admin_init', $plugin_admin, 'add_test_products' );
 
 	}
