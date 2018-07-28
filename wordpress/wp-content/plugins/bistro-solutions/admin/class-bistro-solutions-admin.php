@@ -471,6 +471,7 @@ class Bistro_Solutions_Admin {
   public function init_bdb() {
     global $bdb;
 
+    // Shorten MySQL connection timeout
     ini_set('mysql.connect_timeout', 5);
     ini_set('default_socket_timeout', 5);
 
@@ -497,7 +498,6 @@ class Bistro_Solutions_Admin {
       add_action( 'wp_dashboard_setup', array($this, 'support_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'terminal_info_widget_setup') );
       add_action( 'wp_dashboard_setup', array($this, 'quick_serve_info_widget_setup') );
-      add_action( 'wp_dashboard_setup', array($this, 'cart_info_widget_setup') );
     }
   }
 
@@ -550,6 +550,10 @@ class Bistro_Solutions_Admin {
   }
 
   public function account_info_widget_render() {
+    if (empty($this->account_options['secret_token']) || empty($this->account_options['account_name'])) {
+      return false; 
+    }
+    
     $token = base64_encode(gmdate('Y-m-d-H') . $this->account_options['secret_token']);
     
     echo '<ul>';
@@ -573,18 +577,6 @@ class Bistro_Solutions_Admin {
   public function support_info_widget_render() {
   }
 
-  public function cart_info_widget_setup() {
-    wp_add_dashboard_widget(
-        'bistrosol_cart_info_widget',
-        'Bistro Solutions Cart Info',
-        array( $this, 'cart_info_widget_render')
-      );
-  }
-
-  public function cart_info_widget_render() {
-    echo 'Active cart ';
-  }
-
   public function terminal_info_widget_setup() {
     wp_add_dashboard_widget(
         'bistrosol_terminal_info_widget',
@@ -595,6 +587,13 @@ class Bistro_Solutions_Admin {
 
   public function terminal_info_widget_render() {
     global $bdb;
+
+    $db_error = $this->get_db_connect_error();
+
+    if ($db_error) {
+      echo '<div class="bistrosol-master-db-error">' . $db_error . '</div>';
+      return false;
+    }
 
     // Get upward replication interval
     $query = "SELECT global_config_value_int.value FROM global_configs JOIN global_config_value_int ON (global_configs.id = global_config_value_int.configId) WHERE global_configs.section = 'database' AND global_configs.subsection = 'replication' AND global_configs.name = 'Upward Replication Frequency (Seconds)'";
@@ -657,6 +656,13 @@ class Bistro_Solutions_Admin {
 
   public function quick_serve_info_widget_render() {
     global $bdb;
+
+    $db_error = $this->get_db_connect_error();
+
+    if ($db_error) {
+      echo '<div class="bistrosol-master-db-error">' . $db_error . '</div>';
+      return false;
+    }
 
     $query = 'SELECT quick_serve.id AS quick_serve_id, quick_serve.name AS quick_serve_name, quick_serve.feature, quick_serve.ip, quick_serve.model, TIMESTAMPDIFF(second, quick_serve.lastOnlineCheck, NOW()) AS last_online_check_time_diff, locations.id AS location_id, locations.name AS location_name FROM quick_serve JOIN locations ON quick_serve.locationId = locations.id WHERE locations.active = 1 AND quick_serve.active = 1 ORDER BY locations.name ASC, quick_serve.name ASC';
 
@@ -726,16 +732,13 @@ class Bistro_Solutions_Admin {
   }
 
   public function master_database_info_widget_render() {
-    //echo '<pre>';
-    //var_dump($bdb->error);
-    //echo '</pre>';
-
     $db_error = $this->get_db_connect_error();
 
-    if (!$db_error) {
-      echo '<div>Database is connected</div>';
+    if ($db_error) {
+      echo '<div class="bistrosol-master-db-error">' . $db_error . '</div>';
+      return false;
     } else {
-      echo '<div>Master database error: ' . $db_error . '</div>';
+      echo '<div class="bistrosol-master-db-success">Database is connected</div>';
     }
 
     echo '<ul>';
@@ -747,6 +750,7 @@ class Bistro_Solutions_Admin {
     echo '<li><strong>Connections:</strong></li>';
     echo '<ul class="bistrosol-dashboard-info">';
     echo '<pre>';
+
     foreach ($this->get_db_connections() as $user => $hosts) {
       echo '<strong>' . $user . "</strong>\n";
       foreach ($hosts as $host) {
@@ -763,7 +767,9 @@ class Bistro_Solutions_Admin {
 
     $db_error = null;
 
-    if ($bdb->error && $bdb->error->errors) {
+    if (!$bdb) {
+      $db_error = 'Database connection setting error';
+    } else if ($bdb->error && $bdb->error->errors) {
       $db_errors = $bdb->error->errors;
       if ($db_errors['db_connect_fail'][0]) {
         $db_error = $db_errors['db_connect_fail'][0];
@@ -780,12 +786,21 @@ class Bistro_Solutions_Admin {
   public function get_db_version() {
     global $bdb;
 
+    if (!$bdb) {
+      return false;
+    }
+
     $version = $bdb->get_var('SELECT @@innodb_version');
+
     return $version;
   }
 
   public function get_db_uptime() {
     global $bdb;
+
+    if (!$bdb) {
+      return false;
+    }
 
     $uptime_sec = $bdb->get_var("SELECT VARIABLE_VALUE FROM performance_schema.global_status WHERE VARIABLE_NAME = 'Uptime'");
 
@@ -801,6 +816,10 @@ class Bistro_Solutions_Admin {
   public function get_db_users() {
     global $bdb;
 
+    if (!$bdb) {
+      return false;
+    }
+
     $users = array();
 
     $query = "SELECT DISTINCT(User) FROM mysql.user WHERE User NOT IN ('root', 'mysql.infoschema', 'mysql.session', 'mysql.sys')";
@@ -815,6 +834,10 @@ class Bistro_Solutions_Admin {
 
   public function get_db_connections() {
     global $bdb;
+
+    if (!$bdb) {
+      return false;
+    }
 
     $connections = array();
 

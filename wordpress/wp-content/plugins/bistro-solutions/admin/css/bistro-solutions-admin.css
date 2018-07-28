@@ -23,6 +23,14 @@
   50% { opacity: 0; }
 }
 
+.bistrosol-master-db-error {
+  color: #ff0000;
+}
+
+.bistrosol-master-db-success {
+  color: green;
+}
+
 .bistrosol-feed-error {
   background-color: #ff0000;
   color: #ffffff;
