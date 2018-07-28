@@ -287,11 +287,11 @@ class Bistro_Solutions_Wc_Admin {
       // Manual: https://docs.woocommerce.com/wc-apidocs/source-class-WC_Product.html
       
       $sp = new WC_Product_Simple();
-      $sp->set_name( $sp_data['name'] . ' - WC');
+      $sp->set_name( $sp_data['name'] . ' - wc');
       $sp->set_slug( $sp_data['slug'] . '-wc' );
       $sp->set_sku( $sp_data['sku'] . '-wc' );
-      $sp->set_date_created( date('Y-m-d H:i:s') );
-      $sp->set_date_modified( date('Y-m-d H:i:s') );
+      $sp->set_date_created( date('y-m-d h:i:s') );
+      $sp->set_date_modified( date('y-m-d h:i:s') );
       $sp->set_status( 'publish' );
       $sp->set_featured( false );
       $sp->set_catalog_visibility( 'visible' );
@@ -299,7 +299,7 @@ class Bistro_Solutions_Wc_Admin {
       // $sp->set_short_description( '' );
       $sp->set_price( $sp_data['price'] );
       $sp->set_regular_price( $sp_data['regular_price'] );
-      $sp->set_sale_price( $sp_data['sale_price'] );
+      // $sp->set_sale_price( $sp_data['sale_price'] );
       // $sp->set_date_on_sale_from();
       // $sp->set_date_on_sale_to();
       // $sp->set_total_sales( 1 );
@@ -350,6 +350,127 @@ class Bistro_Solutions_Wc_Admin {
     } catch ( Exception $e ) {
       echo $e->getMessage();
       exit;
-		}
+    }
+
+    //
+    // Variable product
+    //
+
+    $vp_data = array(
+      'name'          => 'Variable product ' . $unique_id,
+      'slug'          => 'variable-product-' . $unique_id,
+      'sku'           => 'variable-product-' . $unique_id,
+      'description'   => 'Variable product description',
+      'regular_price' => '9.99',
+      'sale_price'    => '5.99',
+      'manage_stock'  => 'yes',
+      'stock_qty'     => '999',
+      'post_type'     => 'product',
+      'product_type'  => 'variable'
+    );
+
+    try {
+
+      // Attribute 1
+      $a1 = new WC_Product_Attribute();
+      $a1->set_name( 'Size' );
+      $a1->set_options( array(
+        'Small',
+        'Large'
+      ) );
+      $a1->set_position( 1 );
+      $a1->set_visible( false );;
+      $a1->set_variation( true );
+
+      // Attribute 2
+      $a2 = new WC_Product_Attribute();
+      $a2->set_name( 'Color' );
+      $a2->set_options( array(
+        'Black',
+        'White'
+      ) );
+      $a2->set_position( 2 );
+      $a2->set_visible( false );;
+      $a2->set_variation( true );
+
+      $vp = new WC_Product_Variable();
+      $vp->set_name( $vp_data['name'] . ' - wc2');
+      $vp->set_slug( $vp_data['slug'] . '-wc2' );
+      $vp->set_date_created( date('y-m-d h:i:s') );
+      $vp->set_date_modified( date('y-m-d h:i:s') );
+      $vp->set_status( 'publish' );
+      $vp->set_featured( false );
+      $vp->set_catalog_visibility( 'visible' );
+      $vp->set_description( $vp_data['description'] );
+      // $vp->set_short_description( '' );
+      //$vp->set_price( $vp_data['price'] );
+      //$vp->set_regular_price( $vp_data['regular_price'] );
+      // $vp->set_sale_price( $vp_data['sale_price'] );
+      // $vp->set_date_on_sale_from();
+      // $vp->set_date_on_sale_to();
+      // $vp->set_total_sales( 1 );
+      // taxable, shipping or none
+      $vp->set_tax_status( 'none' );
+      // $vp->set_tax_class( '' );
+      $vp->set_manage_stock( $vp_data['manage_stock'] );
+      $vp->set_stock_quantity( $vp_data['stock_qty'] );
+      $vp->set_stock_status( 'instock' );
+      $vp->set_backorders( 'no' );
+      $vp->set_sold_individually( false );
+      // $vp->set_weight( 1 );
+      // $vp->set_length( 1 );
+      // $vp->set_width( 1 );
+      // $vp->set_height( 1 );
+      // $vp->set_upsell_ids( 1, 2, 3 ) ;
+      // $vp->set_cross_sell_ids( 1, 2, 3 );
+      // $vp->set_parent_id( 1 );
+      // $vp->set_reviews_allowed( false );
+      // $vp->set_purchase_note( '' );
+
+      $vp->set_attributes( array($a1, $a2) );
+      $vp->set_default_attributes( array(
+        'Size'  => 'Small',
+        'Color' => 'White'
+      ) );
+      
+      $vp_id = $vp->save();
+
+      // Variation 1
+      $v1 = new WC_Product_Variation();
+      $v1->set_sku( $vp_data['sku'] . '-wc-sm-wh' );
+      $v1->set_regular_price( $vp_data['regular_price'] );
+      $v1->set_parent_id( $vp_id );
+
+      $v1->set_attributes( array(
+        'Size' => 'Small',
+        'Color' => 'White'
+      ) );
+
+      $v1->save();
+
+      // Variation 2
+      $v2 = new WC_Product_Variation();
+      $v2->set_sku( $vp_data['sku'] . '-wc-lg-bk' );
+      $v2->set_regular_price( $vp_data['regular_price'] );
+      $v2->set_parent_id( $vp_id );
+
+      $v2->set_attributes( array(
+        'Size' => 'Large',
+        'Color' => 'Black'
+      ) );
+
+      $v2->save();
+
+    } catch ( Exception $e) {
+      echo $e->getMessage();
+      exit;
+    }
+
+
+    // 
+    // Order
+    //
+
+    $order = new Wc_Order();
   }
 }
