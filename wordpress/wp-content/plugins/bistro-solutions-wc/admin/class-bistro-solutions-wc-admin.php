@@ -373,8 +373,8 @@ class Bistro_Solutions_Wc_Admin {
 
       // Attribute 1
       $a1 = new WC_Product_Attribute();
-      // Any positive value is interpreted as is_taxonomy=true
-      $a1->set_id( 1 );
+      // Any positive value is interpreted as is_taxonomy = true
+      $a1->set_id( 0 );
       $a1->set_name( 'Size' );
       $a1->set_options( array(
         'Small',
@@ -386,7 +386,8 @@ class Bistro_Solutions_Wc_Admin {
 
       // Attribute 2
       $a2 = new WC_Product_Attribute();
-      $a2->set_id( 2 );
+      // Any positive value is interpreted as is_taxonomy = true
+      $a2->set_id( 0 );
       $a2->set_name( 'Color' );
       $a2->set_options( array(
         'Black',
@@ -415,10 +416,6 @@ class Bistro_Solutions_Wc_Admin {
       // taxable, shipping or none
       $vp->set_tax_status( 'none' );
       // $vp->set_tax_class( '' );
-      $vp->set_manage_stock( $vp_data['manage_stock'] );
-      $vp->set_stock_quantity( $vp_data['stock_qty'] );
-      $vp->set_stock_status( 'instock' );
-      $vp->set_backorders( 'no' );
       $vp->set_sold_individually( false );
       // $vp->set_weight( 1 );
       // $vp->set_length( 1 );
@@ -443,6 +440,10 @@ class Bistro_Solutions_Wc_Admin {
       $v1->set_sku( $vp_data['sku'] . '-wc-sm-wh' );
       $v1->set_regular_price( $vp_data['regular_price'] );
       $v1->set_parent_id( $vp_id );
+      $v1->set_manage_stock( $vp_data['manage_stock'] );
+      $v1->set_stock_quantity( $vp_data['stock_qty'] );
+      $v1->set_stock_status( 'instock' );
+      $v1->set_backorders( 'no' );
 
       $v1->set_attributes( array(
         'Size' => 'Small',
@@ -456,6 +457,10 @@ class Bistro_Solutions_Wc_Admin {
       $v2->set_sku( $vp_data['sku'] . '-wc-lg-bk' );
       $v2->set_regular_price( $vp_data['regular_price'] );
       $v2->set_parent_id( $vp_id );
+      $v2->set_manage_stock( $vp_data['manage_stock'] );
+      $v2->set_stock_quantity( $vp_data['stock_qty'] );
+      $v2->set_stock_status( 'instock' );
+      $v2->set_backorders( 'no' );
 
       $v2->set_attributes( array(
         'Size' => 'Large',
