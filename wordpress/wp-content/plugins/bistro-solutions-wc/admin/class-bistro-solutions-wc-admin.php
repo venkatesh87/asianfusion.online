@@ -373,6 +373,8 @@ class Bistro_Solutions_Wc_Admin {
 
       // Attribute 1
       $a1 = new WC_Product_Attribute();
+      // Any positive value is interpreted as is_taxonomy=true
+      $a1->set_id( 1 );
       $a1->set_name( 'Size' );
       $a1->set_options( array(
         'Small',
@@ -384,6 +386,7 @@ class Bistro_Solutions_Wc_Admin {
 
       // Attribute 2
       $a2 = new WC_Product_Attribute();
+      $a2->set_id( 2 );
       $a2->set_name( 'Color' );
       $a2->set_options( array(
         'Black',
