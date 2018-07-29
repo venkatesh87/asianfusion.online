@@ -116,20 +116,17 @@ class Bistro_Solutions_Wc_Admin {
     echo '<input type="button" class="button button-secondary" value="Create Test Products" id="create-test-products" name="create-test-products" />';
   }
 
-  public function woocommerce_customization() {
-    $this->disable_product_edit();
-    $this->hide_in_stock();
-  }
-
-  public function disable_product_edit() {
-  }
-
-  public function hide_in_stock() {
-  }
-
   public function add_test_products_wc_way() {
-    // todo: author
-    // add wordpress product id field to bistrosol db
+
+
+    //
+    // Convert Bistro Solutions product to WC product
+    // Convert WC order to Bistro Solutions Order
+    //
+
+
+    date_default_timezone_set('America/New_York');
+
     $create_user_id = 1;
     $bswc_user = get_user_by('login', 'bistrosol_wc_sync');
     if ($bswc_user) {
@@ -194,8 +191,8 @@ class Bistro_Solutions_Wc_Admin {
       $sp->set_name( $sp_data['name'] . ' - wc');
       $sp->set_slug( $sp_data['slug'] . '-wc' );
       $sp->set_sku( $sp_data['sku'] . '-wc' );
-      $sp->set_date_created( date('y-m-d h:i:s') );
-      $sp->set_date_modified( date('y-m-d h:i:s') );
+      $sp->set_date_created( date('Y-m-d h:i:s') );
+      $sp->set_date_modified( date('Y-m-d h:i:s') );
       $sp->set_status( 'publish' );
       $sp->set_featured( false );
       $sp->set_catalog_visibility( 'visible' );
@@ -271,8 +268,6 @@ class Bistro_Solutions_Wc_Admin {
 
     try {
 
-      //$attribute_id = $this->get_attribute_taxonomy_id( $attribute['name']
-
       // Attribute 1
       $a1 = new WC_Product_Attribute();
       //$a1->set_id( 0 );
@@ -300,8 +295,8 @@ class Bistro_Solutions_Wc_Admin {
       $vp = new WC_Product_Variable();
       $vp->set_name( $vp_data['name'] . ' - wc');
       $vp->set_slug( $vp_data['slug'] . '-wc' );
-      $vp->set_date_created( date('y-m-d h:i:s') );
-      $vp->set_date_modified( date('y-m-d h:i:s') );
+      $vp->set_date_created( date('Y-m-d H:i:s') );
+      $vp->set_date_modified( date('Y-m-d H:i:s') );
       $vp->set_status( 'publish' );
       $vp->set_featured( false );
       $vp->set_catalog_visibility( 'visible' );
@@ -331,10 +326,12 @@ class Bistro_Solutions_Wc_Admin {
       // $sp->set_tag_ids( array(1) );
 
       $vp->set_attributes( array($a1, $a2) );
+      /*
       $vp->set_default_attributes( array(
         'size'  => 'Small',
         'color' => 'White'
       ) );
+       */
       
       $vp_id = $vp->save();
 
@@ -359,7 +356,7 @@ class Bistro_Solutions_Wc_Admin {
         'color' => 'White'
       ) );
 
-      $v1->save();
+      $v1_id = $v1->save();
 
       // Variation 2
       $v2 = new WC_Product_Variation();
@@ -382,7 +379,7 @@ class Bistro_Solutions_Wc_Admin {
         'color' => 'Black'
       ) );
 
-      $v2->save();
+      $v2_id = $v2->save();
 
     } catch ( Exception $e) {
       echo $e->getMessage();
@@ -394,7 +391,28 @@ class Bistro_Solutions_Wc_Admin {
     // Order
     //
 
-    $order = new Wc_Order();
+    $order = new WC_Order();
+
+    $address = array(
+        'first_name' => 'Alan',
+        'last_name'  => 'Zhao',
+        'company'    => 'Bistro Solutions',
+        'email'      => 'azhao6060@gmail.com',
+        'phone'      => '777-777-7777',
+        'address_1'  => '555 Main Street',
+        'address_2'  => '', 
+        'city'       => 'Saratoga Springs',
+        'state'      => 'NY',
+        'postcode'   => '12866',
+        'country'    => 'US'
+    );
+
+    $order->add_product( wc_get_product($v1_id), $quantity);
+    $order->add_product( wc_get_product($v2_id), $quantity);
+    $order->set_address( $address, 'billing' );
+    $order->set_address( $address, 'shipping' );
+
+    $order->calculate_totals();
 
     $response = array('success' => true);
 
