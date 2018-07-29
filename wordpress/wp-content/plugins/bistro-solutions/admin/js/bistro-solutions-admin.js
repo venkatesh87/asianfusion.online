@@ -13,6 +13,10 @@
       var secret_token = $('#bistrosol-secret-token').val();
       var account_url = 'https://www.bistrosol.co/wp-json/bistrosol/v2/account/' + account_name + '/' + secret_token + '/account_info';
 
+      if (!account_name || !secret_token) {
+        return false;
+      }
+
       $.getJSON(account_url, function( data ) {
         var items = [];
        

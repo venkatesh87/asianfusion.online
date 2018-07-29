@@ -157,9 +157,14 @@ class Bistro_Solutions_Wc {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
     $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
+    // WooCommerce customization
     $this->loader->add_action( 'admin_init', $plugin_admin, 'woocommerce_customization' );
-    $this->loader->add_action( 'admin_init', $plugin_admin, 'add_test_products_wc_way' );
 
+    // Add dashboard widgets
+    $this->loader->add_action( 'admin_init', $plugin_admin, 'add_dashboard_widgets' );
+    
+    // Admin AJAX target 
+    $this->loader->add_action( 'wp_ajax_create_test_products', $plugin_admin, 'add_test_products_wc_way' );
 	}
 
 	/**
