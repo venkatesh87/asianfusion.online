@@ -171,6 +171,7 @@ class Bistro_Solutions {
 
     // Admin AJAX target 
     $this->loader->add_action( 'wp_ajax_test_db_connection', $plugin_admin, 'test_db_connection_ajax' );
+    $this->loader->add_action( 'wp_ajax_create_test_products', $plugin_admin, 'add_test_products_wc_way' );
 	}
 
 	/**

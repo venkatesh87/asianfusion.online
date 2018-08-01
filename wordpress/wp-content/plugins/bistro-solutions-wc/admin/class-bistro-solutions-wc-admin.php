@@ -122,6 +122,7 @@ class Bistro_Solutions_Wc_Admin {
     //
     // Convert Bistro Solutions product to WC product
     // Convert WC order to Bistro Solutions Order
+    // Convert WC customer to Bistro Solutions Customer
     //
 
 
