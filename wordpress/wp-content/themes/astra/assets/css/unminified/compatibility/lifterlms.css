@@ -1178,27 +1178,6 @@ body .llms-loop-item-content .llms-progress-bar .progress-bar-complete {
   }
 }
 
-.header-main-layout-2 .main-header-container {
-  text-align: center;
-}
-
-.header-main-layout-2 .main-header-log-out {
-  display: inline-block;
-  float: right;
-}
-
-.header-main-layout-2 .ast-main-header-bar-alignment {
-  display: inline-block;
-}
-
-.ast-header-break-point .header-main-layout-2 .ast-mobile-menu-buttons {
-  display: inline-block;
-}
-
-.ast-header-break-point .header-main-layout-2 .ast-main-header-bar-alignment {
-  display: none;
-}
-
 .ast-woocommerce-cart-menu .main-header-bar .main-header-log-out {
   padding-left: 10px;
 }

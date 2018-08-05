@@ -35,7 +35,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 		 */
 		public static function get_instance() {
 			if ( ! isset( self::$instance ) ) {
-				self::$instance = new self;
+				self::$instance = new self();
 			}
 			return self::$instance;
 		}
@@ -51,7 +51,7 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 			add_filter( 'astra_theme_assets', array( $this, 'add_styles' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'add_dynamic_styles' ) );
 
-			add_action( 'customize_register', array( $this, 'customize_register' ), 11 );
+			add_action( 'customize_register', array( $this, 'customize_register' ), 2 );
 
 			add_filter( 'astra_theme_defaults', array( $this, 'theme_defaults' ) );
 
@@ -154,14 +154,14 @@ if ( ! class_exists( 'Astra_LifterLMS' ) ) :
 			/**
 			 * Register Sections & Panels
 			 */
-			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/register-panels-and-sections.php';
+			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/class-astra-liferlms-section-configs.php';
 
 			/**
 			 * Sections
 			 */
-			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/section-container.php';
-			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/section-sidebar.php';
-			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/layout/section-general.php';
+			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/class-astra-lifter-container-configs.php';
+			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/class-astra-lifter-sidebar-configs.php';
+			require ASTRA_THEME_DIR . 'inc/compatibility/lifterlms/customizer/sections/layout/class-astra-lifter-general-configs.php';
 		}
 
 		/**
