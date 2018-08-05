@@ -3018,6 +3018,10 @@ body {
   text-align: center;
 }
 
+.ast-header-break-point .ast-mobile-header-stack.ast-logo-title-inline .site-title {
+  text-align: right;
+}
+
 .ast-header-break-point .ast-mobile-header-stack .ast-mobile-menu-buttons {
   -webkit-box-flex: 1;
   -webkit-flex: 1 1 100%;
@@ -3155,14 +3159,6 @@ body {
   -moz-box-pack: left;
   -ms-flex-pack: left;
   justify-content: left;
-}
-
-.ast-header-break-point.ast-header-custom-item-outside .ast-logo-title-inline .ast-site-identity {
-  display: block;
-}
-
-.ast-header-break-point.ast-header-custom-item-outside .ast-logo-title-inline .site-logo-img {
-  padding-left: 0;
 }
 
 .ast-header-break-point.ast-header-custom-item-outside .header-main-layout-2 .ast-mobile-menu-buttons {
@@ -3567,6 +3563,10 @@ li.ast-masthead-custom-menu-items .ast-search-icon .astra-search-icon {
 
 .ast-header-break-point .ast-mobile-header-stack .site-description {
   text-align: center;
+}
+
+.ast-header-break-point .ast-mobile-header-stack.ast-logo-title-inline .site-description {
+  text-align: right;
 }
 
 .ast-header-break-point.ast-header-custom-item-outside .ast-primary-menu-disabled .ast-mobile-menu-buttons {
