@@ -6,7 +6,7 @@
 function custom_login_logo() { ?>
     <style type="text/css">
         #login h1 a {
-            background-image: url(<?php echo get_stylesheet_directory_uri(); ?>/assets/images/login-logo.svg);
+            background-image: url(/wp-content/login-logo.svg);
 		        background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
