@@ -69,7 +69,7 @@ add_filter('contextual_help', 'remove_help_tabs', 999, 3);
 //
 // Remove screen option tab
 //
-add_filter( 'screen_options_show_screen', '__return_false');
+//add_filter( 'screen_options_show_screen', '__return_false');
 
 //
 // Disable notice
