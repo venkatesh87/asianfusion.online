@@ -1,3 +1,10 @@
+v1.4.8
+- Fix: Correctly sanitize font-family settings in customizer. This fixes font-family settings not being saved.
+
+v1.4.7
+- Fix: Optimized the customizer dependency logic to fix the Slowness when changing the customizer options.
+- Fix: W3 Validation error due to empty border-radius value.
+
 v1.4.6
 - Improvement: Default thumbnail size for blog set to `large` instead of full. credit - (ipokkel)[https://github.com/ipokkel] (#697)[https://github.com/brainstormforce/astra/pull/697]
 - Improvement: Contact form 7 & Gravity Forms compatibility CSS will load only on the pages where contact forms are used. 
