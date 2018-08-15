@@ -34,7 +34,7 @@ if ( ! class_exists( 'Astra_Contact_Form_7' ) ) :
 		 */
 		public static function get_instance() {
 			if ( ! isset( self::$instance ) ) {
-				self::$instance = new self;
+				self::$instance = new self();
 			}
 			return self::$instance;
 		}
@@ -43,7 +43,7 @@ if ( ! class_exists( 'Astra_Contact_Form_7' ) ) :
 		 * Constructor
 		 */
 		public function __construct() {
-			add_action( 'wpcf7_enqueue_scripts', array( $this, 'add_styles' ) );
+			add_action( 'wpcf7_enqueue_styles', array( $this, 'add_styles' ) );
 		}
 
 		/**
