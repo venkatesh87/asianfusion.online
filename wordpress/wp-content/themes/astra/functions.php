@@ -11,7 +11,7 @@
 /**
  * Define Constants
  */
-define( 'ASTRA_THEME_VERSION', '1.4.6' );
+define( 'ASTRA_THEME_VERSION', '1.4.8' );
 define( 'ASTRA_THEME_SETTINGS', 'astra-settings' );
 define( 'ASTRA_THEME_DIR', get_template_directory() . '/' );
 define( 'ASTRA_THEME_URI', get_template_directory_uri() . '/' );
@@ -132,6 +132,7 @@ if ( version_compare( PHP_VERSION, '5.3', '>=' ) ) {
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-filters.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-hooks.php';
 require_once ASTRA_THEME_DIR . 'inc/core/deprecated/deprecated-functions.php';
+
 
 /**
  * Custom code
