@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# mybistro.net
-=======
 # DRAFT
 
 ## Table of Content
