@@ -237,7 +237,10 @@ function hide_plugins() {
     'wordpress-seo/wp-seo.php',
     'wp-email-smtp/wp_email_smtp.php',
     'wpcf7-redirect/wpcf7-redirect.php',
-    'wps-hide-login/wps-hide-login.php'
+    'wps-hide-login/wps-hide-login.php',
+    'shortcoder/shortcoder.php',
+    'better-search-replace/better-search-replace.php',
+    'members/members.php'
   );
   $mypluginslist = $wp_list_table->items;
   foreach ($mypluginslist as $key => $val) {
