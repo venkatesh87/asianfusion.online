@@ -188,17 +188,6 @@ function search_rewrite($url) {
 add_filter('wpseo_json_ld_search_url', 'search_rewrite');
 
 //
-// https://github.com/roots/soil/blob/master/modules/js-to-footer.php
-//
-function js_to_footer() {
-  remove_action('wp_head', 'wp_print_scripts');
-  remove_action('wp_head', 'wp_print_head_scripts', 9);
-  remove_action('wp_head', 'wp_enqueue_scripts', 1);
-}
-add_action('wp_enqueue_scripts', 'js_to_footer');
-
-
-//
 // Remove comment from admin menu
 //
 function remove_comment_from_admin_menus() {
