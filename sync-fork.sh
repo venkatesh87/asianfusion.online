@@ -3,7 +3,8 @@
 readonly APP_BRANCH=$(git branch | sed -n -e 's/^\* \(.*\)/\1/p')
 
 # Add remote repo
-git remote add upstream git@github.com:alanzhaonys/mywordpress.git
+#git remote add upstream git@github.com:alanzhaonys/mywordpress.git
+git remote add upstream git@github.com:BistroSolutions/mybistro.net.git
 
 # Fetch from remote
 git fetch upstream
