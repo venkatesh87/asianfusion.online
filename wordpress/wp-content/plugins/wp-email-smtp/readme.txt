@@ -2,8 +2,8 @@
 Contributors: pankajagarwal
 Tags: add smtp plugin, mail, mail ssl, mail tls, phpmailer, send email via smtp, smtp, smtp plugin, test email, email, mail smtp, outgoing mail, sendmail, ssl, tls, wordpress smtp, wp mail, wp smtp, wp_mail, gmail, google apps, hotmail, Mailer, mandrill api, oauth2, sendgrid api, smtp, sparkpost api, yahoo, mailgun, mailjet, amazon ses, ses
 Requires at least: 3.0.1
-Tested up to: 4.9.4
-Stable tag: 1.0.5
+Tested up to: 4.9.8
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
