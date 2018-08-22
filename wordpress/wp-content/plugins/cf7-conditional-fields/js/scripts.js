@@ -257,6 +257,7 @@ var cf7signature_resized = 0; // for compatibility with contact-form-7-signature
         $hidden_group_fields = $form.find('[name="_wpcf7cf_hidden_group_fields"]');
         $hidden_groups = $form.find('[name="_wpcf7cf_hidden_groups"]');
         $visible_groups = $form.find('[name="_wpcf7cf_visible_groups"]');
+        $repeaters = $form.find('[name="_wpcf7cf_repeaters"]');
 
         var hidden_fields = [];
         var hidden_groups = [];
@@ -301,15 +302,55 @@ var cf7signature_resized = 0; // for compatibility with contact-form-7-signature
         });
     };
 
+    // PRO ONLY
+
+    $('.wpcf7cf_repeater').each(init_repeater);
+
+    function init_repeater(i) {
+        var $repeater = $(this);
+        $repeater.$last_sub = undefined;
+        $repeater.num_subs = 0;
+        $repeater.id = $repeater.attr('id');
+        var $repeater_sub = $repeater.find('.wpcf7cf_repeater_sub').eq(0);
+        var $repeater_controls = $repeater.find('.wpcf7cf_repeater_controls').eq(0);
+
+        $('.wpcf7cf_add',$repeater).click({
+            $repeater:$repeater,
+            $repeater_sub:$repeater_sub,
+            repeater_sub_html:$repeater_sub[0].outerHTML,
+            $repeater_controls:$repeater_controls
+        }, repeater_add_sub);
+
+        $('.wpcf7cf_remove',$repeater).click({
+            $repeater:$repeater,
+            $repeater_sub:$repeater_sub,
+            $repeater_controls:$repeater_controls
+        },repeater_remove_sub);
+    }
+
+    function repeater_add_sub(e) {
+        var $repeater = e.data.$repeater;
+        var $repeater_sub = e.data.$repeater_sub;
+        var $repeater_controls = e.data.$repeater_controls;
+
+        $repeater_controls.before(e.data.repeater_sub_html.replace(/name="(.*?)"/g,'name="wpcf7cf_repeater['+$repeater.id+']['+$repeater.num_subs+'][$1]"'));
+
+        $repeater.num_subs++;
+        return false;
+    }
+
+    function repeater_remove_sub(e) {
+        var $repeater = e.data.$repeater;
+        var $repeater_sub = e.data.$repeater_sub;
+        var $repeater_controls = e.data.$repeater_controls;
+
+        if ($repeater.num_subs <= 0) return;
+        $('.wpcf7cf_repeater_sub',$repeater).last().remove();
+
+        $repeater.num_subs--;
+        return false;
+    }
+
+    // END PRO ONLY
+
 })( jQuery );
-
-
-/* Demo Code. */
-
-/* Clear values of hidden fields */
-// jQuery('[data-class="wpcf7cf_group"]').on('wpcf7cf_hide_group', function(e) {
-//     $group = jQuery(e.target);
-//     $group.find('input').not(':checkbox, :button, :submit, :reset, :hidden').val('');
-//     $group.find('option').removeAttr('selected');
-//     $group.find(':checkbox').removeAttr('checked');
-// });
