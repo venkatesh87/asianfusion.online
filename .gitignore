@@ -1,0 +1,14 @@
+.DS_Store
+/*.pem
+/db.json
+/app.json
+/ec2.json
+/ec2-db.json
+/docker-compose.yml
+
+/wordpress/wp-config.php
+/wordpress/.ebextensions/default.config
+/wordpress/wp-content/uploads/elementor/css/
+
+/mysql/data/*
+/mysq/logs/*

@@ -1,0 +1,29 @@
+{
+  "imageId": "ami-b70554c8",
+  "securityGroupName": "wordpress-server-1-ec2-sg",
+  "securityGroupDescription": "WordPress Server 1 EC2 Security Group",
+  "keyName": "default-ec2",
+  "keyPath": "default-ec2.pem",
+  "sshUser": "ec2-user",
+  "sshPort": "22",
+  "sshAllowedIps": "0.0.0.0/0",
+  "mysqlPort": "3306",
+  "mysqlAllowedIps": "0.0.0.0/0",
+  "webAllowedIps": "0.0.0.0/0",
+  "instanceType": "t2.micro",
+  "instanceName": "WordPress Server 1",
+  "availabilityZone": "us-east-1a",
+  "volumeSize": "100",
+  "serverName": "change-me",
+  "elasticIp": "change-me",
+  "certS3Bucket": "change-me",
+  "php": {
+    "memoryLimit": "512M",
+    "outputCompression": "On",
+    "allowUrlFopen": "Off",
+    "displayErrors": "Off",
+    "maxExecutionTime": 60,
+    "uploadMaxFilesize": "20M",
+    "postMaxSize": "2M"
+  }
+}

@@ -1,0 +1,16 @@
+create ebs wait method
+report ebs health
+speedup docker - docker sync
+when editing in localhost, user must be in dev branch, show warning if not(maybe checkout shouldn't change db)
+datetime zone config
+add recaptcha to login form/or fail login ban plugin
+
+if "connectLocalMysqlForDev" install local db
+lockdown preinstalled plugins
+when dumping database, env specific plugin settings like s3 offload bucket will be overwritten
+better way to do docker port assignment
+
+s3 bucket for keys
+docker mysql local user unaccessable
+
+build process
