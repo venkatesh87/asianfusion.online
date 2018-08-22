@@ -205,30 +205,17 @@ class ContactForm7ConditionalFields {
     }
 
     function hide_hidden_mail_fields( $components ) {
-        $regex = '@\[[\t ]*([a-zA-Z_][0-9a-zA-Z:._-]*)[\t ]*\](.*?)\[[\t ]*/[\t ]*\1[\t ]*\]@s';
-        // [1] = name [2] = contents
 
-        $components['body'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $components['body'] );
-        $components['subject'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $components['subject'] );
-        $components['sender'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $components['sender'] );
-        $components['recipient'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $components['recipient'] );
-        $components['additional_headers'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $components['additional_headers'] );
+        foreach ($components as $key => $val) {
+	        $components[$key] = preg_replace_callback(WPCF7CF_REGEX_MAIL_GROUP, array($this, 'hide_hidden_mail_fields_regex_callback'), $val );
+        }
 
         return $components;
     }
 
     function hide_hidden_mail_fields_additional_mail($additional_mail, $contact_form) {
-
         if (!is_array($additional_mail) || !array_key_exists('mail_2', $additional_mail)) return $additional_mail;
-
-        $regex = '@\[[\t ]*([a-zA-Z_][0-9a-zA-Z:._-]*)[\t ]*\](.*?)\[[\t ]*/[\t ]*\1[\t ]*\]@s';
-
-        $additional_mail['mail_2']['body'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $additional_mail['mail_2']['body'] );
-        $additional_mail['mail_2']['subject'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $additional_mail['mail_2']['subject'] );
-        $additional_mail['mail_2']['sender'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $additional_mail['mail_2']['sender'] );
-        $additional_mail['mail_2']['recipient'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $additional_mail['mail_2']['recipient'] );
-        $additional_mail['mail_2']['additional_headers'] = preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $additional_mail['mail_2']['additional_headers'] );
-
+	    $additional_mail['mail_2'] = $this->hide_hidden_mail_fields($additional_mail['mail_2']);
         return $additional_mail;
     }
 
@@ -240,11 +227,8 @@ class ContactForm7ConditionalFields {
             return '';
         } elseif ( in_array( $name, $this->visible_groups ) ) {
             // The tag name represents a visible group, so remove the tags themselves, but return everything else
-            //return $content;
-            $regex = '@\[[\t ]*([a-zA-Z_][0-9a-zA-Z:._-]*)[\t ]*\](.*?)\[[\t ]*/[\t ]*\1[\t ]*\]@s';
-
             // instead of just returning the $content, return the preg_replaced content :)
-            return preg_replace_callback($regex, array($this, 'hide_hidden_mail_fields_regex_callback'), $content );
+            return preg_replace_callback(WPCF7CF_REGEX_MAIL_GROUP, array($this, 'hide_hidden_mail_fields_regex_callback'), $content );
         } else {
             // The tag name doesn't represent a group that was used in the form. Leave it alone (return the entire match).
             return $matches[0];
@@ -257,7 +241,9 @@ new ContactForm7ConditionalFields;
 add_filter( 'wpcf7_contact_form_properties', 'wpcf7cf_properties', 10, 2 );
 
 function wpcf7cf_properties($properties, $wpcf7form) {
-    if (!is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) { // TODO: kind of hacky. maybe find a better solution. Needed because otherwise the group tags will be replaced in the editor as well.
+	// TODO: This function is called serveral times. The problem is that the filter is called each time we call get_properties() on a contact form.
+	// TODO: I haven't found a better way to solve this problem yet, any suggestions or push requests are welcome. (same problem in PRO/repeater.php)
+	if (!is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) { // TODO: kind of hacky. maybe find a better solution. Needed because otherwise the group tags will be replaced in the editor as well.
         $form = $properties['form'];
 
 	    $form_parts = preg_split('/(\[\/?group(?:\]|\s.*?\]))/',$form, -1,PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);

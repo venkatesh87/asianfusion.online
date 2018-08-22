@@ -2,7 +2,7 @@
 /*
   Plugin Name: WP Email SMTP
   Description: WP Email SMTP plugin allows you to connect any SMTP for sending emails from your WordPress site.
-  Version: 1.0.5
+  Version: 1.0.8
   Author: FormGet
   Author URI: https://www.formget.com/
   License: GPLv2
@@ -55,7 +55,7 @@ class WP_Email_Smtp {
 	public function add_plugin_page() {
 		//This page will be under "Settings"
 		add_options_page(
-				__( 'WP Email Smtp', 'wp-email-smtp' ), __( 'WP Email Smtp', 'wp-email-smtp' ), 'manage_options', 'wp-email-smtp', array( $this, 'create_admin_page' )
+				__( 'WP Email SMTP', 'wp-email-smtp' ), __( 'WP Email SMTP', 'wp-email-smtp' ), 'manage_options', 'wp-email-smtp', array( $this, 'create_admin_page' )
 		);
 	}
 	
@@ -228,9 +228,9 @@ class WP_Email_Smtp {
 		//print_r( $this->options );
 		?>
 		<div class="wrap">
-			<h1><?php _e( 'WP Email Smtp Settings', 'wp-email-smtp' ); ?></h1>
+			<h1><?php _e( 'WP Email SMTP Settings', 'wp-email-smtp' ); ?></h1>
 			<div>
-			   <a href="https://www.formget.com/mailget-bolt/?utm_source=wpplugin&amp;utm_campaign=wpplugin&amp;utm_medium=wpplugin" target="_blank">
+			   <a href="https://www.formget.com/smtp/" target="_blank">
 				<img src="<?php echo plugins_url('m_bolt_img.png', __FILE__); ?>"/>
 			   </a>
 		   </div>
