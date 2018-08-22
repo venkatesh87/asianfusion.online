@@ -254,3 +254,12 @@ function hide_plugins() {
 }
 
 add_action('pre_current_active_plugins', 'hide_plugins');
+
+
+//
+// Loads Woocommerce customizations
+//
+
+define( 'ALLSOL_THEME_DIR', get_stylesheet_directory() . '/' );
+
+require_once ALLSOL_THEME_DIR . 'base-wc-customizations.php';
