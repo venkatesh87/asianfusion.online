@@ -45,7 +45,7 @@ var termTemplate = "<span class='ui-autocomplete-term'>%s</span>";
     _wpcf7.taggen.compose = function(tagType, $form)
     {
 
-        $('#tag-generator-panel-group-style-hidden').val($('#tag-generator-panel-group-style').val());
+       $('#tag-generator-panel-group-style-hidden').val($('#tag-generator-panel-group-style').val());
 
         // original behavior - use function.apply to preserve context
         var ret = old_compose.apply(this, arguments);
@@ -54,6 +54,8 @@ var termTemplate = "<span class='ui-autocomplete-term'>%s</span>";
 
         // START: code here will be executed after the _wpcf7.taggen.update function
         if (tagType== 'group') ret += "[/group]";
+        if (tagType== 'repeater') ret += "[/repeater]";
+
         // END
 
         if (tagType== 'togglebutton') {
@@ -169,8 +171,8 @@ var termTemplate = "<span class='ui-autocomplete-term'>%s</span>";
 
                 }
                 line += ' if [' + $and_rule.find('.if-field-select').val() + ']'
-                    + ' ' + $and_rule.find('.operator').val()
-                    + ' "' + $and_rule.find('.if-value').val() + '"';
+                + ' ' + $and_rule.find('.operator').val()
+                + ' "' + $and_rule.find('.if-value').val() + '"';
             });
             $('#wpcf7cf-settings-text').val($('#wpcf7cf-settings-text').val() + line + "\n" ).select();
         });
@@ -249,8 +251,8 @@ var termTemplate = "<span class='ui-autocomplete-term'>%s</span>";
         }).each(function() {
             $(this).autocomplete( "instance" )._renderItem = function( ul, item ) {
                 return $("<li>")
-                    .append("<div><em>" + item.label + "</em><br><em>" + item.desc + "</em></div>")
-                    .appendTo(ul);
+                .append("<div><em>" + item.label + "</em><br><em>" + item.desc + "</em></div>")
+                .appendTo(ul);
             }
         });
         $if_values.on('focus', function() {
@@ -298,10 +300,10 @@ var termTemplate = "<span class='ui-autocomplete-term'>%s</span>";
 
     function scale_and_button() {
         $('.wpcf7cf-and-rule:first-child .and-button').each(function(){
-            $and_button = $(this);
-            num_and_rules = $and_button.closest('.wpcf7cf-and-rule').siblings().length+1;
-            var height = (34*num_and_rules-12)+'px';
-            $and_button.css({'height':height,'line-height':height});
+           $and_button = $(this);
+           num_and_rules = $and_button.closest('.wpcf7cf-and-rule').siblings().length+1;
+           var height = (34*num_and_rules-12)+'px';
+           $and_button.css({'height':height,'line-height':height});
         });
     }
 

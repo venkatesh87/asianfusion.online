@@ -76,7 +76,7 @@ function wpcf7cf_options_page() {
                 <li>Save the Contact Form</li>
                 <li>go to the <strong><em>Conditional Fields</em></strong> Tab</li>
             </ol>
-                <a href="http://bdwm.be/wpcf7cf/how-to-set-up-conditional-fields-for-contact-form-7/" target="_blank">Show me an example</a> | <a class="notice-dismiss-2" href="#">Dismiss notice</a>
+                <a href="https://conditional-fields-cf7.bdwm.be/conditional-fields-for-contact-form-7-tutorial/" target="_blank">Show me an example</a> | <a class="notice-dismiss-2" href="#">Dismiss notice</a>
         </div></div>
         <?php } ?>
         <form action="options.php" method="post">
