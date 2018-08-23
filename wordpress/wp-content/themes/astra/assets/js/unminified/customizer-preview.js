@@ -553,12 +553,23 @@ function astra_background_obj_css( wp_customize, bg_obj, ctrl_name, style ) {
 	astra_responsive_font_size( 'astra-settings[font-size-entry-title]', '.ast-single-post .entry-title, .page-title' );
 	astra_responsive_font_size( 'astra-settings[font-size-archive-summary-title]', '.ast-archive-description .ast-archive-title' );
 	astra_responsive_font_size( 'astra-settings[font-size-page-title]', 'body:not(.ast-single-post) .entry-title' );
-	astra_responsive_font_size( 'astra-settings[font-size-h1]', 'h1, .entry-content h1, .entry-content h1 a' );
-	astra_responsive_font_size( 'astra-settings[font-size-h2]', 'h2, .entry-content h2, .entry-content h2 a' );
-	astra_responsive_font_size( 'astra-settings[font-size-h3]', 'h3, .entry-content h3, .entry-content h3 a' );
-	astra_responsive_font_size( 'astra-settings[font-size-h4]', 'h4, .entry-content h4, .entry-content h4 a' );
-	astra_responsive_font_size( 'astra-settings[font-size-h5]', 'h5, .entry-content h5, .entry-content h5 a' );
-	astra_responsive_font_size( 'astra-settings[font-size-h6]', 'h6, .entry-content h6, .entry-content h6 a' );
+
+	// Check if anchors should be loaded in the CSS for headings.	
+	if (true == astraCustomizer.includeAnchorsInHeadindsCss) {
+		astra_responsive_font_size('astra-settings[font-size-h1]', 'h1, .entry-content h1, .entry-content h1 a');
+		astra_responsive_font_size('astra-settings[font-size-h2]', 'h2, .entry-content h2, .entry-content h2 a');
+		astra_responsive_font_size('astra-settings[font-size-h3]', 'h3, .entry-content h3, .entry-content h3 a');
+		astra_responsive_font_size('astra-settings[font-size-h4]', 'h4, .entry-content h4, .entry-content h4 a');
+		astra_responsive_font_size('astra-settings[font-size-h5]', 'h5, .entry-content h5, .entry-content h5 a');
+		astra_responsive_font_size('astra-settings[font-size-h6]', 'h6, .entry-content h6, .entry-content h6 a');
+	} else {
+		astra_responsive_font_size('astra-settings[font-size-h1]', 'h1, .entry-content h1');
+		astra_responsive_font_size('astra-settings[font-size-h2]', 'h2, .entry-content h2');
+		astra_responsive_font_size('astra-settings[font-size-h3]', 'h3, .entry-content h3');
+		astra_responsive_font_size('astra-settings[font-size-h4]', 'h4, .entry-content h4');
+		astra_responsive_font_size('astra-settings[font-size-h5]', 'h5, .entry-content h5');
+		astra_responsive_font_size('astra-settings[font-size-h6]', 'h6, .entry-content h6');
+	}
 
 	astra_css( 'astra-settings[body-line-height]', 'line-height', 'body, button, input, select, textarea' );
 	// paragraph margin bottom.
@@ -578,7 +589,13 @@ function astra_background_obj_css( wp_customize, bg_obj, ctrl_name, style ) {
 
 	astra_css( 'astra-settings[body-text-transform]', 'text-transform', 'body, button, input, select, textarea' );
 
-	astra_css( 'astra-settings[headings-text-transform]', 'text-transform', 'h1, .entry-content h1, .entry-content h1 a, h2, .entry-content h2, .entry-content h2 a, h3, .entry-content h3, .entry-content h3 a, h4, .entry-content h4, .entry-content h4 a, h5, .entry-content h5, .entry-content h5 a, h6, .entry-content h6, .entry-content h6 a' );
+	// Check if anchors should be loaded in the CSS for headings.
+	if (true == astraCustomizer.includeAnchorsInHeadindsCss) {
+		astra_css('astra-settings[headings-text-transform]', 'text-transform', 'h1, .entry-content h1, .entry-content h1 a, h2, .entry-content h2, .entry-content h2 a, h3, .entry-content h3, .entry-content h3 a, h4, .entry-content h4, .entry-content h4 a, h5, .entry-content h5, .entry-content h5 a, h6, .entry-content h6, .entry-content h6 a');
+	} else {
+		astra_css('astra-settings[headings-text-transform]', 'text-transform', 'h1, .entry-content h1, h2, .entry-content h2, h3, .entry-content h3, h4, .entry-content h4, h5, .entry-content h5, h6, .entry-content h6');		
+	}
+
 
 	// Footer Bar.
 	astra_css( 'astra-settings[footer-color]', 'color', '.ast-small-footer' );
