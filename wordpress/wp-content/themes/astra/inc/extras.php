@@ -186,17 +186,70 @@ if ( ! function_exists( 'astra_logo' ) ) {
 			}
 
 			/**
-			 * Filters the tags for site title.
+			 * Filters the site title output.
 			 *
-			 * @since 1.3.1
+			 * @since x.x.x
 			 *
-			 * @param string $tags string containing the HTML tags for Site Title.
+			 * @param string the HTML output for Site Title.
 			 */
-			$tag               = apply_filters( 'astra_site_title_tag', $tag );
-			$site_title_markup = '<' . $tag . ' itemprop="name" class="site-title"> <a href="' . esc_url( home_url( '/' ) ) . '" itemprop="url" rel="home">' . get_bloginfo( 'name' ) . '</a> </' . $tag . '>';
+			// Site Title.
+			$site_title_markup = apply_filters(
+				'astra_site_title_output', sprintf(
+					'<%1$s class="site-title" itemprop="name">
+					<a href="%2$s" rel="home" itemprop="url" >
+						%3$s
+					</a>
+				</%1$s>',
+					/**
+					* Filters the tags for site title.
+					*
+					* @since 1.3.1
+					*
+					* @param string $tags string containing the HTML tags for Site Title.
+					*/
+					apply_filters( 'astra_site_title_tag', $tag ),
+					/**
+					* Filters the href for the site title.
+					*
+					* @since x.x.x
+					*
+					* @param string site title home url
+					*/
+					esc_url( apply_filters( 'astra_site_title_href', home_url( '/' ) ) ),
+					/**
+					* Filters the site title.
+					*
+					* @since x.x.x
+					*
+					* @param string site title
+					*/
+					apply_filters( 'astra_site_title', get_bloginfo( 'name' ) )
+				)
+			);
 
 			// Site Description.
-			$site_tagline_markup = '<p class="site-description" itemprop="description">' . get_bloginfo( 'description' ) . '</p>';
+			/**
+			 * Filters the site description markup.
+			 *
+			 * @since x.x.x
+			 *
+			 * @param string the HTML output for Site Title.
+			 */
+			$site_tagline_markup = apply_filters(
+				'astra_site_description_markup', sprintf(
+					'<p class="site-description" itemprop="description">
+					%1$s
+				</p>',
+					/**
+					* Filters the site description.
+					*
+					* @since x.x.x
+					*
+					* @param string site description
+					*/
+					apply_filters( 'astra_site_description', get_bloginfo( 'description' ) )
+				)
+			);
 
 			if ( $display_site_title || $display_site_tagline ) {
 				/* translators: 1: Site Title Markup, 2: Site Tagline Markup */
@@ -277,11 +330,18 @@ if ( ! function_exists( 'astra_get_search' ) ) {
 	 * @return mixed Search HTML structure created.
 	 */
 	function astra_get_search( $option = '' ) {
-
-		$search_html  = '<div class="ast-search-icon"><a class="slide-search astra-search-icon" href="#"><span class="screen-reader-text">' . esc_html__( 'Search', 'astra' ) . '</span></a></div>
-						<div class="ast-search-menu-icon slide-search" id="ast-search-form" >';
-		$search_html .= get_search_form( false );
-		$search_html .= '</div>';
+		ob_start();
+		?>
+		<div class="ast-search-menu-icon slide-search" id="ast-search-form">
+			<div class="ast-search-icon">
+				<a class="slide-search astra-search-icon" href="#">
+					<span class="screen-reader-text"><?php esc_html_e( 'Search', 'astra' ); ?></span>
+				</a>
+			</div>
+			<?php astra_get_search_form(); ?>
+		</div>
+		<?php
+		$search_html = ob_get_clean();
 
 		return apply_filters( 'astra_get_search', $search_html, $option );
 	}
@@ -1205,11 +1265,13 @@ if ( ! function_exists( 'astra_get_post_thumbnail' ) ) {
 
 			if ( $featured_image && ( ! ( $check_is_singular ) || ( ! post_password_required() && ! is_attachment() && has_post_thumbnail() ) ) ) {
 
-				$post_thumb = get_the_post_thumbnail(
-					get_the_ID(),
-					apply_filters( 'astra_post_thumbnail_default_size', 'large' ),
-					array(
-						'itemprop' => 'image',
+				$post_thumb = apply_filters(
+					'astra_featured_image_markup', get_the_post_thumbnail(
+						get_the_ID(),
+						apply_filters( 'astra_post_thumbnail_default_size', 'large' ),
+						array(
+							'itemprop' => 'image',
+						)
 					)
 				);
 
@@ -1339,7 +1401,7 @@ if ( ! function_exists( 'astra_replace_header_attr' ) ) :
 
 			$diff_retina_logo = astra_get_option( 'different-retina-logo' );
 
-			if ( '1' === $diff_retina_logo ) {
+			if ( '1' == $diff_retina_logo ) {
 
 				$retina_logo = astra_get_option( 'ast-header-retina-logo' );
 
