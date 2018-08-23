@@ -52,7 +52,7 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 		 */
 		public static function get_instance() {
 			if ( ! isset( self::$instance ) ) {
-				self::$instance = new self;
+				self::$instance = new self();
 			}
 			return self::$instance;
 		}
@@ -614,7 +614,8 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 			wp_register_script( 'astra-customizer-preview-js', ASTRA_THEME_URI . 'assets/js/' . $dir . '/customizer-preview' . $js_prefix, array( 'customize-preview' ), null, ASTRA_THEME_VERSION );
 
 			$localize_array = array(
-				'headerBreakpoint' => astra_header_break_point(),
+				'headerBreakpoint'            => astra_header_break_point(),
+				'includeAnchorsInHeadindsCss' => Astra_Dynamic_CSS::anchors_in_css_selectors_heading(),
 			);
 
 			wp_localize_script( 'astra-customizer-preview-js', 'astraCustomizer', $localize_array );
@@ -652,7 +653,7 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 		 *
 		 * @return array
 		 */
-		static public function logo_image_sizes( $sizes, $metadata ) {
+		public static function logo_image_sizes( $sizes, $metadata ) {
 
 			$logo_width = astra_get_option( 'ast-header-responsive-logo-width' );
 
@@ -674,7 +675,7 @@ if ( ! class_exists( 'Astra_Customizer' ) ) {
 		 * @since 1.0.0
 		 * @param int $custom_logo_id Logo id.
 		 */
-		static public function generate_logo_by_width( $custom_logo_id ) {
+		public static function generate_logo_by_width( $custom_logo_id ) {
 			if ( $custom_logo_id ) {
 
 				$image = get_post( $custom_logo_id );

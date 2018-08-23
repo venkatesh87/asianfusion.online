@@ -44,7 +44,7 @@ if ( ! function_exists( 'astra_get_foreground_color' ) ) {
 			$b   = hexdec( substr( $hex, 4, 2 ) );
 			$hex = ( ( $r * 299 ) + ( $g * 587 ) + ( $b * 114 ) ) / 1000;
 
-			return 128 <= $hex ? '#000000' : '#ffffff';
+			return 128 <= $hex ? '#222222' : '#ffffff';
 		}
 	}
 }
@@ -1043,4 +1043,44 @@ if ( ! function_exists( 'astra_get_pro_url' ) ) :
 		return esc_url( $url );
 	}
 
+endif;
+
+
+/**
+ * Search Form
+ */
+if ( ! function_exists( 'astra_get_search_form' ) ) :
+	/**
+	 * Display search form.
+	 *
+	 * @param bool $echo Default to echo and not return the form.
+	 * @return string|void String when $echo is false.
+	 */
+	function astra_get_search_form( $echo = true ) {
+
+		$form = '<form role="search" method="get" class="search-form" action="' . esc_url( home_url( '/' ) ) . '">
+			<label>
+				<span class="screen-reader-text">' . _x( 'Search for:', 'label', 'astra' ) . '</span>
+				<input type="search" class="search-field" placeholder="' . esc_attr_x( 'Search &hellip;', 'placeholder', 'astra' ) . '" value="' . get_search_query() . '" name="s" />
+			</label>
+			<button type="submit" class="search-submit" value="' . esc_html__( 'Search', 'astra' ) . '"><i class="astra-search-icon"></i></button>
+		</form>';
+
+		/**
+		 * Filters the HTML output of the search form.
+		 *
+		 * @param string $form The search form HTML output.
+		 */
+		$result = apply_filters( 'astra_get_search_form', $form );
+
+		if ( null === $result ) {
+			$result = $form;
+		}
+
+		if ( $echo ) {
+			echo $result;
+		} else {
+			return $result;
+		}
+	}
 endif;

@@ -1,3 +1,8 @@
+v1.4.9
+- Improvement: Search will not turn into search box on mobile devices. This will make search layouts usable on mobile devices as well.
+- Fix: Elementor Pro's WooCommerce grid adding not displayed in full width because of Astra's WooCommerce options.
+- Fix: Content width not working in Full width / stretched container layout.
+
 v1.4.8
 - Fix: Correctly sanitize font-family settings in customizer. This fixes font-family settings not being saved.
 
