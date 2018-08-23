@@ -369,34 +369,35 @@ var astraTriggerEvent = function astraTriggerEvent( el, typeArg ) {
 	for (var i = 0; i < SearchIcons.length; i++) {
 
 		SearchIcons[i].onclick = function(event) {
-			if ( this.classList.contains( 'slide-search' ) ) {
-				event.preventDefault();
-				var sibling = this.parentNode.parentNode.querySelector( '.ast-search-menu-icon' );
-				if ( ! sibling.classList.contains( 'ast-dropdown-active' ) ) {
-					sibling.classList.add( 'ast-dropdown-active' );
-					sibling.querySelector( '.search-field' ).setAttribute('autocomplete','off');
-					setTimeout(function() {
-						sibling.querySelector( '.search-field' ).focus();
-					},200);
-				} else {
-					sibling.classList.remove( 'ast-dropdown-active' );
-				}
-			}
-		}
+            if ( this.classList.contains( 'slide-search' ) ) {
+                event.preventDefault();
+                var sibling = this.parentNode.parentNode.parentNode.querySelector( '.ast-search-menu-icon' );
+                if ( ! sibling.classList.contains( 'ast-dropdown-active' ) ) {
+                    sibling.classList.add( 'ast-dropdown-active' );
+                    sibling.querySelector( '.search-field' ).setAttribute('autocomplete','off');
+                    setTimeout(function() {
+                     sibling.querySelector( '.search-field' ).focus();
+                    },200);
+                } else {
+                	var searchTerm = sibling.querySelector( '.search-field' ).value || '';
+	                if( '' !== searchTerm ) {
+    		            sibling.querySelector( '.search-form' ).submit();
+                    }
+                    sibling.classList.remove( 'ast-dropdown-active' );
+                }
+            }
+        }
 	};
 
 	/* Hide Dropdown on body click*/
 	document.body.onclick = function( event ) {
-		if ( ! this.classList.contains( 'ast-header-break-point' ) ) {
-			if ( ! event.target.classList.contains( 'ast-search-menu-icon' ) && getParents( event.target, '.ast-search-menu-icon' ).length === 0 && getParents( event.target, '.ast-search-icon' ).length === 0  ) {
-
-				var dropdownSearchWrap = document.getElementsByClassName( 'ast-search-menu-icon' );
-
-				for (var i = 0; i < dropdownSearchWrap.length; i++) {
-					dropdownSearchWrap[i].classList.remove( 'ast-dropdown-active' );
-				};
-			}
-		}
+		if ( ! event.target.classList.contains( 'ast-search-menu-icon' ) && getParents( event.target, '.ast-search-menu-icon' ).length === 0 && getParents( event.target, '.ast-search-icon' ).length === 0  ) {
+            var dropdownSearchWrap = document.getElementsByClassName( 'ast-search-menu-icon' );
+            
+            for (var i = 0; i < dropdownSearchWrap.length; i++) {
+                dropdownSearchWrap[i].classList.remove( 'ast-dropdown-active' );
+            };
+        }
 	}
 	/**
 	 * Navigation Keyboard Navigation.

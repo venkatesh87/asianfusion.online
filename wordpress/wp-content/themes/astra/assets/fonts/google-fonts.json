@@ -4131,6 +4131,22 @@
         }
     },
     {
+        "Kosugi": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
+        "Kosugi Maru": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
         "Kotta One": {
             "variants": [
                 "regular"
@@ -4563,6 +4579,34 @@
                 "regular"
             ],
             "category": "serif"
+        }
+    },
+    {
+        "M PLUS 1p": {
+            "variants": [
+                "100",
+                "300",
+                "regular",
+                "500",
+                "700",
+                "800",
+                "900"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
+        "M PLUS Rounded 1c": {
+            "variants": [
+                "100",
+                "300",
+                "regular",
+                "500",
+                "700",
+                "800",
+                "900"
+            ],
+            "category": "sans-serif"
         }
     },
     {
@@ -7116,6 +7160,22 @@
                 "regular"
             ],
             "category": "handwriting"
+        }
+    },
+    {
+        "Sawarabi Gothic": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
+        }
+    },
+    {
+        "Sawarabi Mincho": {
+            "variants": [
+                "regular"
+            ],
+            "category": "sans-serif"
         }
     },
     {

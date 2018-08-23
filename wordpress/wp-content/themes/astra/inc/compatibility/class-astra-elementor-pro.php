@@ -70,6 +70,7 @@ if ( ! class_exists( 'Astra_Elementor_Pro' ) ) :
 
 			add_action( 'astra_entry_content_404_page', array( $this, 'do_template_part_404' ), 0 );
 
+			add_filter( 'post_class', array( $this, 'render_post_class' ), 99 );
 			// Override post meta.
 			add_action( 'wp', array( $this, 'override_meta' ), 0 );
 		}
@@ -262,6 +263,66 @@ if ( ! class_exists( 'Astra_Elementor_Pro' ) ) :
 			}
 		}
 
+		/**
+		 * Remove theme post's default classes when Elementor's template builder is activated.
+		 *
+		 * @param  array $classes Post Classes.
+		 * @return array
+		 * @since  1.4.9
+		 */
+		function render_post_class( $classes ) {
+			$post_class = array( 'elementor-post elementor-grid-item', 'elementor-portfolio-item' );
+			$result     = array_intersect( $classes, $post_class );
+
+			if ( count( $result ) > 0 ) {
+				$classes = array_diff(
+					$classes, array(
+						// Astra common grid.
+						'ast-col-sm-12',
+						'ast-col-md-8',
+						'ast-col-md-6',
+						'ast-col-md-12',
+
+						// Astra Blog / Single Post.
+						'ast-article-post',
+						'ast-article-single',
+						'ast-separate-posts',
+						'remove-featured-img-padding',
+						'ast-featured-post',
+
+						// Astra Woocommerce.
+						'ast-product-gallery-layout-vertical',
+						'ast-product-gallery-layout-horizontal',
+						'ast-product-gallery-with-no-image',
+
+						'ast-product-tabs-layout-vertical',
+						'ast-product-tabs-layout-horizontal',
+
+						'ast-qv-disabled',
+						'ast-qv-on-image',
+						'ast-qv-on-image-click',
+						'ast-qv-after-summary',
+
+						'astra-woo-hover-swap',
+
+						'box-shadow-0',
+						'box-shadow-0-hover',
+						'box-shadow-1',
+						'box-shadow-1-hover',
+						'box-shadow-2',
+						'box-shadow-2-hover',
+						'box-shadow-3',
+						'box-shadow-3-hover',
+						'box-shadow-4',
+						'box-shadow-4-hover',
+						'box-shadow-5',
+						'box-shadow-5-hover',
+					)
+				);
+			}
+			return $classes;
+		}
+
 	}
 
 	/**
@@ -270,4 +331,3 @@ if ( ! class_exists( 'Astra_Elementor_Pro' ) ) :
 	Astra_Elementor_Pro::get_instance();
 
 endif;
-
