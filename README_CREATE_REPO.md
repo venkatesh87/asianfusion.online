@@ -4,3 +4,4 @@
     run `sudo ./certbot.sh asianfusion.online`
     run `./sync-certs-up.sh`
 4. Go back to repo, run `./ec2.sh deploy`
+5. Create A records in AWS
