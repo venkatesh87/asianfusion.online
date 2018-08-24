@@ -116,6 +116,9 @@ Search for `change-me`, they are the values you most likely need to change.
     
     // S3 bucket for WordPress paid plugins
     "pluginS3Bucket": "change-me",
+
+    // S3 bucket for database backup files
+    "dbBackupS3Bucket": "change-me",
     
     // AWS user Access Key ID with S3 permissions. This is used by Offload S3 plugin.
     "s3AccessKeyId": "change-me",
