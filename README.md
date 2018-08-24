@@ -456,4 +456,3 @@ If you would like AWS as your SMTP server
 
 ## Licensing
 MIT - See included LICENSE.md
->>>>>>> upstream/master
