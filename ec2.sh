@@ -297,8 +297,10 @@ rm \$SQL_FILE' | sudo tee ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh > /dev/null 2>&1
 
 readonly CHANGE_CRON_PERMISSION_CMD="sudo chmod 777 ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh"
 
+# Run CRON jobs anywhere between 00:00 to 04:59
 readonly MIN=$((RANDOM % 60))
-readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} * * * * root ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh' | sudo tee /etc/cron.d/${DB_BACKUP_CRON_NAME} > /dev/null 2>&1"
+readonly HOUR=$((RANDOM % 5))
+readonly SETUP_DB_BACKUP_CRON_CMD="echo '${MIN} ${HOUR} * * * root ${CRON_DIR}/${DB_BACKUP_CRON_NAME}.sh' | sudo tee /etc/cron.d/${DB_BACKUP_CRON_NAME} > /dev/null 2>&1"
 
 ec2_ssh_run_cmd "$CREATE_DB_BACKUP_CRON_CMD;$CHANGE_CRON_PERMISSION_CMD;$SETUP_DB_BACKUP_CRON_CMD"
 
