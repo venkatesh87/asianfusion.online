@@ -141,7 +141,7 @@ if ( ! class_exists( 'Astra_Header_Layout_Configs' ) ) {
 					'control'     => 'number',
 					'section'     => 'section-header',
 					'priority'    => 25,
-					'title'       => __( 'Bottom Border Size', 'astra' ),
+					'title'       => __( 'Header Bottom Border Size', 'astra' ),
 					'input_attrs' => array(
 						'min'  => 0,
 						'step' => 1,
@@ -161,7 +161,7 @@ if ( ! class_exists( 'Astra_Header_Layout_Configs' ) ) {
 					'control'   => 'ast-color',
 					'section'   => 'section-header',
 					'priority'  => 30,
-					'title'     => __( 'Bottom Border Color', 'astra' ),
+					'title'     => __( 'Header Bottom Border Color', 'astra' ),
 				),
 
 				/**
