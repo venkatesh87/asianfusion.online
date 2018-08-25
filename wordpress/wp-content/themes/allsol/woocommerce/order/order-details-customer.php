@@ -35,8 +35,8 @@ $show_shipping = ! wc_ship_to_billing_address_only() && $order->needs_shipping_a
 		<?php echo wp_kses_post( $order->get_formatted_billing_address( __( 'N/A', 'woocommerce' ) ) ); ?>
 
 		<?php if ( $order->get_billing_phone() ) : ?>
-			<p class="woocommerce-customer-details--phone"><?php echo esc_html( $order->get_billing_phone() ); ?></p>
-    <?php endif; ?>
+      <p class="woocommerce-customer-details--phone">
+        <?php echo esc_html( $order->get_billing_phone() ); ?>
 
     <?php
       // Customization block: add billing phone extension
@@ -45,6 +45,9 @@ $show_shipping = ! wc_ship_to_billing_address_only() && $order->needs_shipping_a
         echo 'ext. ' . esc_html( $billing_phone_ext );
       }
     ?>
+
+      </p>
+    <?php endif; ?>
 
 		<?php if ( $order->get_billing_email() ) : ?>
 			<p class="woocommerce-customer-details--email"><?php echo esc_html( $order->get_billing_email() ); ?></p>
