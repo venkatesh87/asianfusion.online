@@ -4,30 +4,81 @@
 // Woocommerce customizations
 //
 
+$timezone = get_custom( 'timezone' );
+if ( !$timezone ) {
+  $timezone = 'American/New_York';
+}
+
+$default_state = get_custom( 'default_state' );
+if ( !$default_state ) {
+  $default_state = 'NY';
+}
+
+$menu_items_per_page = get_custom( 'menu_items_per_page' );
+if ( !$menu_items_per_page ) {
+  $menu_items_per_page = 100;
+}
+
+$item_select_button_text = get_custom( 'item_select_button_text' );
+if ( !$item_select_button_text ) {
+  $item_select_button_text = 'Select options'; 
+}
+
+define( 'TIMEZONE', $timezone );
+define( 'DEFAULT_STATE', $default_state );
+define( 'MENU_ITEMS_PER_PAGE', $menu_items_per_page );
+define( 'ITEM_SELECT_BUTTON_TEXT', $item_select_button_text );
+
+// Make sure correct timezone is used
+date_default_timezone_set( TIMEZONE );
+
+// Change the default state on the checkout page
+add_filter( 'default_checkout_billing_state', 'change_default_checkout_state' );
+add_filter( 'default_checkout_shipping_state', 'change_default_checkout_state' );
+function change_default_checkout_state() {
+  return DEFAULT_STATE;
+}
+
+// Change number of products that are displayed per page (shop page)
+add_filter( 'loop_shop_per_page', 'new_loop_shop_per_page', 20 );
+function new_loop_shop_per_page( $cols ) {
+  return MENU_ITEMS_PER_PAGE;
+}
+
 //
 // Change text
 //
 add_filter( 'gettext', 'change_woocommerce_return_to_shop_text', 20, 3 );
 function change_woocommerce_return_to_shop_text( $translated_text, $text, $domain ) {
   switch ( $translated_text ) {
-    case 'Product' :
+  case 'Select options':
+      if ( ITEM_SELECT_BUTTON_TEXT !== 'Select options') {
+        $translated_text = __( ITEM_SELECT_BUTTON_TEXT, 'woocommerce' );
+      }
+      break;
+    case 'Product':
       $translated_text = __( 'Item', 'woocommerce' );
       break;
-    case 'Return to shop' :
+    case 'Return to shop':
       $translated_text = __( 'Return to menu', 'woocommerce' );
       break;
-    case 'Go shop' :
+    case 'Go shop':
       $translated_text = __( 'Go to menu', 'woocommerce' );
       break;
-    case 'Ship to a different address?' :
+    case 'Ship to a different address?':
       $translated_text = __( 'Check here if this is a <strong>delivery order</strong> and delivery address is different from billing.', 'woocommerce' );
       break;
-    case 'Search products&hellip;' :
+    case 'Search products&hellip;':
       $translated_text = __( 'Search menu&hellip;', 'woocommerce' );
     break;
   }
   return $translated_text;
 }
+
+//
+// Disable sorting
+//
+remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
 
 //
 // Remove country fields from checkout
