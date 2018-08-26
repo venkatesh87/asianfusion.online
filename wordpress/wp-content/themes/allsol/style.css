@@ -6,7 +6,51 @@
  Author URI:   https://www.azhao.me
  Template:     astra
  Version:      1.0
+*/
 
- /* == Add your own styles below this line ==
---------------------------------------------*/
+/* Remove product count under category name */
+.woocommerce-page ul.products li.product .woocommerce-loop-category__title .count {
+  display: none;
+}
 
+/* Remove category name above item on category product page */
+/* This is an Astra class */
+.woocommerce .ast-woo-product-category {
+  display: none !important;
+}
+
+/* Order detail - remove unnecessary icons */
+.woocommerce-customer-details .woocommerce-customer-details--phone::before,
+.woocommerce-customer-details .woocommerce-customer-details--email::before {
+  display: none;
+}
+
+.woocommerce-customer-details .woocommerce-customer-details--phone,
+.woocommerce-customer-details .woocommerce-customer-details--email {
+  padding-left: 0!important;
+}
+
+/* Checkout - billing and shipping phone/ext */
+#billing_first_name_field, #billing_last_name_field,
+#shipping_first_name_field, #shipping_last_name_field,
+#billing_phone_field, #billing_phone_ext_field,
+#shipping_phone_field, #shipping_phone_ext_field {
+  display: inline-block;
+  width: 50%!important;
+}
+
+#billing_city_field, #billing_state_field, #billing_postcode_field,
+#shipping_city_field, #shipping_state_field, #shipping_postcode_field
+{
+  display: inline-block;
+  width: 33.33%!important;
+}
+
+.select2-selection {
+  margin: 0!important;
+}
+
+/* Side cart - remove checkmark */
+.xoo-wsc-icon-checkmark {
+  display: none;
+}
