@@ -8,6 +8,17 @@
  Version:      1.0
 */
 
+/* Remove product count under category name */
+.woocommerce-page ul.products li.product .woocommerce-loop-category__title .count {
+  display: none;
+}
+
+/* Remove category name above item on category product page */
+/* This is an Astra class */
+.woocommerce .ast-woo-product-category {
+  display: none !important;
+}
+
 /* Order detail - remove unnecessary icons */
 .woocommerce-customer-details .woocommerce-customer-details--phone::before,
 .woocommerce-customer-details .woocommerce-customer-details--email::before {
