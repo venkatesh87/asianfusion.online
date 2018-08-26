@@ -9,13 +9,13 @@
 */
 
 /* Order detail - remove unnecessary icons */
-.woocommerce-order .woocommerce-customer-details--phone::before,
-.woocommerce-order .woocommerce-customer-details--email::before {
+.woocommerce-customer-details .woocommerce-customer-details--phone::before,
+.woocommerce-customer-details .woocommerce-customer-details--email::before {
   display: none;
 }
 
-.woocommerce-order .woocommerce-customer-details--phone,
-.woocommerce-order .woocommerce-customer-details--email {
+.woocommerce-customer-details .woocommerce-customer-details--phone,
+.woocommerce-customer-details .woocommerce-customer-details--email {
   padding-left: 0!important;
 }
 
