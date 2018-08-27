@@ -9,6 +9,7 @@
 /wordpress/wp-config.php
 /wordpress/.ebextensions/default.config
 /wordpress/wp-content/uploads/elementor/css/
+wordpress/wp-content/wflogs/
 
 /mysql/data/*
 /mysq/logs/*
