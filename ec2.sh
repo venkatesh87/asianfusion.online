@@ -3,6 +3,7 @@
 source ./variables.sh
 source ./functions.sh
 
+
 #
 # Begin functions
 #
