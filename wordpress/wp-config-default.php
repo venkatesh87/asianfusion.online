@@ -18,29 +18,33 @@
  * @package WordPress
  */
 
-// Configure server URL dynamically so that multiple environment URLs work
 
-// More reliable way to determine https protocol in load balancing environments
+/** More reliable way to determine https protocol in load balancing environments **/
 define('SERVER_PROTOCOL', isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : ((isset( $_SERVER["HTTPS"] ) && strtolower( $_SERVER["HTTPS"] ) == "on" ) ? 'https' : 'http')); 
 
+/** Configure server URL dynamically so that multiple environment URLs work **/
 $serverUrl = SERVER_PROTOCOL . '://' . $_SERVER['HTTP_HOST'];
-
 define('WP_SITEURL', $serverUrl);
 define('WP_HOME', $serverUrl);
 
+/** Disable file editing **/
+define('DISALLOW_FILE_EDIT', true);
 
-// ** MySQL settings - You can get this info from your web host ** //
-/** The name of the database for WordPress */
-define('DB_NAME', 'to-be-replaced');
+/** Custom MAMP setup **/
+define('WP_NAME', '');
 
-/** MySQL database username */
-define('DB_USER', 'to-be-replaced');
-
-/** MySQL database password */
-define('DB_PASSWORD', 'to-be-replaced');
-
-/** MySQL hostname */
-define('DB_HOST', 'to-be-replaced');
+/** MySQL credentials **/
+if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === WP_NAME) {
+  define('DB_USER', 'root');
+  define('DB_PASSWORD', 'root');
+  define('DB_NAME', WP_NAME);
+  define('DB_HOST', 'localhost:8777');
+} else {
+  define('DB_NAME', 'to-be-replaced');
+  define('DB_USER', 'to-be-replaced');
+  define('DB_PASSWORD', 'to-be-replaced');
+  define('DB_HOST', 'to-be-replaced');
+}
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8mb4');
@@ -48,8 +52,7 @@ define('DB_CHARSET', 'utf8mb4');
 /** The Database Collate type. Don't change this if in doubt. */
 define('DB_COLLATE', '');
 
-/** Disable file editing **/
-define('DISALLOW_FILE_EDIT', true);
+
 
 /**#@+
  * Authentication Unique Keys and Salts.
