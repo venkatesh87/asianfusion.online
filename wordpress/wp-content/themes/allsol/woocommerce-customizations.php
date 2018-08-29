@@ -6,7 +6,7 @@
 
 $timezone = get_custom( 'timezone' );
 if ( !$timezone ) {
-  $timezone = 'American/New_York';
+  $timezone = 'America/New_York';
 }
 
 $default_state = get_custom( 'default_state' );
