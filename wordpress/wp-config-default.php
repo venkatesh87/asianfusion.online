@@ -35,10 +35,10 @@ define('WP_NAME', '');
 
 /** MySQL credentials **/
 if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === WP_NAME) {
-  define('DB_USER', 'root');
-  define('DB_PASSWORD', 'root');
+  define('DB_USER', 'wordpress');
+  define('DB_PASSWORD', 'wordpress');
   define('DB_NAME', WP_NAME);
-  define('DB_HOST', 'localhost:8777');
+  define('DB_HOST', '127.0.0.1');
 } else {
   define('DB_NAME', 'to-be-replaced');
   define('DB_USER', 'to-be-replaced');
