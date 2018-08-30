@@ -41,8 +41,10 @@ source ./install-check.sh
 # Start configurations #
 ########################
 
-# Application domain name
+# Domain name
 readonly DOMAIN_NAME=$(jq -r ".domainName" $APP_CONFIG_FILE)
+# Domain alias (delimited by space)
+readonly DOMAIN_ALIAS=$(jq -r ".domainAlias" $APP_CONFIG_FILE)
 # Environment name
 readonly ENV_NAME=${APP_NAME}-${APP_BRANCH}
 # Public web directory
@@ -221,6 +223,7 @@ fi
 THIS_DOMAIN_NAME=$DOMAIN_NAME
 HTTPS_DOMAIN_NAME=''
 THIS_SERVER_ALIAS=''
+THIS_SERVER_ALIAS_REDIRECT=''
 
 # Apache log levels
 # emerg   Emergencies - system is unusable.
@@ -238,13 +241,26 @@ if [ "$APP_BRANCH" != "master" ]; then
   HTTPS_DOMAIN_NAME=$THIS_DOMAIN_NAME
   LOG_LEVEL=debug
 else
-  THIS_SERVER_ALIAS="ServerAlias www.${DOMAIN_NAME}"
   HTTPS_DOMAIN_NAME="www.${DOMAIN_NAME}"
+
+  THIS_SERVER_ALIAS="ServerAlias www.${DOMAIN_NAME}"
+
+  if [ "$DOMAIN_ALIAS" != "" ]; then
+    for ALIAS in $DOMAIN_ALIAS
+    do
+      THIS_SERVER_ALIAS="$THIS_SERVER_ALIAS $ALIAS"
+      THIS_SERVER_ALIAS="$THIS_SERVER_ALIAS www.$ALIAS"
+
+      THIS_SERVER_ALIAS_REDIRECT="$THIS_SERVER_ALIAS_REDIRECT{NEWLINE}<If \"req('Host') =~ \/$ALIAS\/i\">{NEWLINE}RedirectMatch (\.\*) https:\/\/$HTTPS_DOMAIN_NAME\$1{NEWLINE}<\/If>"
+    done
+  fi
 fi
 
 sed -i '' -e "s/{ENV_NAME}/${ENV_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{THIS_DOMAIN_NAME}/${THIS_DOMAIN_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{THIS_SERVER_ALIAS}/${THIS_SERVER_ALIAS}/g" $TMP_HTTPD_CONF_FILE
+sed -i '' -e "s/{THIS_SERVER_ALIAS_REDIRECT}/${THIS_SERVER_ALIAS_REDIRECT}/g" $TMP_HTTPD_CONF_FILE
+sed -i '' -e 's/{NEWLINE}/\'$'\n''/g' $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{HTTPS_DOMAIN_NAME}/${HTTPS_DOMAIN_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{DOMAIN_NAME}/${DOMAIN_NAME}/g" $TMP_HTTPD_CONF_FILE
 sed -i '' -e "s/{SERVER_NAME}/${SERVER_NAME}/g" $TMP_HTTPD_CONF_FILE
