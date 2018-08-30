@@ -220,7 +220,20 @@ if ( ! class_exists( 'Astra_Admin_Settings' ) ) {
 
 			$assets_js_uri = ASTRA_THEME_URI . 'assets/js/' . $dir_name . '/';
 
-			wp_enqueue_script( 'astra-color-alpha', $assets_js_uri . 'wp-color-picker-alpha' . $file_prefix . '.js', array( 'jquery', 'customize-base', 'wp-color-picker' ), ASTRA_THEME_VERSION, true );
+			/**
+			 * Filters the Admin JavaScript handles added
+			 *
+			 * @since v1.4.10
+			 *
+			 * @param array array of the javascript handles.
+			 */
+			$js_handle = apply_filters( 'astra_admin_script_handles', array( 'jquery', 'wp-color-picker' ) );
+			// Add customize-base handle only for the Customizer Preview Screen.
+			if ( true === is_customize_preview() ) {
+				$js_handle[] = 'customize-base';
+			}
+
+			wp_enqueue_script( 'astra-color-alpha', $assets_js_uri . 'wp-color-picker-alpha' . $file_prefix . '.js', $js_handle, ASTRA_THEME_VERSION, true );
 		}
 
 		/**
