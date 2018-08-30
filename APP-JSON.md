@@ -9,7 +9,12 @@ Search for `change-me`, they are the values you most likely need to change.
   // The domain name of this site
   "domainName": "",
 
-  // Act as the "ServerAlias" Apache config
+  // Act as the "ServerAlias" of Apache config
+  // For example: your main domain is domain.com, you want domain.net and domain.org to direct to the main domain,
+  // put "domain.net domain.org" here
+  // Make sure follow are complete:
+  // 1. DNS for these alias domains have to point to the same server
+  // 2. The SSL for the site need to include all domain names
   "domainAlias": "",
   
   // Directory where WordPress source code is

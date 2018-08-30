@@ -944,7 +944,7 @@ if ( ! class_exists( 'Astra_Dynamic_CSS' ) ) {
 		 *
 		 * @access Private.
 		 *
-		 * @since x.x.x
+		 * @since 1.4.9
 		 * @param String $selectors_with_achors CSS Selectors with anchors.
 		 * @param String $selectors_without_achors CSS Selectors withour annchors.
 		 *
@@ -963,7 +963,7 @@ if ( ! class_exists( 'Astra_Dynamic_CSS' ) ) {
 		/**
 		 * Check if CSS selectors in Headings should use anchors.
 		 *
-		 * @since x.x.x
+		 * @since 1.4.9
 		 * @return boolean true if it should include anchors, False if not.
 		 */
 		public static function anchors_in_css_selectors_heading() {
