@@ -59,6 +59,9 @@ function change_woocommerce_return_to_shop_text( $translated_text, $text, $domai
     case 'Product':
       $translated_text = __( 'Item', 'woocommerce' );
       break;
+    case 'Related products':
+      $translated_text = __( 'You might also like', 'woocommerce' );
+      break;
     case 'Return to shop':
       $translated_text = __( 'Return to menu', 'woocommerce' );
       break;
