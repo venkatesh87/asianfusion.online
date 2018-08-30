@@ -188,7 +188,7 @@ if ( ! function_exists( 'astra_logo' ) ) {
 			/**
 			 * Filters the site title output.
 			 *
-			 * @since x.x.x
+			 * @since 1.4.9
 			 *
 			 * @param string the HTML output for Site Title.
 			 */
@@ -211,7 +211,7 @@ if ( ! function_exists( 'astra_logo' ) ) {
 					/**
 					* Filters the href for the site title.
 					*
-					* @since x.x.x
+					* @since 1.4.9
 					*
 					* @param string site title home url
 					*/
@@ -219,7 +219,7 @@ if ( ! function_exists( 'astra_logo' ) ) {
 					/**
 					* Filters the site title.
 					*
-					* @since x.x.x
+					* @since 1.4.9
 					*
 					* @param string site title
 					*/
@@ -231,7 +231,7 @@ if ( ! function_exists( 'astra_logo' ) ) {
 			/**
 			 * Filters the site description markup.
 			 *
-			 * @since x.x.x
+			 * @since 1.4.9
 			 *
 			 * @param string the HTML output for Site Title.
 			 */
@@ -243,7 +243,7 @@ if ( ! function_exists( 'astra_logo' ) ) {
 					/**
 					* Filters the site description.
 					*
-					* @since x.x.x
+					* @since 1.4.9
 					*
 					* @param string site description
 					*/
