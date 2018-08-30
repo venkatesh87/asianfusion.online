@@ -7,7 +7,10 @@ Search for `change-me`, they are the values you most likely need to change.
   "appName": "change-me",
   
   // The domain name of this site
-  "domainName": "change-me",
+  "domainName": "",
+
+  // Act as the "ServerAlias" Apache config
+  "domainAlias": "",
   
   // Directory where WordPress source code is
   "publicWebDir": "wordpress",
