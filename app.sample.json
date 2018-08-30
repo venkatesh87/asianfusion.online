@@ -1,6 +1,7 @@
 {
   "appName": "change-me",
-  "domainName": "change-me",
+  "domainName": "",
+  "domainAlias": "",
   "publicWebDir": "wordpress",
   "connectLocalMysqlForDev": 0,
   "docker": {
