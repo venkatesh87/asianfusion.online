@@ -46,6 +46,14 @@ function new_loop_shop_per_page( $cols ) {
 }
 
 //
+// Change "Shipping" text
+//
+add_filter( 'woocommerce_shipping_package_name', 'custom_shipping_package_name' );
+function custom_shipping_package_name( $name ) {
+  return 'Pickup or delivery?';
+}
+
+//
 // Change text
 //
 add_filter( 'gettext', 'change_woocommerce_return_to_shop_text', 20, 3 );
@@ -55,9 +63,6 @@ function change_woocommerce_return_to_shop_text( $translated_text, $text, $domai
       if ( ITEM_SELECT_BUTTON_TEXT !== 'Select options') {
         $translated_text = __( ITEM_SELECT_BUTTON_TEXT, 'woocommerce' );
       }
-      break;
-    case 'Shipping':
-      $translated_text = __( 'Pickup or delivery?', 'woocommerce' );
       break;
     case 'Product':
       $translated_text = __( 'Item', 'woocommerce' );
