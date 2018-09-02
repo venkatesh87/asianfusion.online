@@ -70,7 +70,7 @@ function change_woocommerce_return_to_shop_text( $translated_text, $text, $domai
       break;
     // Label in email template
     case 'Shipping address':
-      $translated_text = __( 'Delivery address (if applicable)', 'woocommerce' );
+      $translated_text = __( 'Delivery address', 'woocommerce' );
       break;
     case 'Product':
       $translated_text = __( 'Item', 'woocommerce' );
