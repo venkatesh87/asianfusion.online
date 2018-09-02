@@ -56,6 +56,9 @@ function change_woocommerce_return_to_shop_text( $translated_text, $text, $domai
         $translated_text = __( ITEM_SELECT_BUTTON_TEXT, 'woocommerce' );
       }
       break;
+    case 'Shipping':
+      $translated_text = __( 'Pickup or delivery?', 'woocommerce' );
+      break;
     case 'Product':
       $translated_text = __( 'Item', 'woocommerce' );
       break;
