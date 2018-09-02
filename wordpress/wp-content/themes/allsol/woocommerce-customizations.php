@@ -46,7 +46,7 @@ function new_loop_shop_per_page( $cols ) {
 }
 
 //
-// Change "Shipping" text
+// Change "Shipping" text in checkout
 //
 add_filter( 'woocommerce_shipping_package_name', 'custom_shipping_package_name' );
 function custom_shipping_package_name( $name ) {
@@ -63,6 +63,14 @@ function change_woocommerce_return_to_shop_text( $translated_text, $text, $domai
       if ( ITEM_SELECT_BUTTON_TEXT !== 'Select options') {
         $translated_text = __( ITEM_SELECT_BUTTON_TEXT, 'woocommerce' );
       }
+      break;
+    // Label in email template
+    case 'Shipping:':
+      $translated_text = __( 'Pickup or delivery?', 'woocommerce' );
+      break;
+    // Label in email template
+    case 'Shipping address':
+      $translated_text = __( 'Delivery address (if applicable)', 'woocommerce' );
       break;
     case 'Product':
       $translated_text = __( 'Item', 'woocommerce' );
