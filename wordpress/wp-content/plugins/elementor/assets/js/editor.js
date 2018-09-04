@@ -1,4 +1,4 @@
-/*! elementor - v2.2.0 - 28-08-2018 */
+/*! elementor - v2.2.1 - 03-09-2018 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -93,8 +93,8 @@
 
 
 var ControlBaseView = __webpack_require__(7),
-    TagsBehavior = __webpack_require__(87),
-    Validator = __webpack_require__(17),
+    TagsBehavior = __webpack_require__(97),
+    Validator = __webpack_require__(18),
     ControlBaseDataView;
 
 ControlBaseDataView = ControlBaseView.extend({
@@ -1181,9 +1181,9 @@ module.exports = ControlBaseView;
 "use strict";
 
 
-var TemplateLibraryHeaderView = __webpack_require__(13),
+var TemplateLibraryHeaderView = __webpack_require__(14),
     TemplateLibraryHeaderLogoView = __webpack_require__(9),
-    TemplateLibraryLoadingView = __webpack_require__(14);
+    TemplateLibraryLoadingView = __webpack_require__(15);
 
 module.exports = Marionette.LayoutView.extend({
 	el: function el() {
@@ -1311,799 +1311,12 @@ module.exports = Marionette.ItemView.extend({
 "use strict";
 
 
-var ControlsStack;
-
-ControlsStack = Marionette.CompositeView.extend({
-	className: 'elementor-panel-controls-stack',
-
-	classes: {
-		popover: 'elementor-controls-popover'
-	},
-
-	activeTab: null,
-
-	activeSection: null,
-
-	templateHelpers: function templateHelpers() {
-		return {
-			elementData: elementor.getElementData(this.model)
-		};
-	},
-
-	ui: function ui() {
-		return {
-			tabs: '.elementor-panel-navigation-tab',
-			reloadButton: '.elementor-update-preview-button'
-		};
-	},
-
-	events: function events() {
-		return {
-			'click @ui.tabs': 'onClickTabControl',
-			'click @ui.reloadButton': 'onReloadButtonClick'
-		};
-	},
-
-	modelEvents: {
-		'destroy': 'onModelDestroy'
-	},
-
-	behaviors: {
-		HandleInnerTabs: {
-			behaviorClass: __webpack_require__(27)
-		}
-	},
-
-	initialize: function initialize() {
-		this.initCollection();
-
-		this.listenTo(elementor.channels.deviceMode, 'change', this.onDeviceModeChange);
-	},
-
-	initCollection: function initCollection() {
-		this.collection = new Backbone.Collection(_.values(elementor.mergeControlsSettings(this.getOption('controls'))));
-	},
-
-	filter: function filter(controlModel) {
-		if (controlModel.get('tab') !== this.activeTab) {
-			return false;
-		}
-
-		if ('section' === controlModel.get('type')) {
-			return true;
-		}
-
-		var section = controlModel.get('section');
-
-		return !section || section === this.activeSection;
-	},
-
-	isVisibleSectionControl: function isVisibleSectionControl(sectionControlModel) {
-		return this.activeTab === sectionControlModel.get('tab');
-	},
-
-	activateTab: function activateTab(tabName) {
-		this.activeTab = tabName;
-
-		this.ui.tabs.removeClass('elementor-active').filter('[data-tab="' + tabName + '"]').addClass('elementor-active');
-
-		this.activateFirstSection();
-	},
-
-	activateSection: function activateSection(sectionName) {
-		this.activeSection = sectionName;
-	},
-
-	activateFirstSection: function activateFirstSection() {
-		var self = this;
-
-		var sectionControls = self.collection.filter(function (controlModel) {
-			return 'section' === controlModel.get('type') && self.isVisibleSectionControl(controlModel);
-		});
-
-		if (!sectionControls[0]) {
-			return;
-		}
-
-		var preActivatedSection = sectionControls.filter(function (controlModel) {
-			return self.activeSection === controlModel.get('name');
-		});
-
-		if (preActivatedSection[0]) {
-			return;
-		}
-
-		self.activateSection(sectionControls[0].get('name'));
-	},
-
-	getChildView: function getChildView(item) {
-		var controlType = item.get('type');
-
-		return elementor.getControlView(controlType);
-	},
-
-	handlePopovers: function handlePopovers() {
-		var self = this,
-		    popoverStarted = false,
-		    $popover;
-
-		self.removePopovers();
-
-		self.children.each(function (child) {
-			if (popoverStarted) {
-				$popover.append(child.$el);
-			}
-
-			var popover = child.model.get('popover');
-
-			if (!popover) {
-				return;
-			}
-
-			if (popover.start) {
-				popoverStarted = true;
-
-				$popover = jQuery('<div>', { 'class': self.classes.popover });
-
-				child.$el.before($popover);
-
-				$popover.append(child.$el);
-			}
-
-			if (popover.end) {
-				popoverStarted = false;
-			}
-		});
-	},
-
-	removePopovers: function removePopovers() {
-		this.$el.find('.' + this.classes.popover).remove();
-	},
-
-	openActiveSection: function openActiveSection() {
-		var activeSection = this.activeSection,
-		    activeSectionView = this.children.filter(function (view) {
-			return activeSection === view.model.get('name');
-		});
-
-		if (activeSectionView[0]) {
-			activeSectionView[0].$el.addClass('elementor-open');
-		}
-	},
-
-	onRenderCollection: function onRenderCollection() {
-		this.openActiveSection();
-
-		this.handlePopovers();
-	},
-
-	onRenderTemplate: function onRenderTemplate() {
-		this.activateTab(this.activeTab || this.ui.tabs.eq(0).data('tab'));
-	},
-
-	onModelDestroy: function onModelDestroy() {
-		this.destroy();
-	},
-
-	onClickTabControl: function onClickTabControl(event) {
-		event.preventDefault();
-
-		var $tab = this.$(event.currentTarget),
-		    tabName = $tab.data('tab');
-
-		if (this.activeTab === tabName) {
-			return;
-		}
-
-		this.activateTab(tabName);
-
-		this._renderChildren();
-	},
-
-	onReloadButtonClick: function onReloadButtonClick() {
-		elementor.reloadPreview();
-	},
-
-	onDeviceModeChange: function onDeviceModeChange() {
-		this.$el.removeClass('elementor-responsive-switchers-open');
-	},
-
-	onChildviewControlSectionClicked: function onChildviewControlSectionClicked(childView) {
-		var isSectionOpen = childView.$el.hasClass('elementor-open');
-
-		this.activateSection(isSectionOpen ? null : childView.model.get('name'));
-
-		this._renderChildren();
-	},
-
-	onChildviewResponsiveSwitcherClick: function onChildviewResponsiveSwitcherClick(childView, device) {
-		if ('desktop' === device) {
-			this.$el.toggleClass('elementor-responsive-switchers-open');
-		}
-	}
-});
-
-module.exports = ControlsStack;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ContextMenu = __webpack_require__(117);
-
-module.exports = Marionette.Behavior.extend({
-
-	defaults: {
-		groups: [],
-		eventTargets: ['el']
-	},
-
-	events: function events() {
-		var events = {};
-
-		if (!elementor.userCan('design')) {
-			return events;
-		}
-
-		this.getOption('eventTargets').forEach(function (eventTarget) {
-			var eventName = 'contextmenu';
-
-			if ('el' !== eventTarget) {
-				eventName += ' ' + eventTarget;
-			}
-
-			events[eventName] = 'onContextMenu';
-		});
-
-		return events;
-	},
-
-	initialize: function initialize() {
-		this.listenTo(this.view.options.model, 'request:contextmenu', this.onRequestContextMenu);
-	},
-
-	initContextMenu: function initContextMenu() {
-		var contextMenuGroups = this.getOption('groups'),
-		    deleteGroup = _.findWhere(contextMenuGroups, { name: 'delete' }),
-		    afterGroupIndex = contextMenuGroups.indexOf(deleteGroup);
-
-		if (-1 === afterGroupIndex) {
-			afterGroupIndex = contextMenuGroups.length;
-		}
-
-		contextMenuGroups.splice(afterGroupIndex, 0, {
-			name: 'tools',
-			actions: [{
-				name: 'navigator',
-				title: elementor.translate('navigator'),
-				callback: elementor.navigator.open.bind(elementor.navigator, this.view.model)
-			}]
-		});
-
-		this.contextMenu = new ContextMenu({
-			groups: contextMenuGroups
-		});
-
-		this.contextMenu.getModal().on('hide', this.onContextMenuHide);
-	},
-
-	getContextMenu: function getContextMenu() {
-		if (!this.contextMenu) {
-			this.initContextMenu();
-		}
-
-		return this.contextMenu;
-	},
-
-	onContextMenu: function onContextMenu(event) {
-		if (elementor.hotKeys.isControlEvent(event)) {
-			return;
-		}
-
-		var activeMode = elementor.channels.dataEditMode.request('activeMode');
-
-		if ('edit' !== activeMode) {
-			return;
-		}
-
-		event.preventDefault();
-
-		event.stopPropagation();
-
-		this.getContextMenu().show(event);
-
-		elementor.channels.editor.reply('contextMenu:targetView', this.view);
-	},
-
-	onRequestContextMenu: function onRequestContextMenu(event) {
-		var modal = this.getContextMenu().getModal(),
-		    iframe = modal.getSettings('iframe'),
-		    toolsGroup = _.findWhere(this.contextMenu.getSettings('groups'), { name: 'tools' });
-
-		toolsGroup.isVisible = false;
-
-		modal.setSettings('iframe', null);
-
-		this.onContextMenu(event);
-
-		toolsGroup.isVisible = true;
-
-		modal.setSettings('iframe', iframe);
-	},
-
-	onContextMenuHide: function onContextMenuHide() {
-		elementor.channels.editor.reply('contextMenu:targetView', null);
-	},
-
-	onDestroy: function onDestroy() {
-		if (this.contextMenu) {
-			this.contextMenu.destroy();
-		}
-	}
-});
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ViewModule = __webpack_require__(1),
-    Stylesheet = __webpack_require__(23),
-    ControlsCSSParser;
-
-ControlsCSSParser = ViewModule.extend({
-	stylesheet: null,
-
-	getDefaultSettings: function getDefaultSettings() {
-		return {
-			id: 0,
-			settingsModel: null,
-			dynamicParsing: {}
-		};
-	},
-
-	getDefaultElements: function getDefaultElements() {
-		return {
-			$stylesheetElement: jQuery('<style>', { id: 'elementor-style-' + this.getSettings('id') })
-		};
-	},
-
-	initStylesheet: function initStylesheet() {
-		var breakpoints = elementorFrontend.config.breakpoints;
-
-		this.stylesheet = new Stylesheet();
-
-		this.stylesheet.addDevice('mobile', 0).addDevice('tablet', breakpoints.md).addDevice('desktop', breakpoints.lg);
-	},
-
-	addStyleRules: function addStyleRules(styleControls, values, controls, placeholders, replacements) {
-		var self = this,
-		    dynamicParsedValues = self.getSettings('settingsModel').parseDynamicSettings(values, self.getSettings('dynamicParsing'), styleControls);
-
-		_.each(styleControls, function (control) {
-			if (control.styleFields && control.styleFields.length) {
-				self.addRepeaterControlsStyleRules(values[control.name], control.styleFields, controls, placeholders, replacements);
-			}
-
-			if (control.dynamic && control.dynamic.active && values.__dynamic__ && values.__dynamic__[control.name]) {
-				self.addDynamicControlStyleRules(values.__dynamic__[control.name], control);
-			}
-
-			if (!control.selectors) {
-				return;
-			}
-
-			self.addControlStyleRules(control, dynamicParsedValues, controls, placeholders, replacements);
-		});
-	},
-
-	addControlStyleRules: function addControlStyleRules(control, values, controls, placeholders, replacements) {
-		var self = this;
-
-		ControlsCSSParser.addControlStyleRules(self.stylesheet, control, controls, function (control) {
-			return self.getStyleControlValue(control, values);
-		}, placeholders, replacements);
-	},
-
-	getStyleControlValue: function getStyleControlValue(control, values) {
-		var value = values[control.name];
-
-		if (control.selectors_dictionary) {
-			value = control.selectors_dictionary[value] || value;
-		}
-
-		if (!_.isNumber(value) && _.isEmpty(value)) {
-			return;
-		}
-
-		return value;
-	},
-
-	addRepeaterControlsStyleRules: function addRepeaterControlsStyleRules(repeaterValues, repeaterControlsItems, controls, placeholders, replacements) {
-		var self = this;
-
-		repeaterControlsItems.forEach(function (item, index) {
-			var itemModel = repeaterValues.models[index];
-
-			self.addStyleRules(item, itemModel.attributes, controls, placeholders.concat(['{{CURRENT_ITEM}}']), replacements.concat(['.elementor-repeater-item-' + itemModel.get('_id')]));
-		});
-	},
-
-	addDynamicControlStyleRules: function addDynamicControlStyleRules(value, control) {
-		var self = this;
-
-		elementor.dynamicTags.parseTagsText(value, control.dynamic, function (id, name, settings) {
-			var tag = elementor.dynamicTags.createTag(id, name, settings);
-
-			if (!tag) {
-				return;
-			}
-
-			var tagSettingsModel = tag.model,
-			    styleControls = tagSettingsModel.getStyleControls();
-
-			if (!styleControls.length) {
-				return;
-			}
-
-			self.addStyleRules(tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, ['{{WRAPPER}}'], ['#elementor-tag-' + id]);
-		});
-	},
-
-	addStyleToDocument: function addStyleToDocument() {
-		elementor.$previewContents.find('head').append(this.elements.$stylesheetElement);
-
-		this.elements.$stylesheetElement.text(this.stylesheet);
-	},
-
-	removeStyleFromDocument: function removeStyleFromDocument() {
-		this.elements.$stylesheetElement.remove();
-	},
-
-	onInit: function onInit() {
-		ViewModule.prototype.onInit.apply(this, arguments);
-
-		this.initStylesheet();
-	}
-});
-
-ControlsCSSParser.addControlStyleRules = function (stylesheet, control, controls, valueCallback, placeholders, replacements) {
-	var value = valueCallback(control);
-
-	if (undefined === value) {
-		return;
-	}
-
-	_.each(control.selectors, function (cssProperty, selector) {
-		var outputCssProperty;
-
-		try {
-			outputCssProperty = cssProperty.replace(/{{(?:([^.}]+)\.)?([^}]*)}}/g, function (originalPhrase, controlName, placeholder) {
-				var parserControl = control,
-				    valueToInsert = value;
-
-				if (controlName) {
-					parserControl = _.findWhere(controls, { name: controlName });
-
-					if (!parserControl) {
-						return '';
-					}
-
-					valueToInsert = valueCallback(parserControl);
-				}
-
-				var parsedValue = elementor.getControlView(parserControl.type).getStyleValue(placeholder.toLowerCase(), valueToInsert);
-
-				if ('' === parsedValue) {
-					throw '';
-				}
-
-				return parsedValue;
-			});
-		} catch (e) {
-			return;
-		}
-
-		if (_.isEmpty(outputCssProperty)) {
-			return;
-		}
-
-		var devicePattern = /^(?:\([^)]+\)){1,2}/,
-		    deviceRules = selector.match(devicePattern),
-		    query = {};
-
-		if (deviceRules) {
-			deviceRules = deviceRules[0];
-
-			selector = selector.replace(devicePattern, '');
-
-			var pureDevicePattern = /\(([^)]+)\)/g,
-			    pureDeviceRules = [],
-			    matches;
-
-			while (matches = pureDevicePattern.exec(deviceRules)) {
-				pureDeviceRules.push(matches[1]);
-			}
-
-			_.each(pureDeviceRules, function (deviceRule) {
-				if ('desktop' === deviceRule) {
-					return;
-				}
-
-				var device = deviceRule.replace(/\+$/, ''),
-				    endPoint = device === deviceRule ? 'max' : 'min';
-
-				query[endPoint] = device;
-			});
-		}
-
-		_.each(placeholders, function (placeholder, index) {
-			// Check if it's a RegExp
-			var regexp = placeholder.source ? placeholder.source : placeholder,
-			    placeholderPattern = new RegExp(regexp, 'g');
-
-			selector = selector.replace(placeholderPattern, replacements[index]);
-		});
-
-		if (!Object.keys(query).length && control.responsive) {
-			query = _.pick(elementor.helpers.cloneObject(control.responsive), ['min', 'max']);
-
-			if ('desktop' === query.max) {
-				delete query.max;
-			}
-		}
-
-		stylesheet.addRules(selector, outputCssProperty, query);
-	});
-};
-
-module.exports = ControlsCSSParser;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var TemplateLibraryHeaderView;
-
-TemplateLibraryHeaderView = Marionette.LayoutView.extend({
-
-	className: 'elementor-templates-modal__header',
-
-	template: '#tmpl-elementor-templates-modal__header',
-
-	regions: {
-		logoArea: '.elementor-templates-modal__header__logo-area',
-		tools: '#elementor-template-library-header-tools',
-		menuArea: '.elementor-templates-modal__header__menu-area'
-	},
-
-	ui: {
-		closeModal: '.elementor-templates-modal__header__close'
-	},
-
-	events: {
-		'click @ui.closeModal': 'onCloseModalClick'
-	},
-
-	templateHelpers: function templateHelpers() {
-		return {
-			closeType: this.getOption('closeType')
-		};
-	},
-
-	onCloseModalClick: function onCloseModalClick() {
-		this._parent._parent._parent.hideModal();
-	}
-});
-
-module.exports = TemplateLibraryHeaderView;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var TemplateLibraryLoadingView;
-
-TemplateLibraryLoadingView = Marionette.ItemView.extend({
-	id: 'elementor-template-library-loading',
-
-	template: '#tmpl-elementor-template-library-loading'
-});
-
-module.exports = TemplateLibraryLoadingView;
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ViewModule = __webpack_require__(1);
-
-module.exports = ViewModule.extend({
-
-	getDefaultSettings: function getDefaultSettings() {
-		return {
-			container: null,
-			items: null,
-			columnsCount: 3,
-			verticalSpaceBetween: 30
-		};
-	},
-
-	getDefaultElements: function getDefaultElements() {
-		return {
-			$container: jQuery(this.getSettings('container')),
-			$items: jQuery(this.getSettings('items'))
-		};
-	},
-
-	run: function run() {
-		var heights = [],
-		    distanceFromTop = this.elements.$container.position().top,
-		    settings = this.getSettings(),
-		    columnsCount = settings.columnsCount;
-
-		distanceFromTop += parseInt(this.elements.$container.css('margin-top'), 10);
-
-		this.elements.$items.each(function (index) {
-			var row = Math.floor(index / columnsCount),
-			    $item = jQuery(this),
-			    itemHeight = $item[0].getBoundingClientRect().height + settings.verticalSpaceBetween;
-
-			if (row) {
-				var itemPosition = $item.position(),
-				    indexAtRow = index % columnsCount,
-				    pullHeight = itemPosition.top - distanceFromTop - heights[indexAtRow];
-
-				pullHeight -= parseInt($item.css('margin-top'), 10);
-
-				pullHeight *= -1;
-
-				$item.css('margin-top', pullHeight + 'px');
-
-				heights[indexAtRow] += itemHeight;
-			} else {
-				heights.push(itemHeight);
-			}
-		});
-	}
-});
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var HotKeys = function HotKeys() {
-	var hotKeysHandlers = {};
-
-	var applyHotKey = function applyHotKey(event) {
-		var handlers = hotKeysHandlers[event.which];
-
-		if (!handlers) {
-			return;
-		}
-
-		jQuery.each(handlers, function () {
-			var handler = this;
-
-			if (handler.isWorthHandling && !handler.isWorthHandling(event)) {
-				return;
-			}
-
-			// Fix for some keyboard sources that consider alt key as ctrl key
-			if (!handler.allowAltKey && event.altKey) {
-				return;
-			}
-
-			event.preventDefault();
-
-			handler.handle(event);
-		});
-	};
-
-	this.isControlEvent = function (event) {
-		return event[elementor.envData.mac ? 'metaKey' : 'ctrlKey'];
-	};
-
-	this.addHotKeyHandler = function (keyCode, handlerName, handler) {
-		if (!hotKeysHandlers[keyCode]) {
-			hotKeysHandlers[keyCode] = {};
-		}
-
-		hotKeysHandlers[keyCode][handlerName] = handler;
-	};
-
-	this.bindListener = function ($listener) {
-		$listener.on('keydown', applyHotKey);
-	};
-};
-
-module.exports = new HotKeys();
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Module = __webpack_require__(2),
-    Validator;
-
-Validator = Module.extend({
-	errors: [],
-
-	__construct: function __construct(settings) {
-		var customValidationMethod = settings.customValidationMethod;
-
-		if (customValidationMethod) {
-			this.validationMethod = customValidationMethod;
-		}
-	},
-
-	getDefaultSettings: function getDefaultSettings() {
-		return {
-			validationTerms: {}
-		};
-	},
-
-	isValid: function isValid() {
-		var validationErrors = this.validationMethod.apply(this, arguments);
-
-		if (validationErrors.length) {
-			this.errors = validationErrors;
-
-			return false;
-		}
-
-		return true;
-	},
-
-	validationMethod: function validationMethod(newValue) {
-		var validationTerms = this.getSettings('validationTerms'),
-		    errors = [];
-
-		if (validationTerms.required) {
-			if (!('' + newValue).length) {
-				errors.push('Required value is empty');
-			}
-		}
-
-		return errors;
-	}
-});
-
-module.exports = Validator;
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var BaseSettingsModel = __webpack_require__(3),
-    ControlsCSSParser = __webpack_require__(12),
-    Validator = __webpack_require__(17),
-    BaseContainer = __webpack_require__(34),
+    ControlsCSSParser = __webpack_require__(13),
+    Validator = __webpack_require__(18),
+    BaseContainer = __webpack_require__(28),
     BaseElementView;
 
 BaseElementView = BaseContainer.extend({
@@ -2194,9 +1407,9 @@ BaseElementView = BaseContainer.extend({
 		    elType = model.get('elType');
 
 		if ('section' === elType) {
-			ChildView = __webpack_require__(35);
+			ChildView = __webpack_require__(29);
 		} else if ('column' === elType) {
-			ChildView = __webpack_require__(119);
+			ChildView = __webpack_require__(90);
 		} else {
 			ChildView = elementor.modules.elements.views.Widget;
 		}
@@ -2818,15 +2031,24 @@ BaseElementView = BaseContainer.extend({
 	},
 
 	onEditRequest: function onEditRequest() {
-		elementor.helpers.scrollToView(this.$el, 200);
+		var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-		var activeMode = elementor.channels.dataEditMode.request('activeMode');
-
-		if ('edit' !== activeMode) {
+		if ('edit' !== elementor.channels.dataEditMode.request('activeMode')) {
 			return;
 		}
 
-		elementor.getPanelView().openEditor(this.getEditModel(), this);
+		var model = this.getEditModel(),
+		    panel = elementor.getPanelView();
+
+		if ('editor' === panel.getCurrentPageName() && panel.getCurrentPageView().model === model) {
+			return;
+		}
+
+		if (options.scrollIntoView) {
+			elementor.helpers.scrollToView(this.$el, 200);
+		}
+
+		panel.openEditor(model, this);
 	},
 
 	onDuplicateButtonClick: function onDuplicateButtonClick(event) {
@@ -2862,6 +2084,787 @@ BaseElementView = BaseContainer.extend({
 module.exports = BaseElementView;
 
 /***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ContextMenu = __webpack_require__(88);
+
+module.exports = Marionette.Behavior.extend({
+
+	defaults: {
+		groups: [],
+		eventTargets: ['el']
+	},
+
+	events: function events() {
+		var events = {};
+
+		this.getOption('eventTargets').forEach(function (eventTarget) {
+			var eventName = 'contextmenu';
+
+			if ('el' !== eventTarget) {
+				eventName += ' ' + eventTarget;
+			}
+
+			events[eventName] = 'onContextMenu';
+		});
+
+		return events;
+	},
+
+	initialize: function initialize() {
+		this.listenTo(this.view.options.model, 'request:contextmenu', this.onRequestContextMenu);
+	},
+
+	initContextMenu: function initContextMenu() {
+		var contextMenuGroups = this.getOption('groups'),
+		    deleteGroup = _.findWhere(contextMenuGroups, { name: 'delete' }),
+		    afterGroupIndex = contextMenuGroups.indexOf(deleteGroup);
+
+		if (-1 === afterGroupIndex) {
+			afterGroupIndex = contextMenuGroups.length;
+		}
+
+		contextMenuGroups.splice(afterGroupIndex, 0, {
+			name: 'tools',
+			actions: [{
+				name: 'navigator',
+				title: elementor.translate('navigator'),
+				callback: elementor.navigator.open.bind(elementor.navigator, this.view.model)
+			}]
+		});
+
+		this.contextMenu = new ContextMenu({
+			groups: contextMenuGroups
+		});
+
+		this.contextMenu.getModal().on('hide', this.onContextMenuHide);
+	},
+
+	getContextMenu: function getContextMenu() {
+		if (!this.contextMenu) {
+			this.initContextMenu();
+		}
+
+		return this.contextMenu;
+	},
+
+	onContextMenu: function onContextMenu(event) {
+		if (elementor.hotKeys.isControlEvent(event) || !elementor.userCan('design')) {
+			return;
+		}
+
+		if ('edit' !== elementor.channels.dataEditMode.request('activeMode')) {
+			return;
+		}
+
+		event.preventDefault();
+
+		event.stopPropagation();
+
+		this.getContextMenu().show(event);
+
+		elementor.channels.editor.reply('contextMenu:targetView', this.view);
+	},
+
+	onRequestContextMenu: function onRequestContextMenu(event) {
+		var modal = this.getContextMenu().getModal(),
+		    iframe = modal.getSettings('iframe'),
+		    toolsGroup = _.findWhere(this.contextMenu.getSettings('groups'), { name: 'tools' });
+
+		toolsGroup.isVisible = false;
+
+		modal.setSettings('iframe', null);
+
+		this.onContextMenu(event);
+
+		toolsGroup.isVisible = true;
+
+		modal.setSettings('iframe', iframe);
+	},
+
+	onContextMenuHide: function onContextMenuHide() {
+		elementor.channels.editor.reply('contextMenu:targetView', null);
+	},
+
+	onDestroy: function onDestroy() {
+		if (this.contextMenu) {
+			this.contextMenu.destroy();
+		}
+	}
+});
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ControlsStack;
+
+ControlsStack = Marionette.CompositeView.extend({
+	className: 'elementor-panel-controls-stack',
+
+	classes: {
+		popover: 'elementor-controls-popover'
+	},
+
+	activeTab: null,
+
+	activeSection: null,
+
+	templateHelpers: function templateHelpers() {
+		return {
+			elementData: elementor.getElementData(this.model)
+		};
+	},
+
+	ui: function ui() {
+		return {
+			tabs: '.elementor-panel-navigation-tab',
+			reloadButton: '.elementor-update-preview-button'
+		};
+	},
+
+	events: function events() {
+		return {
+			'click @ui.tabs': 'onClickTabControl',
+			'click @ui.reloadButton': 'onReloadButtonClick'
+		};
+	},
+
+	modelEvents: {
+		'destroy': 'onModelDestroy'
+	},
+
+	behaviors: {
+		HandleInnerTabs: {
+			behaviorClass: __webpack_require__(31)
+		}
+	},
+
+	initialize: function initialize() {
+		this.initCollection();
+
+		this.listenTo(elementor.channels.deviceMode, 'change', this.onDeviceModeChange);
+	},
+
+	initCollection: function initCollection() {
+		this.collection = new Backbone.Collection(_.values(elementor.mergeControlsSettings(this.getOption('controls'))));
+	},
+
+	filter: function filter(controlModel) {
+		if (controlModel.get('tab') !== this.activeTab) {
+			return false;
+		}
+
+		if ('section' === controlModel.get('type')) {
+			return true;
+		}
+
+		var section = controlModel.get('section');
+
+		return !section || section === this.activeSection;
+	},
+
+	isVisibleSectionControl: function isVisibleSectionControl(sectionControlModel) {
+		return this.activeTab === sectionControlModel.get('tab');
+	},
+
+	activateTab: function activateTab(tabName) {
+		this.activeTab = tabName;
+
+		this.ui.tabs.removeClass('elementor-active').filter('[data-tab="' + tabName + '"]').addClass('elementor-active');
+
+		this.activateFirstSection();
+	},
+
+	activateSection: function activateSection(sectionName) {
+		this.activeSection = sectionName;
+	},
+
+	activateFirstSection: function activateFirstSection() {
+		var self = this;
+
+		var sectionControls = self.collection.filter(function (controlModel) {
+			return 'section' === controlModel.get('type') && self.isVisibleSectionControl(controlModel);
+		});
+
+		if (!sectionControls[0]) {
+			return;
+		}
+
+		var preActivatedSection = sectionControls.filter(function (controlModel) {
+			return self.activeSection === controlModel.get('name');
+		});
+
+		if (preActivatedSection[0]) {
+			return;
+		}
+
+		self.activateSection(sectionControls[0].get('name'));
+	},
+
+	getChildView: function getChildView(item) {
+		var controlType = item.get('type');
+
+		return elementor.getControlView(controlType);
+	},
+
+	handlePopovers: function handlePopovers() {
+		var self = this,
+		    popoverStarted = false,
+		    $popover;
+
+		self.removePopovers();
+
+		self.children.each(function (child) {
+			if (popoverStarted) {
+				$popover.append(child.$el);
+			}
+
+			var popover = child.model.get('popover');
+
+			if (!popover) {
+				return;
+			}
+
+			if (popover.start) {
+				popoverStarted = true;
+
+				$popover = jQuery('<div>', { 'class': self.classes.popover });
+
+				child.$el.before($popover);
+
+				$popover.append(child.$el);
+			}
+
+			if (popover.end) {
+				popoverStarted = false;
+			}
+		});
+	},
+
+	removePopovers: function removePopovers() {
+		this.$el.find('.' + this.classes.popover).remove();
+	},
+
+	openActiveSection: function openActiveSection() {
+		var activeSection = this.activeSection,
+		    activeSectionView = this.children.filter(function (view) {
+			return activeSection === view.model.get('name');
+		});
+
+		if (activeSectionView[0]) {
+			activeSectionView[0].$el.addClass('elementor-open');
+		}
+	},
+
+	onRenderCollection: function onRenderCollection() {
+		this.openActiveSection();
+
+		this.handlePopovers();
+	},
+
+	onRenderTemplate: function onRenderTemplate() {
+		this.activateTab(this.activeTab || this.ui.tabs.eq(0).data('tab'));
+	},
+
+	onModelDestroy: function onModelDestroy() {
+		this.destroy();
+	},
+
+	onClickTabControl: function onClickTabControl(event) {
+		event.preventDefault();
+
+		var $tab = this.$(event.currentTarget),
+		    tabName = $tab.data('tab');
+
+		if (this.activeTab === tabName) {
+			return;
+		}
+
+		this.activateTab(tabName);
+
+		this._renderChildren();
+	},
+
+	onReloadButtonClick: function onReloadButtonClick() {
+		elementor.reloadPreview();
+	},
+
+	onDeviceModeChange: function onDeviceModeChange() {
+		this.$el.removeClass('elementor-responsive-switchers-open');
+	},
+
+	onChildviewControlSectionClicked: function onChildviewControlSectionClicked(childView) {
+		var isSectionOpen = childView.$el.hasClass('elementor-open');
+
+		this.activateSection(isSectionOpen ? null : childView.model.get('name'));
+
+		this._renderChildren();
+	},
+
+	onChildviewResponsiveSwitcherClick: function onChildviewResponsiveSwitcherClick(childView, device) {
+		if ('desktop' === device) {
+			this.$el.toggleClass('elementor-responsive-switchers-open');
+		}
+	}
+});
+
+module.exports = ControlsStack;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ViewModule = __webpack_require__(1),
+    Stylesheet = __webpack_require__(24),
+    ControlsCSSParser;
+
+ControlsCSSParser = ViewModule.extend({
+	stylesheet: null,
+
+	getDefaultSettings: function getDefaultSettings() {
+		return {
+			id: 0,
+			settingsModel: null,
+			dynamicParsing: {}
+		};
+	},
+
+	getDefaultElements: function getDefaultElements() {
+		return {
+			$stylesheetElement: jQuery('<style>', { id: 'elementor-style-' + this.getSettings('id') })
+		};
+	},
+
+	initStylesheet: function initStylesheet() {
+		var breakpoints = elementorFrontend.config.breakpoints;
+
+		this.stylesheet = new Stylesheet();
+
+		this.stylesheet.addDevice('mobile', 0).addDevice('tablet', breakpoints.md).addDevice('desktop', breakpoints.lg);
+	},
+
+	addStyleRules: function addStyleRules(styleControls, values, controls, placeholders, replacements) {
+		var self = this,
+		    dynamicParsedValues = self.getSettings('settingsModel').parseDynamicSettings(values, self.getSettings('dynamicParsing'), styleControls);
+
+		_.each(styleControls, function (control) {
+			if (control.styleFields && control.styleFields.length) {
+				self.addRepeaterControlsStyleRules(values[control.name], control.styleFields, controls, placeholders, replacements);
+			}
+
+			if (control.dynamic && control.dynamic.active && values.__dynamic__ && values.__dynamic__[control.name]) {
+				self.addDynamicControlStyleRules(values.__dynamic__[control.name], control);
+			}
+
+			if (!control.selectors) {
+				return;
+			}
+
+			self.addControlStyleRules(control, dynamicParsedValues, controls, placeholders, replacements);
+		});
+	},
+
+	addControlStyleRules: function addControlStyleRules(control, values, controls, placeholders, replacements) {
+		var self = this;
+
+		ControlsCSSParser.addControlStyleRules(self.stylesheet, control, controls, function (control) {
+			return self.getStyleControlValue(control, values);
+		}, placeholders, replacements);
+	},
+
+	getStyleControlValue: function getStyleControlValue(control, values) {
+		var value = values[control.name];
+
+		if (control.selectors_dictionary) {
+			value = control.selectors_dictionary[value] || value;
+		}
+
+		if (!_.isNumber(value) && _.isEmpty(value)) {
+			return;
+		}
+
+		return value;
+	},
+
+	addRepeaterControlsStyleRules: function addRepeaterControlsStyleRules(repeaterValues, repeaterControlsItems, controls, placeholders, replacements) {
+		var self = this;
+
+		repeaterControlsItems.forEach(function (item, index) {
+			var itemModel = repeaterValues.models[index];
+
+			self.addStyleRules(item, itemModel.attributes, controls, placeholders.concat(['{{CURRENT_ITEM}}']), replacements.concat(['.elementor-repeater-item-' + itemModel.get('_id')]));
+		});
+	},
+
+	addDynamicControlStyleRules: function addDynamicControlStyleRules(value, control) {
+		var self = this;
+
+		elementor.dynamicTags.parseTagsText(value, control.dynamic, function (id, name, settings) {
+			var tag = elementor.dynamicTags.createTag(id, name, settings);
+
+			if (!tag) {
+				return;
+			}
+
+			var tagSettingsModel = tag.model,
+			    styleControls = tagSettingsModel.getStyleControls();
+
+			if (!styleControls.length) {
+				return;
+			}
+
+			self.addStyleRules(tagSettingsModel.getStyleControls(), tagSettingsModel.attributes, tagSettingsModel.controls, ['{{WRAPPER}}'], ['#elementor-tag-' + id]);
+		});
+	},
+
+	addStyleToDocument: function addStyleToDocument() {
+		elementor.$previewContents.find('head').append(this.elements.$stylesheetElement);
+
+		this.elements.$stylesheetElement.text(this.stylesheet);
+	},
+
+	removeStyleFromDocument: function removeStyleFromDocument() {
+		this.elements.$stylesheetElement.remove();
+	},
+
+	onInit: function onInit() {
+		ViewModule.prototype.onInit.apply(this, arguments);
+
+		this.initStylesheet();
+	}
+});
+
+ControlsCSSParser.addControlStyleRules = function (stylesheet, control, controls, valueCallback, placeholders, replacements) {
+	var value = valueCallback(control);
+
+	if (undefined === value) {
+		return;
+	}
+
+	_.each(control.selectors, function (cssProperty, selector) {
+		var outputCssProperty;
+
+		try {
+			outputCssProperty = cssProperty.replace(/{{(?:([^.}]+)\.)?([^}]*)}}/g, function (originalPhrase, controlName, placeholder) {
+				var parserControl = control,
+				    valueToInsert = value;
+
+				if (controlName) {
+					parserControl = _.findWhere(controls, { name: controlName });
+
+					if (!parserControl) {
+						return '';
+					}
+
+					valueToInsert = valueCallback(parserControl);
+				}
+
+				var parsedValue = elementor.getControlView(parserControl.type).getStyleValue(placeholder.toLowerCase(), valueToInsert);
+
+				if ('' === parsedValue) {
+					throw '';
+				}
+
+				return parsedValue;
+			});
+		} catch (e) {
+			return;
+		}
+
+		if (_.isEmpty(outputCssProperty)) {
+			return;
+		}
+
+		var devicePattern = /^(?:\([^)]+\)){1,2}/,
+		    deviceRules = selector.match(devicePattern),
+		    query = {};
+
+		if (deviceRules) {
+			deviceRules = deviceRules[0];
+
+			selector = selector.replace(devicePattern, '');
+
+			var pureDevicePattern = /\(([^)]+)\)/g,
+			    pureDeviceRules = [],
+			    matches;
+
+			while (matches = pureDevicePattern.exec(deviceRules)) {
+				pureDeviceRules.push(matches[1]);
+			}
+
+			_.each(pureDeviceRules, function (deviceRule) {
+				if ('desktop' === deviceRule) {
+					return;
+				}
+
+				var device = deviceRule.replace(/\+$/, ''),
+				    endPoint = device === deviceRule ? 'max' : 'min';
+
+				query[endPoint] = device;
+			});
+		}
+
+		_.each(placeholders, function (placeholder, index) {
+			// Check if it's a RegExp
+			var regexp = placeholder.source ? placeholder.source : placeholder,
+			    placeholderPattern = new RegExp(regexp, 'g');
+
+			selector = selector.replace(placeholderPattern, replacements[index]);
+		});
+
+		if (!Object.keys(query).length && control.responsive) {
+			query = _.pick(elementor.helpers.cloneObject(control.responsive), ['min', 'max']);
+
+			if ('desktop' === query.max) {
+				delete query.max;
+			}
+		}
+
+		stylesheet.addRules(selector, outputCssProperty, query);
+	});
+};
+
+module.exports = ControlsCSSParser;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var TemplateLibraryHeaderView;
+
+TemplateLibraryHeaderView = Marionette.LayoutView.extend({
+
+	className: 'elementor-templates-modal__header',
+
+	template: '#tmpl-elementor-templates-modal__header',
+
+	regions: {
+		logoArea: '.elementor-templates-modal__header__logo-area',
+		tools: '#elementor-template-library-header-tools',
+		menuArea: '.elementor-templates-modal__header__menu-area'
+	},
+
+	ui: {
+		closeModal: '.elementor-templates-modal__header__close'
+	},
+
+	events: {
+		'click @ui.closeModal': 'onCloseModalClick'
+	},
+
+	templateHelpers: function templateHelpers() {
+		return {
+			closeType: this.getOption('closeType')
+		};
+	},
+
+	onCloseModalClick: function onCloseModalClick() {
+		this._parent._parent._parent.hideModal();
+	}
+});
+
+module.exports = TemplateLibraryHeaderView;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var TemplateLibraryLoadingView;
+
+TemplateLibraryLoadingView = Marionette.ItemView.extend({
+	id: 'elementor-template-library-loading',
+
+	template: '#tmpl-elementor-template-library-loading'
+});
+
+module.exports = TemplateLibraryLoadingView;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ViewModule = __webpack_require__(1);
+
+module.exports = ViewModule.extend({
+
+	getDefaultSettings: function getDefaultSettings() {
+		return {
+			container: null,
+			items: null,
+			columnsCount: 3,
+			verticalSpaceBetween: 30
+		};
+	},
+
+	getDefaultElements: function getDefaultElements() {
+		return {
+			$container: jQuery(this.getSettings('container')),
+			$items: jQuery(this.getSettings('items'))
+		};
+	},
+
+	run: function run() {
+		var heights = [],
+		    distanceFromTop = this.elements.$container.position().top,
+		    settings = this.getSettings(),
+		    columnsCount = settings.columnsCount;
+
+		distanceFromTop += parseInt(this.elements.$container.css('margin-top'), 10);
+
+		this.elements.$items.each(function (index) {
+			var row = Math.floor(index / columnsCount),
+			    $item = jQuery(this),
+			    itemHeight = $item[0].getBoundingClientRect().height + settings.verticalSpaceBetween;
+
+			if (row) {
+				var itemPosition = $item.position(),
+				    indexAtRow = index % columnsCount,
+				    pullHeight = itemPosition.top - distanceFromTop - heights[indexAtRow];
+
+				pullHeight -= parseInt($item.css('margin-top'), 10);
+
+				pullHeight *= -1;
+
+				$item.css('margin-top', pullHeight + 'px');
+
+				heights[indexAtRow] += itemHeight;
+			} else {
+				heights.push(itemHeight);
+			}
+		});
+	}
+});
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var HotKeys = function HotKeys() {
+	var hotKeysHandlers = {};
+
+	var applyHotKey = function applyHotKey(event) {
+		var handlers = hotKeysHandlers[event.which];
+
+		if (!handlers) {
+			return;
+		}
+
+		jQuery.each(handlers, function () {
+			var handler = this;
+
+			if (handler.isWorthHandling && !handler.isWorthHandling(event)) {
+				return;
+			}
+
+			// Fix for some keyboard sources that consider alt key as ctrl key
+			if (!handler.allowAltKey && event.altKey) {
+				return;
+			}
+
+			event.preventDefault();
+
+			handler.handle(event);
+		});
+	};
+
+	this.isControlEvent = function (event) {
+		return event[elementor.envData.mac ? 'metaKey' : 'ctrlKey'];
+	};
+
+	this.addHotKeyHandler = function (keyCode, handlerName, handler) {
+		if (!hotKeysHandlers[keyCode]) {
+			hotKeysHandlers[keyCode] = {};
+		}
+
+		hotKeysHandlers[keyCode][handlerName] = handler;
+	};
+
+	this.bindListener = function ($listener) {
+		$listener.on('keydown', applyHotKey);
+	};
+};
+
+module.exports = new HotKeys();
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Module = __webpack_require__(2),
+    Validator;
+
+Validator = Module.extend({
+	errors: [],
+
+	__construct: function __construct(settings) {
+		var customValidationMethod = settings.customValidationMethod;
+
+		if (customValidationMethod) {
+			this.validationMethod = customValidationMethod;
+		}
+	},
+
+	getDefaultSettings: function getDefaultSettings() {
+		return {
+			validationTerms: {}
+		};
+	},
+
+	isValid: function isValid() {
+		var validationErrors = this.validationMethod.apply(this, arguments);
+
+		if (validationErrors.length) {
+			this.errors = validationErrors;
+
+			return false;
+		}
+
+		return true;
+	},
+
+	validationMethod: function validationMethod(newValue) {
+		var validationTerms = this.getSettings('validationTerms'),
+		    errors = [];
+
+		if (validationTerms.required) {
+			if (!('' + newValue).length) {
+				errors.push('Required value is empty');
+			}
+		}
+
+		return errors;
+	}
+});
+
+module.exports = Validator;
+
+/***/ }),
 /* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2876,11 +2879,11 @@ SortableBehavior = Marionette.Behavior.extend({
 	},
 
 	events: {
-		'sortstart': 'onSortStart',
-		'sortreceive': 'onSortReceive',
-		'sortupdate': 'onSortUpdate',
-		'sortover': 'onSortOver',
-		'sortout': 'onSortOut'
+		sortstart: 'onSortStart',
+		sortreceive: 'onSortReceive',
+		sortupdate: 'onSortUpdate',
+		sortover: 'onSortOver',
+		sortout: 'onSortOut'
 	},
 
 	initialize: function initialize() {
@@ -2911,6 +2914,7 @@ SortableBehavior = Marionette.Behavior.extend({
 		if (!elementor.userCan('design')) {
 			return;
 		}
+
 		if (this.getChildViewContainer().sortable('instance')) {
 			return;
 		}
@@ -3362,7 +3366,7 @@ module.exports = EventManager;
 
 var ViewModule = __webpack_require__(1),
     SettingsModel = __webpack_require__(3),
-    ControlsCSSParser = __webpack_require__(12);
+    ControlsCSSParser = __webpack_require__(13);
 
 module.exports = ViewModule.extend({
 	model: null,
@@ -3531,6 +3535,40 @@ module.exports = ViewModule.extend({
 /***/ }),
 /* 22 */,
 /* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = Marionette.Region.extend({
+
+	storage: null,
+
+	storageSizeKeys: null,
+
+	constructor: function constructor() {
+		Marionette.Region.prototype.constructor.apply(this, arguments);
+
+		var savedStorage = elementor.getStorage(this.getStorageKey());
+
+		this.storage = savedStorage ? savedStorage : this.getDefaultStorage();
+
+		this.storageSizeKeys = Object.keys(this.storage.size);
+	},
+
+	saveStorage: function saveStorage(key, value) {
+		this.storage[key] = value;
+
+		elementor.setStorage(this.getStorageKey(), this.storage);
+	},
+
+	saveSize: function saveSize() {
+		this.saveStorage('size', elementor.helpers.getElementInlineStyle(this.$el, this.storageSizeKeys));
+	}
+});
+
+/***/ }),
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3769,7 +3807,7 @@ module.exports = ViewModule.extend({
 })(jQuery);
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3835,13 +3873,13 @@ InsertTemplateHandler = Marionette.Behavior.extend({
 module.exports = InsertTemplateHandler;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryInsertTemplateBehavior = __webpack_require__(24),
+var TemplateLibraryInsertTemplateBehavior = __webpack_require__(25),
     TemplateLibraryTemplateView;
 
 TemplateLibraryTemplateView = Marionette.ItemView.extend({
@@ -3884,7 +3922,7 @@ TemplateLibraryTemplateView = Marionette.ItemView.extend({
 module.exports = TemplateLibraryTemplateView;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3908,689 +3946,7 @@ module.exports = Backbone.Model.extend({
 });
 
 /***/ }),
-/* 27 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var InnerTabsBehavior;
-
-InnerTabsBehavior = Marionette.Behavior.extend({
-
-	onRenderCollection: function onRenderCollection() {
-		this.handleInnerTabs(this.view);
-	},
-
-	handleInnerTabs: function handleInnerTabs(parent) {
-		var closedClass = 'elementor-tab-close',
-		    activeClass = 'elementor-tab-active',
-		    tabsWrappers = parent.children.filter(function (view) {
-			return 'tabs' === view.model.get('type');
-		});
-
-		_.each(tabsWrappers, function (view) {
-			view.$el.find('.elementor-control-content').remove();
-
-			var tabsId = view.model.get('name'),
-			    tabs = parent.children.filter(function (childView) {
-				return 'tab' === childView.model.get('type') && childView.model.get('tabs_wrapper') === tabsId;
-			});
-
-			_.each(tabs, function (childView, index) {
-				view._addChildView(childView);
-
-				var tabId = childView.model.get('name'),
-				    controlsUnderTab = parent.children.filter(function (view) {
-					return tabId === view.model.get('inner_tab');
-				});
-
-				if (0 === index) {
-					childView.$el.addClass(activeClass);
-				} else {
-					_.each(controlsUnderTab, function (view) {
-						view.$el.addClass(closedClass);
-					});
-				}
-			});
-		});
-	},
-
-	onChildviewControlTabClicked: function onChildviewControlTabClicked(childView) {
-		var closedClass = 'elementor-tab-close',
-		    activeClass = 'elementor-tab-active',
-		    tabClicked = childView.model.get('name'),
-		    childrenUnderTab = this.view.children.filter(function (view) {
-			return 'tab' !== view.model.get('type') && childView.model.get('tabs_wrapper') === view.model.get('tabs_wrapper');
-		}),
-		    siblingTabs = this.view.children.filter(function (view) {
-			return 'tab' === view.model.get('type') && childView.model.get('tabs_wrapper') === view.model.get('tabs_wrapper');
-		});
-
-		_.each(siblingTabs, function (view) {
-			view.$el.removeClass(activeClass);
-		});
-
-		childView.$el.addClass(activeClass);
-
-		_.each(childrenUnderTab, function (view) {
-			if (view.model.get('inner_tab') === tabClicked) {
-				view.$el.removeClass(closedClass);
-			} else {
-				view.$el.addClass(closedClass);
-			}
-		});
-
-		elementor.getPanelView().updateScrollbar();
-	}
-});
-
-module.exports = InnerTabsBehavior;
-
-/***/ }),
 /* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ControlMultipleBaseItemView = __webpack_require__(4),
-    ControlBoxShadowItemView;
-
-ControlBoxShadowItemView = ControlMultipleBaseItemView.extend({
-	ui: function ui() {
-		var ui = ControlMultipleBaseItemView.prototype.ui.apply(this, arguments);
-
-		ui.sliders = '.elementor-slider';
-		ui.colors = '.elementor-shadow-color-picker';
-
-		return ui;
-	},
-
-	events: function events() {
-		return _.extend(ControlMultipleBaseItemView.prototype.events.apply(this, arguments), {
-			'slide @ui.sliders': 'onSlideChange'
-		});
-	},
-
-	initSliders: function initSliders() {
-		var value = this.getControlValue();
-
-		this.ui.sliders.each(function () {
-			var $slider = jQuery(this),
-			    $input = $slider.next('.elementor-slider-input').find('input');
-
-			$slider.slider({
-				value: value[this.dataset.input],
-				min: +$input.attr('min'),
-				max: +$input.attr('max')
-			});
-		});
-	},
-
-	initColors: function initColors() {
-		var self = this;
-
-		elementor.helpers.wpColorPicker(this.ui.colors, {
-			change: function change() {
-				var $this = jQuery(this),
-				    type = $this.data('setting');
-
-				self.setValue(type, $this.wpColorPicker('color'));
-			},
-
-			clear: function clear() {
-				self.setValue(this.dataset.setting, '');
-			}
-		});
-	},
-
-	onInputChange: function onInputChange(event) {
-		var type = event.currentTarget.dataset.setting,
-		    $slider = this.ui.sliders.filter('[data-input="' + type + '"]');
-
-		$slider.slider('value', this.getControlValue(type));
-	},
-
-	onReady: function onReady() {
-		this.initSliders();
-		this.initColors();
-	},
-
-	onSlideChange: function onSlideChange(event, ui) {
-		var type = event.currentTarget.dataset.input,
-		    $input = this.ui.input.filter('[data-setting="' + type + '"]');
-
-		$input.val(ui.value);
-		this.setValue(type, ui.value);
-	},
-
-	onBeforeDestroy: function onBeforeDestroy() {
-		this.ui.colors.each(function () {
-			var $color = jQuery(this);
-
-			if ($color.wpColorPicker('instance')) {
-				$color.wpColorPicker('close');
-			}
-		});
-
-		this.$el.remove();
-	}
-});
-
-module.exports = ControlBoxShadowItemView;
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ControlBaseDataView = __webpack_require__(0),
-    ControlChooseItemView;
-
-ControlChooseItemView = ControlBaseDataView.extend({
-	ui: function ui() {
-		var ui = ControlBaseDataView.prototype.ui.apply(this, arguments);
-
-		ui.inputs = '[type="radio"]';
-
-		return ui;
-	},
-
-	events: function events() {
-		return _.extend(ControlBaseDataView.prototype.events.apply(this, arguments), {
-			'mousedown label': 'onMouseDownLabel',
-			'click @ui.inputs': 'onClickInput',
-			'change @ui.inputs': 'onBaseInputChange'
-		});
-	},
-
-	onMouseDownLabel: function onMouseDownLabel(event) {
-		var $clickedLabel = this.$(event.currentTarget),
-		    $selectedInput = this.$('#' + $clickedLabel.attr('for'));
-
-		$selectedInput.data('checked', $selectedInput.prop('checked'));
-	},
-
-	onClickInput: function onClickInput(event) {
-		if (!this.model.get('toggle')) {
-			return;
-		}
-
-		var $selectedInput = this.$(event.currentTarget);
-
-		if ($selectedInput.data('checked')) {
-			$selectedInput.prop('checked', false).trigger('change');
-		}
-	},
-
-	onRender: function onRender() {
-		ControlBaseDataView.prototype.onRender.apply(this, arguments);
-
-		var currentValue = this.getControlValue();
-
-		if (currentValue) {
-			this.ui.inputs.filter('[value="' + currentValue + '"]').prop('checked', true);
-		}
-	}
-}, {
-
-	onPasteStyle: function onPasteStyle(control, clipboardValue) {
-		return '' === clipboardValue || undefined !== control.options[clipboardValue];
-	}
-});
-
-module.exports = ControlChooseItemView;
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ControlBaseMultipleItemView = __webpack_require__(4),
-    ControlBaseUnitsItemView;
-
-ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend({
-
-	getCurrentRange: function getCurrentRange() {
-		return this.getUnitRange(this.getControlValue('unit'));
-	},
-
-	getUnitRange: function getUnitRange(unit) {
-		var ranges = this.model.get('range');
-
-		if (!ranges || !ranges[unit]) {
-			return false;
-		}
-
-		return ranges[unit];
-	}
-});
-
-module.exports = ControlBaseUnitsItemView;
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ControlBaseDataView = __webpack_require__(0),
-    RepeaterRowView;
-
-RepeaterRowView = Marionette.CompositeView.extend({
-	template: Marionette.TemplateCache.get('#tmpl-elementor-repeater-row'),
-
-	className: 'elementor-repeater-fields',
-
-	ui: {
-		duplicateButton: '.elementor-repeater-tool-duplicate',
-		editButton: '.elementor-repeater-tool-edit',
-		removeButton: '.elementor-repeater-tool-remove',
-		itemTitle: '.elementor-repeater-row-item-title'
-	},
-
-	behaviors: {
-		HandleInnerTabs: {
-			behaviorClass: __webpack_require__(27)
-		}
-	},
-
-	triggers: {
-		'click @ui.removeButton': 'click:remove',
-		'click @ui.duplicateButton': 'click:duplicate',
-		'click @ui.itemTitle': 'click:edit'
-	},
-
-	modelEvents: {
-		change: 'onModelChange'
-	},
-
-	templateHelpers: function templateHelpers() {
-		return {
-			itemIndex: this.getOption('itemIndex')
-		};
-	},
-
-	childViewContainer: '.elementor-repeater-row-controls',
-
-	getChildView: function getChildView(item) {
-		var controlType = item.get('type');
-
-		return elementor.getControlView(controlType);
-	},
-
-	childViewOptions: function childViewOptions() {
-		return {
-			elementSettingsModel: this.model
-		};
-	},
-
-	updateIndex: function updateIndex(newIndex) {
-		this.itemIndex = newIndex;
-	},
-
-	setTitle: function setTitle() {
-		var titleField = this.getOption('titleField'),
-		    title = '';
-
-		if (titleField) {
-			var values = {};
-
-			this.children.each(function (child) {
-				if (!(child instanceof ControlBaseDataView)) {
-					return;
-				}
-
-				values[child.model.get('name')] = child.getControlValue();
-			});
-
-			title = Marionette.TemplateCache.prototype.compileTemplate(titleField)(this.model.parseDynamicSettings());
-		}
-
-		if (!title) {
-			title = elementor.translate('Item #{0}', [this.getOption('itemIndex')]);
-		}
-
-		this.ui.itemTitle.html(title);
-	},
-
-	initialize: function initialize(options) {
-		this.itemIndex = 0;
-
-		// Collection for Controls list
-		this.collection = new Backbone.Collection(_.values(elementor.mergeControlsSettings(options.controlFields)));
-	},
-
-	onRender: function onRender() {
-		this.setTitle();
-	},
-
-	onModelChange: function onModelChange() {
-		if (this.getOption('titleField')) {
-			this.setTitle();
-		}
-	},
-
-	onChildviewResponsiveSwitcherClick: function onChildviewResponsiveSwitcherClick(childView, device) {
-		if ('desktop' === device) {
-			elementor.getPanelView().getCurrentPageView().$el.toggleClass('elementor-responsive-switchers-open');
-		}
-	}
-});
-
-module.exports = RepeaterRowView;
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var BaseSettingsModel = __webpack_require__(3),
-    ColumnSettingsModel = __webpack_require__(115),
-    ElementModel;
-
-ElementModel = Backbone.Model.extend({
-	defaults: {
-		id: '',
-		elType: '',
-		isInner: false,
-		settings: {},
-		defaultEditSettings: {}
-	},
-
-	remoteRender: false,
-	_htmlCache: null,
-	_jqueryXhr: null,
-	renderOnLeave: false,
-
-	initialize: function initialize(options) {
-		var elType = this.get('elType'),
-		    elements = this.get('elements');
-
-		if (undefined !== elements) {
-			var ElementsCollection = __webpack_require__(33);
-
-			this.set('elements', new ElementsCollection(elements));
-		}
-
-		if ('widget' === elType) {
-			this.remoteRender = true;
-			this.setHtmlCache(options.htmlCache || '');
-		}
-
-		// No need this variable anymore
-		delete options.htmlCache;
-
-		// Make call to remote server as throttle function
-		this.renderRemoteServer = _.throttle(this.renderRemoteServer, 1000);
-
-		this.initSettings();
-
-		this.initEditSettings();
-
-		this.on({
-			destroy: this.onDestroy,
-			'editor:close': this.onCloseEditor
-		});
-	},
-
-	initSettings: function initSettings() {
-		var elType = this.get('elType'),
-		    settings = this.get('settings'),
-		    settingModels = {
-			column: ColumnSettingsModel
-		},
-		    SettingsModel = settingModels[elType] || BaseSettingsModel;
-
-		if (jQuery.isEmptyObject(settings)) {
-			settings = elementor.helpers.cloneObject(settings);
-		}
-
-		if ('widget' === elType) {
-			settings.widgetType = this.get('widgetType');
-		}
-
-		settings.elType = elType;
-		settings.isInner = this.get('isInner');
-
-		settings = new SettingsModel(settings, {
-			controls: elementor.getElementControls(this)
-		});
-
-		this.set('settings', settings);
-
-		elementorFrontend.config.elements.data[this.cid] = settings;
-	},
-
-	initEditSettings: function initEditSettings() {
-		var editSettings = new Backbone.Model(this.get('defaultEditSettings'));
-
-		this.set('editSettings', editSettings);
-
-		elementorFrontend.config.elements.editSettings[this.cid] = editSettings;
-	},
-
-	setSetting: function setSetting(key, value) {
-		var settings = this.get('settings');
-
-		if ('object' !== (typeof key === 'undefined' ? 'undefined' : _typeof(key))) {
-			var keyParts = key.split('.'),
-			    isRepeaterKey = 3 === keyParts.length;
-
-			key = keyParts[0];
-
-			if (isRepeaterKey) {
-				settings = settings.get(key).models[keyParts[1]];
-
-				key = keyParts[2];
-			}
-		}
-
-		settings.setExternalChange(key, value);
-	},
-
-	getSetting: function getSetting(key) {
-		var keyParts = key.split('.'),
-		    isRepeaterKey = 3 === keyParts.length,
-		    settings = this.get('settings');
-
-		key = keyParts[0];
-
-		var value = settings.get(key);
-
-		if (undefined === value) {
-			return '';
-		}
-
-		if (isRepeaterKey) {
-			value = value.models[keyParts[1]].get(keyParts[2]);
-		}
-
-		return value;
-	},
-
-	setHtmlCache: function setHtmlCache(htmlCache) {
-		this._htmlCache = htmlCache;
-	},
-
-	getHtmlCache: function getHtmlCache() {
-		return this._htmlCache;
-	},
-
-	getDefaultTitle: function getDefaultTitle() {
-		return elementor.getElementData(this).title;
-	},
-
-	getTitle: function getTitle() {
-		var title = this.getSetting('_title');
-
-		if (!title) {
-			title = this.getDefaultTitle();
-		}
-
-		return title;
-	},
-
-	getIcon: function getIcon() {
-		return elementor.getElementData(this).icon;
-	},
-
-	createRemoteRenderRequest: function createRemoteRenderRequest() {
-		var data = this.toJSON();
-
-		return elementor.ajax.addRequest('render_widget', {
-			unique_id: this.cid,
-			data: {
-				data: data
-			},
-			success: this.onRemoteGetHtml.bind(this)
-		}, true).jqXhr;
-	},
-
-	renderRemoteServer: function renderRemoteServer() {
-		if (!this.remoteRender) {
-			return;
-		}
-
-		this.renderOnLeave = false;
-
-		this.trigger('before:remote:render');
-
-		if (this.isRemoteRequestActive()) {
-			this._jqueryXhr.abort();
-		}
-
-		this._jqueryXhr = this.createRemoteRenderRequest();
-	},
-
-	isRemoteRequestActive: function isRemoteRequestActive() {
-		return this._jqueryXhr && 4 !== this._jqueryXhr.readyState;
-	},
-
-	onRemoteGetHtml: function onRemoteGetHtml(data) {
-		this.setHtmlCache(data.render);
-		this.trigger('remote:render');
-	},
-
-	clone: function clone() {
-		var newModel = new this.constructor(elementor.helpers.cloneObject(this.attributes));
-
-		newModel.set('id', elementor.helpers.getUniqueID());
-
-		newModel.setHtmlCache(this.getHtmlCache());
-
-		var elements = this.get('elements');
-
-		if (!_.isEmpty(elements)) {
-			newModel.set('elements', elements.clone());
-		}
-
-		return newModel;
-	},
-
-	toJSON: function toJSON(options) {
-		options = _.extend({ copyHtmlCache: false }, options);
-
-		// Call parent's toJSON method
-		var data = Backbone.Model.prototype.toJSON.call(this);
-
-		_.each(data, function (attribute, key) {
-			if (attribute && attribute.toJSON) {
-				data[key] = attribute.toJSON(options);
-			}
-		});
-
-		if (options.copyHtmlCache) {
-			data.htmlCache = this.getHtmlCache();
-		} else {
-			delete data.htmlCache;
-		}
-
-		return data;
-	},
-
-	onCloseEditor: function onCloseEditor() {
-		if (this.renderOnLeave) {
-			this.renderRemoteServer();
-		}
-	},
-
-	onDestroy: function onDestroy() {
-		// Clean the memory for all use instances
-		var settings = this.get('settings'),
-		    elements = this.get('elements');
-
-		if (undefined !== elements) {
-			_.each(_.clone(elements.models), function (model) {
-				model.destroy();
-			});
-		}
-
-		settings.destroy();
-	}
-
-});
-
-ElementModel.prototype.sync = ElementModel.prototype.fetch = ElementModel.prototype.save = _.noop;
-
-module.exports = ElementModel;
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ElementModel = __webpack_require__(32);
-
-var ElementsCollection = Backbone.Collection.extend({
-	add: function add(models, options, isCorrectSet) {
-		if ((!options || !options.silent) && !isCorrectSet) {
-			throw 'Call Error: Adding model to element collection is allowed only by the dedicated addChildModel() method.';
-		}
-
-		return Backbone.Collection.prototype.add.call(this, models, options);
-	},
-
-	model: function model(attrs, options) {
-		var ModelClass = Backbone.Model;
-
-		if (attrs.elType) {
-			ModelClass = elementor.hooks.applyFilters('element/model', ElementModel, attrs);
-		}
-
-		return new ModelClass(attrs, options);
-	},
-
-	clone: function clone() {
-		var tempCollection = Backbone.Collection.prototype.clone.apply(this, arguments),
-		    newCollection = new ElementsCollection();
-
-		tempCollection.forEach(function (model) {
-			newCollection.add(model.clone(), null, true);
-		});
-
-		return newCollection;
-	}
-});
-
-ElementsCollection.prototype.sync = ElementsCollection.prototype.fetch = ElementsCollection.prototype.save = _.noop;
-
-module.exports = ElementsCollection;
-
-/***/ }),
-/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4740,14 +4096,19 @@ module.exports = Marionette.CompositeView.extend({
 });
 
 /***/ }),
-/* 35 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var BaseElementView = __webpack_require__(18),
-    AddSectionView = __webpack_require__(118),
+var _inline = __webpack_require__(89);
+
+var _inline2 = _interopRequireDefault(_inline);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var BaseElementView = __webpack_require__(10),
     SectionView;
 
 SectionView = BaseElementView.extend({
@@ -4976,7 +4337,7 @@ SectionView = BaseElementView.extend({
 		}
 
 		var myIndex = this.model.collection.indexOf(this.model),
-		    addSectionView = new AddSectionView({
+		    addSectionView = new _inline2.default({
 			at: myIndex
 		});
 
@@ -5070,171 +4431,907 @@ SectionView = BaseElementView.extend({
 module.exports = SectionView;
 
 /***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AddSectionBase = function (_Marionette$ItemView) {
+	_inherits(AddSectionBase, _Marionette$ItemView);
+
+	function AddSectionBase() {
+		_classCallCheck(this, AddSectionBase);
+
+		return _possibleConstructorReturn(this, (AddSectionBase.__proto__ || Object.getPrototypeOf(AddSectionBase)).apply(this, arguments));
+	}
+
+	_createClass(AddSectionBase, [{
+		key: 'template',
+		value: function template() {
+			return Marionette.TemplateCache.get('#tmpl-elementor-add-section');
+		}
+	}, {
+		key: 'attributes',
+		value: function attributes() {
+			return {
+				'data-view': 'choose-action'
+			};
+		}
+	}, {
+		key: 'ui',
+		value: function ui() {
+			return {
+				addNewSection: '.elementor-add-new-section',
+				closeButton: '.elementor-add-section-close',
+				addSectionButton: '.elementor-add-section-button',
+				addTemplateButton: '.elementor-add-template-button',
+				selectPreset: '.elementor-select-preset',
+				presets: '.elementor-preset'
+			};
+		}
+	}, {
+		key: 'events',
+		value: function events() {
+			return {
+				'click @ui.addSectionButton': 'onAddSectionButtonClick',
+				'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
+				'click @ui.closeButton': 'onCloseButtonClick',
+				'click @ui.presets': 'onPresetSelected'
+			};
+		}
+	}, {
+		key: 'behaviors',
+		value: function behaviors() {
+			return {
+				contextMenu: {
+					behaviorClass: __webpack_require__(11),
+					groups: this.getContextMenuGroups()
+				}
+			};
+		}
+	}, {
+		key: 'className',
+		value: function className() {
+			return 'elementor-add-section elementor-visible-desktop';
+		}
+	}, {
+		key: 'addSection',
+		value: function addSection(properties, options) {
+			return elementor.getPreviewView().addChildElement(properties, jQuery.extend({}, this.options, options));
+		}
+	}, {
+		key: 'setView',
+		value: function setView(view) {
+			this.$el.attr('data-view', view);
+		}
+	}, {
+		key: 'showSelectPresets',
+		value: function showSelectPresets() {
+			this.setView('select-preset');
+		}
+	}, {
+		key: 'closeSelectPresets',
+		value: function closeSelectPresets() {
+			this.setView('choose-action');
+		}
+	}, {
+		key: 'getTemplatesModalOptions',
+		value: function getTemplatesModalOptions() {
+			return {
+				importOptions: {
+					at: this.getOption('at')
+				}
+			};
+		}
+	}, {
+		key: 'getContextMenuGroups',
+		value: function getContextMenuGroups() {
+			var hasContent = function hasContent() {
+				return elementor.elements.length > 0;
+			};
+
+			return [{
+				name: 'paste',
+				actions: [{
+					name: 'paste',
+					title: elementor.translate('paste'),
+					callback: this.paste.bind(this),
+					isEnabled: this.isPasteEnabled.bind(this)
+				}]
+			}, {
+				name: 'content',
+				actions: [{
+					name: 'copy_all_content',
+					title: elementor.translate('copy_all_content'),
+					callback: this.copy.bind(this),
+					isEnabled: hasContent
+				}, {
+					name: 'delete_all_content',
+					title: elementor.translate('delete_all_content'),
+					callback: elementor.clearPage.bind(elementor),
+					isEnabled: hasContent
+				}]
+			}];
+		}
+	}, {
+		key: 'copy',
+		value: function copy() {
+			elementor.getPreviewView().copy();
+		}
+	}, {
+		key: 'paste',
+		value: function paste() {
+			elementor.getPreviewView().paste(this.getOption('at'));
+		}
+	}, {
+		key: 'isPasteEnabled',
+		value: function isPasteEnabled() {
+			return elementor.getStorage('transfer');
+		}
+	}, {
+		key: 'onAddSectionButtonClick',
+		value: function onAddSectionButtonClick() {
+			this.showSelectPresets();
+		}
+	}, {
+		key: 'onAddTemplateButtonClick',
+		value: function onAddTemplateButtonClick() {
+			elementor.templates.startModal(this.getTemplatesModalOptions());
+		}
+	}, {
+		key: 'onRender',
+		value: function onRender() {
+			this.$el.html5Droppable({
+				axis: ['vertical'],
+				groups: ['elementor-element'],
+				placeholder: false,
+				currentElementClass: 'elementor-html5dnd-current-element',
+				hasDraggingOnChildClass: 'elementor-dragging-on-child',
+				onDropping: this.onDropping.bind(this)
+			});
+		}
+	}, {
+		key: 'onPresetSelected',
+		value: function onPresetSelected(event) {
+			this.closeSelectPresets();
+
+			var selectedStructure = event.currentTarget.dataset.structure,
+			    parsedStructure = elementor.presetsFactory.getParsedStructure(selectedStructure),
+			    elements = [],
+			    loopIndex;
+
+			for (loopIndex = 0; loopIndex < parsedStructure.columnsCount; loopIndex++) {
+				elements.push({
+					id: elementor.helpers.getUniqueID(),
+					elType: 'column',
+					settings: {},
+					elements: []
+				});
+			}
+
+			elementor.channels.data.trigger('element:before:add', {
+				elType: 'section'
+			});
+
+			var newSection = this.addSection({ elements: elements });
+
+			newSection.setStructure(selectedStructure);
+
+			elementor.channels.data.trigger('element:after:add');
+		}
+	}, {
+		key: 'onDropping',
+		value: function onDropping() {
+			elementor.channels.data.trigger('section:before:drop');
+
+			this.addSection().addElementFromPanel();
+
+			elementor.channels.data.trigger('section:after:drop');
+		}
+	}]);
+
+	return AddSectionBase;
+}(Marionette.ItemView);
+
+exports.default = AddSectionBase;
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var InnerTabsBehavior;
+
+InnerTabsBehavior = Marionette.Behavior.extend({
+
+	onRenderCollection: function onRenderCollection() {
+		this.handleInnerTabs(this.view);
+	},
+
+	handleInnerTabs: function handleInnerTabs(parent) {
+		var closedClass = 'elementor-tab-close',
+		    activeClass = 'elementor-tab-active',
+		    tabsWrappers = parent.children.filter(function (view) {
+			return 'tabs' === view.model.get('type');
+		});
+
+		_.each(tabsWrappers, function (view) {
+			view.$el.find('.elementor-control-content').remove();
+
+			var tabsId = view.model.get('name'),
+			    tabs = parent.children.filter(function (childView) {
+				return 'tab' === childView.model.get('type') && childView.model.get('tabs_wrapper') === tabsId;
+			});
+
+			_.each(tabs, function (childView, index) {
+				view._addChildView(childView);
+
+				var tabId = childView.model.get('name'),
+				    controlsUnderTab = parent.children.filter(function (view) {
+					return tabId === view.model.get('inner_tab');
+				});
+
+				if (0 === index) {
+					childView.$el.addClass(activeClass);
+				} else {
+					_.each(controlsUnderTab, function (view) {
+						view.$el.addClass(closedClass);
+					});
+				}
+			});
+		});
+	},
+
+	onChildviewControlTabClicked: function onChildviewControlTabClicked(childView) {
+		var closedClass = 'elementor-tab-close',
+		    activeClass = 'elementor-tab-active',
+		    tabClicked = childView.model.get('name'),
+		    childrenUnderTab = this.view.children.filter(function (view) {
+			return 'tab' !== view.model.get('type') && childView.model.get('tabs_wrapper') === view.model.get('tabs_wrapper');
+		}),
+		    siblingTabs = this.view.children.filter(function (view) {
+			return 'tab' === view.model.get('type') && childView.model.get('tabs_wrapper') === view.model.get('tabs_wrapper');
+		});
+
+		_.each(siblingTabs, function (view) {
+			view.$el.removeClass(activeClass);
+		});
+
+		childView.$el.addClass(activeClass);
+
+		_.each(childrenUnderTab, function (view) {
+			if (view.model.get('inner_tab') === tabClicked) {
+				view.$el.removeClass(closedClass);
+			} else {
+				view.$el.addClass(closedClass);
+			}
+		});
+
+		elementor.getPanelView().updateScrollbar();
+	}
+});
+
+module.exports = InnerTabsBehavior;
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ControlMultipleBaseItemView = __webpack_require__(4),
+    ControlBoxShadowItemView;
+
+ControlBoxShadowItemView = ControlMultipleBaseItemView.extend({
+	ui: function ui() {
+		var ui = ControlMultipleBaseItemView.prototype.ui.apply(this, arguments);
+
+		ui.sliders = '.elementor-slider';
+		ui.colors = '.elementor-shadow-color-picker';
+
+		return ui;
+	},
+
+	events: function events() {
+		return _.extend(ControlMultipleBaseItemView.prototype.events.apply(this, arguments), {
+			'slide @ui.sliders': 'onSlideChange'
+		});
+	},
+
+	initSliders: function initSliders() {
+		var value = this.getControlValue();
+
+		this.ui.sliders.each(function () {
+			var $slider = jQuery(this),
+			    $input = $slider.next('.elementor-slider-input').find('input');
+
+			$slider.slider({
+				value: value[this.dataset.input],
+				min: +$input.attr('min'),
+				max: +$input.attr('max')
+			});
+		});
+	},
+
+	initColors: function initColors() {
+		var self = this;
+
+		elementor.helpers.wpColorPicker(this.ui.colors, {
+			change: function change() {
+				var $this = jQuery(this),
+				    type = $this.data('setting');
+
+				self.setValue(type, $this.wpColorPicker('color'));
+			},
+
+			clear: function clear() {
+				self.setValue(this.dataset.setting, '');
+			}
+		});
+	},
+
+	onInputChange: function onInputChange(event) {
+		var type = event.currentTarget.dataset.setting,
+		    $slider = this.ui.sliders.filter('[data-input="' + type + '"]');
+
+		$slider.slider('value', this.getControlValue(type));
+	},
+
+	onReady: function onReady() {
+		this.initSliders();
+		this.initColors();
+	},
+
+	onSlideChange: function onSlideChange(event, ui) {
+		var type = event.currentTarget.dataset.input,
+		    $input = this.ui.input.filter('[data-setting="' + type + '"]');
+
+		$input.val(ui.value);
+		this.setValue(type, ui.value);
+	},
+
+	onBeforeDestroy: function onBeforeDestroy() {
+		this.ui.colors.each(function () {
+			var $color = jQuery(this);
+
+			if ($color.wpColorPicker('instance')) {
+				$color.wpColorPicker('close');
+			}
+		});
+
+		this.$el.remove();
+	}
+});
+
+module.exports = ControlBoxShadowItemView;
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ControlBaseDataView = __webpack_require__(0),
+    ControlChooseItemView;
+
+ControlChooseItemView = ControlBaseDataView.extend({
+	ui: function ui() {
+		var ui = ControlBaseDataView.prototype.ui.apply(this, arguments);
+
+		ui.inputs = '[type="radio"]';
+
+		return ui;
+	},
+
+	events: function events() {
+		return _.extend(ControlBaseDataView.prototype.events.apply(this, arguments), {
+			'mousedown label': 'onMouseDownLabel',
+			'click @ui.inputs': 'onClickInput',
+			'change @ui.inputs': 'onBaseInputChange'
+		});
+	},
+
+	onMouseDownLabel: function onMouseDownLabel(event) {
+		var $clickedLabel = this.$(event.currentTarget),
+		    $selectedInput = this.$('#' + $clickedLabel.attr('for'));
+
+		$selectedInput.data('checked', $selectedInput.prop('checked'));
+	},
+
+	onClickInput: function onClickInput(event) {
+		if (!this.model.get('toggle')) {
+			return;
+		}
+
+		var $selectedInput = this.$(event.currentTarget);
+
+		if ($selectedInput.data('checked')) {
+			$selectedInput.prop('checked', false).trigger('change');
+		}
+	},
+
+	onRender: function onRender() {
+		ControlBaseDataView.prototype.onRender.apply(this, arguments);
+
+		var currentValue = this.getControlValue();
+
+		if (currentValue) {
+			this.ui.inputs.filter('[value="' + currentValue + '"]').prop('checked', true);
+		}
+	}
+}, {
+
+	onPasteStyle: function onPasteStyle(control, clipboardValue) {
+		return '' === clipboardValue || undefined !== control.options[clipboardValue];
+	}
+});
+
+module.exports = ControlChooseItemView;
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ControlBaseMultipleItemView = __webpack_require__(4),
+    ControlBaseUnitsItemView;
+
+ControlBaseUnitsItemView = ControlBaseMultipleItemView.extend({
+
+	getCurrentRange: function getCurrentRange() {
+		return this.getUnitRange(this.getControlValue('unit'));
+	},
+
+	getUnitRange: function getUnitRange(unit) {
+		var ranges = this.model.get('range');
+
+		if (!ranges || !ranges[unit]) {
+			return false;
+		}
+
+		return ranges[unit];
+	}
+});
+
+module.exports = ControlBaseUnitsItemView;
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ControlBaseDataView = __webpack_require__(0),
+    RepeaterRowView;
+
+RepeaterRowView = Marionette.CompositeView.extend({
+	template: Marionette.TemplateCache.get('#tmpl-elementor-repeater-row'),
+
+	className: 'elementor-repeater-fields',
+
+	ui: {
+		duplicateButton: '.elementor-repeater-tool-duplicate',
+		editButton: '.elementor-repeater-tool-edit',
+		removeButton: '.elementor-repeater-tool-remove',
+		itemTitle: '.elementor-repeater-row-item-title'
+	},
+
+	behaviors: {
+		HandleInnerTabs: {
+			behaviorClass: __webpack_require__(31)
+		}
+	},
+
+	triggers: {
+		'click @ui.removeButton': 'click:remove',
+		'click @ui.duplicateButton': 'click:duplicate',
+		'click @ui.itemTitle': 'click:edit'
+	},
+
+	modelEvents: {
+		change: 'onModelChange'
+	},
+
+	templateHelpers: function templateHelpers() {
+		return {
+			itemIndex: this.getOption('itemIndex')
+		};
+	},
+
+	childViewContainer: '.elementor-repeater-row-controls',
+
+	getChildView: function getChildView(item) {
+		var controlType = item.get('type');
+
+		return elementor.getControlView(controlType);
+	},
+
+	childViewOptions: function childViewOptions() {
+		return {
+			elementSettingsModel: this.model
+		};
+	},
+
+	updateIndex: function updateIndex(newIndex) {
+		this.itemIndex = newIndex;
+	},
+
+	setTitle: function setTitle() {
+		var titleField = this.getOption('titleField'),
+		    title = '';
+
+		if (titleField) {
+			var values = {};
+
+			this.children.each(function (child) {
+				if (!(child instanceof ControlBaseDataView)) {
+					return;
+				}
+
+				values[child.model.get('name')] = child.getControlValue();
+			});
+
+			title = Marionette.TemplateCache.prototype.compileTemplate(titleField)(this.model.parseDynamicSettings());
+		}
+
+		if (!title) {
+			title = elementor.translate('Item #{0}', [this.getOption('itemIndex')]);
+		}
+
+		this.ui.itemTitle.html(title);
+	},
+
+	initialize: function initialize(options) {
+		this.itemIndex = 0;
+
+		// Collection for Controls list
+		this.collection = new Backbone.Collection(_.values(elementor.mergeControlsSettings(options.controlFields)));
+	},
+
+	onRender: function onRender() {
+		this.setTitle();
+	},
+
+	onModelChange: function onModelChange() {
+		if (this.getOption('titleField')) {
+			this.setTitle();
+		}
+	},
+
+	onChildviewResponsiveSwitcherClick: function onChildviewResponsiveSwitcherClick(childView, device) {
+		if ('desktop' === device) {
+			elementor.getPanelView().getCurrentPageView().$el.toggleClass('elementor-responsive-switchers-open');
+		}
+	}
+});
+
+module.exports = RepeaterRowView;
+
+/***/ }),
 /* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = Marionette.ItemView.extend({
-	template: Marionette.TemplateCache.get('#tmpl-elementor-add-section'),
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-	attributes: {
-		'data-view': 'choose-action'
+var BaseSettingsModel = __webpack_require__(3),
+    ColumnSettingsModel = __webpack_require__(125),
+    ElementModel;
+
+ElementModel = Backbone.Model.extend({
+	defaults: {
+		id: '',
+		elType: '',
+		isInner: false,
+		settings: {},
+		defaultEditSettings: {}
 	},
 
-	ui: {
-		addNewSection: '.elementor-add-new-section',
-		closeButton: '.elementor-add-section-close',
-		addSectionButton: '.elementor-add-section-button',
-		addTemplateButton: '.elementor-add-template-button',
-		selectPreset: '.elementor-select-preset',
-		presets: '.elementor-preset'
-	},
+	remoteRender: false,
+	_htmlCache: null,
+	_jqueryXhr: null,
+	renderOnLeave: false,
 
-	events: {
-		'click @ui.addSectionButton': 'onAddSectionButtonClick',
-		'click @ui.addTemplateButton': 'onAddTemplateButtonClick',
-		'click @ui.closeButton': 'onCloseButtonClick',
-		'click @ui.presets': 'onPresetSelected'
-	},
+	initialize: function initialize(options) {
+		var elType = this.get('elType'),
+		    elements = this.get('elements');
 
-	behaviors: function behaviors() {
-		return {
-			contextMenu: {
-				behaviorClass: __webpack_require__(11),
-				groups: this.getContextMenuGroups()
-			}
-		};
-	},
+		if (undefined !== elements) {
+			var ElementsCollection = __webpack_require__(37);
 
-	className: function className() {
-		return 'elementor-add-section elementor-visible-desktop';
-	},
+			this.set('elements', new ElementsCollection(elements));
+		}
 
-	addSection: function addSection(properties, options) {
-		return elementor.getPreviewView().addChildElement(properties, jQuery.extend({}, this.options, options));
-	},
+		if ('widget' === elType) {
+			this.remoteRender = true;
+			this.setHtmlCache(options.htmlCache || '');
+		}
 
-	setView: function setView(view) {
-		this.$el.attr('data-view', view);
-	},
+		// No need this variable anymore
+		delete options.htmlCache;
 
-	showSelectPresets: function showSelectPresets() {
-		this.setView('select-preset');
-	},
+		// Make call to remote server as throttle function
+		this.renderRemoteServer = _.throttle(this.renderRemoteServer, 1000);
 
-	closeSelectPresets: function closeSelectPresets() {
-		this.setView('choose-action');
-	},
+		this.initSettings();
 
-	getTemplatesModalOptions: function getTemplatesModalOptions() {
-		return {
-			importOptions: {
-				at: this.getOption('at')
-			}
-		};
-	},
+		this.initEditSettings();
 
-	getContextMenuGroups: function getContextMenuGroups() {
-		var hasContent = function hasContent() {
-			return elementor.elements.length > 0;
-		};
-
-		return [{
-			name: 'paste',
-			actions: [{
-				name: 'paste',
-				title: elementor.translate('paste'),
-				callback: this.paste.bind(this),
-				isEnabled: this.isPasteEnabled.bind(this)
-			}]
-		}, {
-			name: 'content',
-			actions: [{
-				name: 'copy_all_content',
-				title: elementor.translate('copy_all_content'),
-				callback: this.copy.bind(this),
-				isEnabled: hasContent
-			}, {
-				name: 'delete_all_content',
-				title: elementor.translate('delete_all_content'),
-				callback: elementor.clearPage.bind(elementor),
-				isEnabled: hasContent
-			}]
-		}];
-	},
-
-	copy: function copy() {
-		elementor.getPreviewView().copy();
-	},
-
-	paste: function paste() {
-		elementor.getPreviewView().paste(this.getOption('at'));
-	},
-
-	isPasteEnabled: function isPasteEnabled() {
-		return elementor.getStorage('transfer');
-	},
-
-	onAddSectionButtonClick: function onAddSectionButtonClick() {
-		this.showSelectPresets();
-	},
-
-	onAddTemplateButtonClick: function onAddTemplateButtonClick() {
-		elementor.templates.startModal(this.getTemplatesModalOptions());
-	},
-
-	onRender: function onRender() {
-		this.$el.html5Droppable({
-			axis: ['vertical'],
-			groups: ['elementor-element'],
-			placeholder: false,
-			currentElementClass: 'elementor-html5dnd-current-element',
-			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: this.onDropping.bind(this)
+		this.on({
+			destroy: this.onDestroy,
+			'editor:close': this.onCloseEditor
 		});
 	},
 
-	onPresetSelected: function onPresetSelected(event) {
-		this.closeSelectPresets();
+	initSettings: function initSettings() {
+		var elType = this.get('elType'),
+		    settings = this.get('settings'),
+		    settingModels = {
+			column: ColumnSettingsModel
+		},
+		    SettingsModel = settingModels[elType] || BaseSettingsModel;
 
-		var selectedStructure = event.currentTarget.dataset.structure,
-		    parsedStructure = elementor.presetsFactory.getParsedStructure(selectedStructure),
-		    elements = [],
-		    loopIndex;
+		if (jQuery.isEmptyObject(settings)) {
+			settings = elementor.helpers.cloneObject(settings);
+		}
 
-		for (loopIndex = 0; loopIndex < parsedStructure.columnsCount; loopIndex++) {
-			elements.push({
-				id: elementor.helpers.getUniqueID(),
-				elType: 'column',
-				settings: {},
-				elements: []
+		if ('widget' === elType) {
+			settings.widgetType = this.get('widgetType');
+		}
+
+		settings.elType = elType;
+		settings.isInner = this.get('isInner');
+
+		settings = new SettingsModel(settings, {
+			controls: elementor.getElementControls(this)
+		});
+
+		this.set('settings', settings);
+
+		elementorFrontend.config.elements.data[this.cid] = settings;
+	},
+
+	initEditSettings: function initEditSettings() {
+		var editSettings = new Backbone.Model(this.get('defaultEditSettings'));
+
+		this.set('editSettings', editSettings);
+
+		elementorFrontend.config.elements.editSettings[this.cid] = editSettings;
+	},
+
+	setSetting: function setSetting(key, value) {
+		var settings = this.get('settings');
+
+		if ('object' !== (typeof key === 'undefined' ? 'undefined' : _typeof(key))) {
+			var keyParts = key.split('.'),
+			    isRepeaterKey = 3 === keyParts.length;
+
+			key = keyParts[0];
+
+			if (isRepeaterKey) {
+				settings = settings.get(key).models[keyParts[1]];
+
+				key = keyParts[2];
+			}
+		}
+
+		settings.setExternalChange(key, value);
+	},
+
+	getSetting: function getSetting(key) {
+		var keyParts = key.split('.'),
+		    isRepeaterKey = 3 === keyParts.length,
+		    settings = this.get('settings');
+
+		key = keyParts[0];
+
+		var value = settings.get(key);
+
+		if (undefined === value) {
+			return '';
+		}
+
+		if (isRepeaterKey) {
+			value = value.models[keyParts[1]].get(keyParts[2]);
+		}
+
+		return value;
+	},
+
+	setHtmlCache: function setHtmlCache(htmlCache) {
+		this._htmlCache = htmlCache;
+	},
+
+	getHtmlCache: function getHtmlCache() {
+		return this._htmlCache;
+	},
+
+	getDefaultTitle: function getDefaultTitle() {
+		return elementor.getElementData(this).title;
+	},
+
+	getTitle: function getTitle() {
+		var title = this.getSetting('_title');
+
+		if (!title) {
+			title = this.getDefaultTitle();
+		}
+
+		return title;
+	},
+
+	getIcon: function getIcon() {
+		return elementor.getElementData(this).icon;
+	},
+
+	createRemoteRenderRequest: function createRemoteRenderRequest() {
+		var data = this.toJSON();
+
+		return elementor.ajax.addRequest('render_widget', {
+			unique_id: this.cid,
+			data: {
+				data: data
+			},
+			success: this.onRemoteGetHtml.bind(this)
+		}, true).jqXhr;
+	},
+
+	renderRemoteServer: function renderRemoteServer() {
+		if (!this.remoteRender) {
+			return;
+		}
+
+		this.renderOnLeave = false;
+
+		this.trigger('before:remote:render');
+
+		if (this.isRemoteRequestActive()) {
+			this._jqueryXhr.abort();
+		}
+
+		this._jqueryXhr = this.createRemoteRenderRequest();
+	},
+
+	isRemoteRequestActive: function isRemoteRequestActive() {
+		return this._jqueryXhr && 4 !== this._jqueryXhr.readyState;
+	},
+
+	onRemoteGetHtml: function onRemoteGetHtml(data) {
+		this.setHtmlCache(data.render);
+		this.trigger('remote:render');
+	},
+
+	clone: function clone() {
+		var newModel = new this.constructor(elementor.helpers.cloneObject(this.attributes));
+
+		newModel.set('id', elementor.helpers.getUniqueID());
+
+		newModel.setHtmlCache(this.getHtmlCache());
+
+		var elements = this.get('elements');
+
+		if (!_.isEmpty(elements)) {
+			newModel.set('elements', elements.clone());
+		}
+
+		return newModel;
+	},
+
+	toJSON: function toJSON(options) {
+		options = _.extend({ copyHtmlCache: false }, options);
+
+		// Call parent's toJSON method
+		var data = Backbone.Model.prototype.toJSON.call(this);
+
+		_.each(data, function (attribute, key) {
+			if (attribute && attribute.toJSON) {
+				data[key] = attribute.toJSON(options);
+			}
+		});
+
+		if (options.copyHtmlCache) {
+			data.htmlCache = this.getHtmlCache();
+		} else {
+			delete data.htmlCache;
+		}
+
+		return data;
+	},
+
+	onCloseEditor: function onCloseEditor() {
+		if (this.renderOnLeave) {
+			this.renderRemoteServer();
+		}
+	},
+
+	onDestroy: function onDestroy() {
+		// Clean the memory for all use instances
+		var settings = this.get('settings'),
+		    elements = this.get('elements');
+
+		if (undefined !== elements) {
+			_.each(_.clone(elements.models), function (model) {
+				model.destroy();
 			});
 		}
 
-		elementor.channels.data.trigger('element:before:add', {
-			elType: 'section'
-		});
-
-		var newSection = this.addSection({ elements: elements });
-
-		newSection.setStructure(selectedStructure);
-
-		elementor.channels.data.trigger('element:after:add');
-	},
-
-	onDropping: function onDropping() {
-		elementor.channels.data.trigger('section:before:drop');
-
-		this.addSection().addElementFromPanel();
-
-		elementor.channels.data.trigger('section:after:drop');
+		settings.destroy();
 	}
+
 });
+
+ElementModel.prototype.sync = ElementModel.prototype.fetch = ElementModel.prototype.save = _.noop;
+
+module.exports = ElementModel;
 
 /***/ }),
 /* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ElementModel = __webpack_require__(36);
+
+var ElementsCollection = Backbone.Collection.extend({
+	add: function add(models, options, isCorrectSet) {
+		if ((!options || !options.silent) && !isCorrectSet) {
+			throw 'Call Error: Adding model to element collection is allowed only by the dedicated addChildModel() method.';
+		}
+
+		return Backbone.Collection.prototype.add.call(this, models, options);
+	},
+
+	model: function model(attrs, options) {
+		var ModelClass = Backbone.Model;
+
+		if (attrs.elType) {
+			ModelClass = elementor.hooks.applyFilters('element/model', ElementModel, attrs);
+		}
+
+		return new ModelClass(attrs, options);
+	},
+
+	clone: function clone() {
+		var tempCollection = Backbone.Collection.prototype.clone.apply(this, arguments),
+		    newCollection = new ElementsCollection();
+
+		tempCollection.forEach(function (model) {
+			newCollection.add(model.clone(), null, true);
+		});
+
+		return newCollection;
+	}
+});
+
+ElementsCollection.prototype.sync = ElementsCollection.prototype.fetch = ElementsCollection.prototype.save = _.noop;
+
+module.exports = ElementsCollection;
+
+/***/ }),
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5265,7 +5362,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5300,40 +5397,6 @@ PanelElementsElementView = Marionette.ItemView.extend({
 });
 
 module.exports = PanelElementsElementView;
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = Marionette.Region.extend({
-
-	storage: null,
-
-	storageSizeKeys: null,
-
-	constructor: function constructor() {
-		Marionette.Region.prototype.constructor.apply(this, arguments);
-
-		var savedStorage = elementor.getStorage(this.getStorageKey());
-
-		this.storage = savedStorage ? savedStorage : this.getDefaultStorage();
-
-		this.storageSizeKeys = Object.keys(this.storage.size);
-	},
-
-	saveStorage: function saveStorage(key, value) {
-		this.storage[key] = value;
-
-		elementor.setStorage(this.getStorageKey(), this.storage);
-	},
-
-	saveSize: function saveSize() {
-		this.saveStorage('size', elementor.helpers.getElementInlineStyle(this.$el, this.storageSizeKeys));
-	}
-});
 
 /***/ }),
 /* 40 */
@@ -5424,8 +5487,8 @@ module.exports = PanelSchemeColorsView;
 
 
 var childViewTypes = {
-	color: __webpack_require__(144),
-	typography: __webpack_require__(145)
+	color: __webpack_require__(149),
+	typography: __webpack_require__(150)
 },
     PanelSchemeBaseView;
 
@@ -6050,6 +6113,16 @@ module.exports = __webpack_require__(48);
 "use strict";
 
 
+var _heartbeat = __webpack_require__(49);
+
+var _heartbeat2 = _interopRequireDefault(_heartbeat);
+
+var _navigator = __webpack_require__(50);
+
+var _navigator2 = _interopRequireDefault(_navigator);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /* global ElementorConfig */
 Marionette.TemplateCache.prototype.compileTemplate = function (rawTemplate, options) {
 	options = {
@@ -6064,17 +6137,16 @@ Marionette.TemplateCache.prototype.compileTemplate = function (rawTemplate, opti
 var App = Marionette.Application.extend({
 	previewLoadedOnce: false,
 
-	helpers: __webpack_require__(49),
-	heartbeat: __webpack_require__(50),
-	imagesManager: __webpack_require__(51),
-	debug: __webpack_require__(52),
-	schemes: __webpack_require__(53),
-	presetsFactory: __webpack_require__(54),
-	templates: __webpack_require__(55),
-	ajax: __webpack_require__(70),
-	conditions: __webpack_require__(71),
-	hotKeys: __webpack_require__(16),
-	history: __webpack_require__(72),
+	helpers: __webpack_require__(55),
+	imagesManager: __webpack_require__(56),
+	debug: __webpack_require__(57),
+	schemes: __webpack_require__(58),
+	presetsFactory: __webpack_require__(59),
+	templates: __webpack_require__(60),
+	ajax: __webpack_require__(75),
+	conditions: __webpack_require__(76),
+	hotKeys: __webpack_require__(17),
+	history: __webpack_require__(77),
 
 	channels: {
 		editor: Backbone.Radio.channel('ELEMENTOR:editor'),
@@ -6101,7 +6173,7 @@ var App = Marionette.Application.extend({
 			},
 			saver: {
 				behaviors: {
-					FooterSaver: __webpack_require__(86)
+					FooterSaver: __webpack_require__(96)
 				}
 			}
 		},
@@ -6110,43 +6182,43 @@ var App = Marionette.Application.extend({
 			Base: __webpack_require__(7),
 			BaseData: __webpack_require__(0),
 			BaseMultiple: __webpack_require__(4),
-			Box_shadow: __webpack_require__(28),
-			Button: __webpack_require__(91),
-			Choose: __webpack_require__(29),
-			Code: __webpack_require__(92),
-			Color: __webpack_require__(93),
-			Date_time: __webpack_require__(94),
-			Dimensions: __webpack_require__(95),
-			Font: __webpack_require__(96),
-			Gallery: __webpack_require__(97),
+			Box_shadow: __webpack_require__(32),
+			Button: __webpack_require__(101),
+			Choose: __webpack_require__(33),
+			Code: __webpack_require__(102),
+			Color: __webpack_require__(103),
+			Date_time: __webpack_require__(104),
+			Dimensions: __webpack_require__(105),
+			Font: __webpack_require__(106),
+			Gallery: __webpack_require__(107),
 			Hover_animation: __webpack_require__(6),
-			Icon: __webpack_require__(98),
-			Image_dimensions: __webpack_require__(99),
-			Media: __webpack_require__(100),
-			Number: __webpack_require__(101),
-			Order: __webpack_require__(103),
-			Popover_toggle: __webpack_require__(104),
-			Repeater: __webpack_require__(105),
-			RepeaterRow: __webpack_require__(31),
-			Section: __webpack_require__(106),
-			Select: __webpack_require__(107),
+			Icon: __webpack_require__(108),
+			Image_dimensions: __webpack_require__(109),
+			Media: __webpack_require__(110),
+			Number: __webpack_require__(111),
+			Order: __webpack_require__(113),
+			Popover_toggle: __webpack_require__(114),
+			Repeater: __webpack_require__(115),
+			RepeaterRow: __webpack_require__(35),
+			Section: __webpack_require__(116),
+			Select: __webpack_require__(117),
 			Select2: __webpack_require__(6),
-			Slider: __webpack_require__(108),
-			Structure: __webpack_require__(109),
-			Switcher: __webpack_require__(110),
-			Tab: __webpack_require__(111),
-			Text_shadow: __webpack_require__(28),
-			Url: __webpack_require__(112),
-			Wp_widget: __webpack_require__(113),
-			Wysiwyg: __webpack_require__(114)
+			Slider: __webpack_require__(118),
+			Structure: __webpack_require__(119),
+			Switcher: __webpack_require__(120),
+			Tab: __webpack_require__(121),
+			Text_shadow: __webpack_require__(32),
+			Url: __webpack_require__(122),
+			Wp_widget: __webpack_require__(123),
+			Wysiwyg: __webpack_require__(124)
 		},
 		elements: {
 			models: {
 				BaseSettings: __webpack_require__(3),
-				Element: __webpack_require__(32)
+				Element: __webpack_require__(36)
 			},
 			views: {
-				Widget: __webpack_require__(116)
+				Widget: __webpack_require__(126)
 			}
 		},
 		layouts: {
@@ -6154,18 +6226,18 @@ var App = Marionette.Application.extend({
 				pages: {
 					elements: {
 						views: {
-							Global: __webpack_require__(37),
-							Elements: __webpack_require__(123)
+							Global: __webpack_require__(38),
+							Elements: __webpack_require__(128)
 						}
 					},
 					menu: {
-						Menu: __webpack_require__(124)
+						Menu: __webpack_require__(129)
 					}
 				}
 			}
 		},
 		views: {
-			ControlsStack: __webpack_require__(10)
+			ControlsStack: __webpack_require__(12)
 		}
 	},
 
@@ -6304,10 +6376,10 @@ var App = Marionette.Application.extend({
 
 	initComponents: function initComponents() {
 		var EventManager = __webpack_require__(20),
-		    DynamicTags = __webpack_require__(127),
-		    Settings = __webpack_require__(129),
-		    Saver = __webpack_require__(133),
-		    Notifications = __webpack_require__(134);
+		    DynamicTags = __webpack_require__(132),
+		    Settings = __webpack_require__(134),
+		    Saver = __webpack_require__(138),
+		    Notifications = __webpack_require__(139);
 
 		this.hooks = new EventManager();
 
@@ -6340,7 +6412,7 @@ var App = Marionette.Application.extend({
 	},
 
 	initElements: function initElements() {
-		var ElementCollection = __webpack_require__(33),
+		var ElementCollection = __webpack_require__(37),
 		    config = this.config.data;
 
 		// If it's an reload, use the not-saved data
@@ -6646,11 +6718,16 @@ var App = Marionette.Application.extend({
 	},
 
 	initPanel: function initPanel() {
-		this.addRegions({ panel: __webpack_require__(135) });
+		this.addRegions({ panel: __webpack_require__(140) });
 	},
 
 	initNavigator: function initNavigator() {
-		this.addRegions({ navigator: __webpack_require__(151) });
+		this.addRegions({
+			navigator: {
+				el: '#elementor-navigator',
+				regionClass: _navigator2.default
+			}
+		});
 	},
 
 	preventClicksInsideEditor: function preventClicksInsideEditor() {
@@ -7011,7 +7088,7 @@ var App = Marionette.Application.extend({
 	onFirstPreviewLoaded: function onFirstPreviewLoaded() {
 		this.initPanel();
 
-		this.heartbeat.init();
+		this.heartbeat = new _heartbeat2.default();
 
 		this.checkPageStatus();
 
@@ -7104,6 +7181,1136 @@ module.exports = (window.elementor = new App()).start();
 
 /***/ }),
 /* 49 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Heartbeat = function () {
+	function Heartbeat() {
+		var _this = this;
+
+		_classCallCheck(this, Heartbeat);
+
+		var modal = void 0;
+
+		this.getModal = function () {
+			if (!modal) {
+				modal = _this.initModal();
+			}
+
+			return modal;
+		};
+
+		jQuery(document).on({
+			'heartbeat-send': function heartbeatSend(event, data) {
+				data.elementor_post_lock = {
+					post_ID: elementor.config.document.id
+				};
+			},
+			'heartbeat-tick': function heartbeatTick(event, response) {
+				if (response.locked_user) {
+					if (elementor.saver.isEditorChanged()) {
+						elementor.saver.saveEditor({
+							status: 'autosave'
+						});
+					}
+
+					_this.showLockMessage(response.locked_user);
+				} else {
+					_this.getModal().hide();
+				}
+
+				elementor.config.nonce = response.elementorNonce;
+			},
+			'heartbeat-tick.wp-refresh-nonces': function heartbeatTickWpRefreshNonces(event, response) {
+				var nonces = response['elementor-refresh-nonces'];
+
+				if (nonces) {
+					if (nonces.heartbeatNonce) {
+						elementor.config.nonce = nonces.elementorNonce;
+					}
+
+					if (nonces.heartbeatNonce) {
+						window.heartbeatSettings.nonce = nonces.heartbeatNonce;
+					}
+				}
+			}
+		});
+
+		if (elementor.config.locked_user) {
+			this.showLockMessage(elementor.config.locked_user);
+		}
+	}
+
+	_createClass(Heartbeat, [{
+		key: 'initModal',
+		value: function initModal() {
+			var modal = elementor.dialogsManager.createWidget('lightbox', {
+				headerMessage: elementor.translate('take_over')
+			});
+
+			modal.addButton({
+				name: 'go_back',
+				text: elementor.translate('go_back'),
+				callback: function callback() {
+					parent.history.go(-1);
+				}
+			});
+
+			modal.addButton({
+				name: 'take_over',
+				text: elementor.translate('take_over'),
+				callback: function callback() {
+					wp.heartbeat.enqueue('elementor_force_post_lock', true);
+					wp.heartbeat.connectNow();
+				}
+			});
+
+			return modal;
+		}
+	}, {
+		key: 'showLockMessage',
+		value: function showLockMessage(lockedUser) {
+			var modal = this.getModal();
+
+			modal.setMessage(elementor.translate('dialog_user_taken_over', [lockedUser])).show();
+		}
+	}]);
+
+	return Heartbeat;
+}();
+
+exports.default = Heartbeat;
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _layout = __webpack_require__(51);
+
+var _layout2 = _interopRequireDefault(_layout);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var BaseRegion = __webpack_require__(23);
+
+var _class = function (_BaseRegion) {
+	_inherits(_class, _BaseRegion);
+
+	function _class(options) {
+		_classCallCheck(this, _class);
+
+		var _this = _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).call(this, options));
+
+		_this.isDocked = false;
+
+		_this.opened = false;
+
+		_this.ensurePosition = _this.ensurePosition.bind(_this);
+
+		_this.listenTo(elementor.channels.dataEditMode, 'switch', _this.onEditModeSwitched);
+
+		if (_this.storage.visible) {
+			_this.open();
+		}
+		return _this;
+	}
+
+	_createClass(_class, [{
+		key: 'getStorageKey',
+		value: function getStorageKey() {
+			return 'navigator';
+		}
+	}, {
+		key: 'getDefaultStorage',
+		value: function getDefaultStorage() {
+			return {
+				visible: false,
+				size: {
+					width: '',
+					height: '',
+					top: '',
+					bottom: '',
+					right: '',
+					left: ''
+				}
+			};
+		}
+	}, {
+		key: 'getLayout',
+		value: function getLayout() {
+			return this.currentView;
+		}
+	}, {
+		key: 'getDraggableOptions',
+		value: function getDraggableOptions() {
+			return {
+				iframeFix: true,
+				handle: '#elementor-navigator__header',
+				drag: this.onDrag.bind(this),
+				stop: this.onDragStop.bind(this)
+			};
+		}
+	}, {
+		key: 'getResizableOptions',
+		value: function getResizableOptions() {
+			var _this2 = this;
+
+			return {
+				handles: 'all',
+				containment: 'document',
+				minWidth: 150,
+				maxWidth: 500,
+				minHeight: 240,
+				start: function start() {
+					elementor.$previewWrapper.addClass('ui-resizable-resizing');
+				},
+				stop: function stop() {
+					elementor.$previewWrapper.removeClass('ui-resizable-resizing');
+
+					if (_this2.isDocked) {
+						_this2.storage.size.width = elementor.helpers.getElementInlineStyle(_this2.$el, ['width']).width;
+
+						elementor.setStorage('navigator', _this2.storage);
+					} else {
+						_this2.saveSize();
+					}
+				}
+			};
+		}
+	}, {
+		key: 'beforeFirstOpen',
+		value: function beforeFirstOpen() {
+			this.show(new _layout2.default());
+
+			this.$el.draggable(this.getDraggableOptions());
+
+			this.$el.resizable(this.getResizableOptions());
+		}
+	}, {
+		key: 'open',
+		value: function open(model) {
+			if (!this.opened) {
+				this.beforeFirstOpen();
+
+				this.opened = true;
+			}
+
+			this.$el.show();
+
+			if (this.storage.docked) {
+				this.dock();
+
+				this.setDockedSize();
+			} else {
+				this.setSize();
+			}
+
+			if (model) {
+				model.trigger('request:edit');
+			}
+
+			this.saveStorage('visible', true);
+
+			this.ensurePosition();
+
+			elementor.$window.on('resize', this.ensurePosition);
+		}
+	}, {
+		key: 'close',
+		value: function close(silent) {
+			this.$el.hide();
+
+			if (this.isDocked) {
+				this.undock(true);
+			}
+
+			if (!silent) {
+				this.saveStorage('visible', false);
+			}
+
+			elementor.$window.off('resize', this.ensurePosition);
+		}
+	}, {
+		key: 'isOpen',
+		value: function isOpen() {
+			return this.$el.is(':visible');
+		}
+	}, {
+		key: 'dock',
+		value: function dock() {
+			elementor.$body.addClass('elementor-navigator-docked');
+
+			var side = elementor.config.is_rtl ? 'left' : 'right',
+			    resizableOptions = this.getResizableOptions();
+
+			this.$el.css({
+				height: '',
+				top: '',
+				bottom: '',
+				left: '',
+				right: ''
+			});
+
+			elementor.$previewWrapper.css(side, this.storage.size.width);
+
+			this.$el.resizable('destroy');
+
+			resizableOptions.handles = elementor.config.is_rtl ? 'e' : 'w';
+
+			resizableOptions.resize = function (event, ui) {
+				elementor.$previewWrapper.css(side, ui.size.width);
+			};
+
+			this.$el.resizable(resizableOptions);
+
+			this.isDocked = true;
+
+			this.saveStorage('docked', true);
+		}
+	}, {
+		key: 'undock',
+		value: function undock(silent) {
+			elementor.$body.removeClass('elementor-navigator-docked');
+
+			elementor.$previewWrapper.css(elementor.config.is_rtl ? 'left' : 'right', '');
+
+			this.setSize();
+
+			this.$el.resizable('destroy');
+
+			this.$el.resizable(this.getResizableOptions());
+
+			this.isDocked = false;
+
+			if (!silent) {
+				this.saveStorage('docked', false);
+			}
+		}
+	}, {
+		key: 'setSize',
+		value: function setSize() {
+			if (this.storage.size) {
+				this.$el.css(this.storage.size);
+			}
+		}
+	}, {
+		key: 'setDockedSize',
+		value: function setDockedSize() {
+			this.$el.css('width', this.storage.size.width);
+		}
+	}, {
+		key: 'ensurePosition',
+		value: function ensurePosition() {
+			if (this.isDocked) {
+				return;
+			}
+
+			var offset = this.$el.offset();
+
+			if (offset.left > innerWidth) {
+				this.$el.css({
+					left: '',
+					right: ''
+				});
+			}
+
+			if (offset.top > innerHeight) {
+				this.$el.css({
+					top: '',
+					bottom: ''
+				});
+			}
+		}
+	}, {
+		key: 'onDrag',
+		value: function onDrag(event, ui) {
+			if (this.isDocked) {
+				if (ui.position.left === ui.originalPosition.left) {
+					if (ui.position.top !== ui.originalPosition.top) {
+						return false;
+					}
+				} else {
+					this.undock();
+				}
+
+				return;
+			}
+
+			if (0 > ui.position.top) {
+				ui.position.top = 0;
+			}
+
+			var isOutOfLeft = 0 > ui.position.left,
+			    isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
+
+			if (elementor.config.is_rtl) {
+				if (isOutOfRight) {
+					ui.position.left = innerWidth - this.el.offsetWidth;
+				}
+			} else if (isOutOfLeft) {
+				ui.position.left = 0;
+			}
+
+			elementor.$body.toggleClass('elementor-navigator--dock-hint', elementor.config.is_rtl ? isOutOfLeft : isOutOfRight);
+		}
+	}, {
+		key: 'onDragStop',
+		value: function onDragStop(event, ui) {
+			if (this.isDocked) {
+				return;
+			}
+
+			this.saveSize();
+
+			var elementRight = ui.position.left + this.el.offsetWidth;
+
+			if (0 > ui.position.left || elementRight > innerWidth) {
+				this.dock();
+			}
+
+			elementor.$body.removeClass('elementor-navigator--dock-hint');
+		}
+	}, {
+		key: 'onEditModeSwitched',
+		value: function onEditModeSwitched(activeMode) {
+			if ('edit' === activeMode && this.storage.visible) {
+				this.open();
+			} else {
+				this.close(true);
+			}
+		}
+	}]);
+
+	return _class;
+}(BaseRegion);
+
+exports.default = _class;
+
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _element = __webpack_require__(52);
+
+var _element2 = _interopRequireDefault(_element);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _class = function (_Marionette$LayoutVie) {
+	_inherits(_class, _Marionette$LayoutVie);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+	}
+
+	_createClass(_class, [{
+		key: 'getTemplate',
+		value: function getTemplate() {
+			return '#tmpl-elementor-navigator';
+		}
+	}, {
+		key: 'id',
+		value: function id() {
+			return 'elementor-navigator__inner';
+		}
+	}, {
+		key: 'ui',
+		value: function ui() {
+			return {
+				toggleAll: '#elementor-navigator__toggle-all',
+				close: '#elementor-navigator__close'
+			};
+		}
+	}, {
+		key: 'events',
+		value: function events() {
+			return {
+				'click @ui.toggleAll': 'toggleAll',
+				'click @ui.close': 'onCloseClick'
+			};
+		}
+	}, {
+		key: 'regions',
+		value: function regions() {
+			return {
+				elements: '#elementor-navigator__elements'
+			};
+		}
+	}, {
+		key: 'toggleAll',
+		value: function toggleAll() {
+			var state = 'expand' === this.ui.toggleAll.data('elementor-action'),
+			    classes = ['eicon-collapse', 'eicon-expand'];
+
+			this.ui.toggleAll.data('elementor-action', state ? 'collapse' : 'expand').removeClass(classes[+state]).addClass(classes[+!state]);
+
+			this.elements.currentView.recursiveChildInvoke('toggleList', state);
+		}
+	}, {
+		key: 'activateElementsMouseInteraction',
+		value: function activateElementsMouseInteraction() {
+			this.elements.currentView.recursiveChildInvoke('activateMouseInteraction');
+		}
+	}, {
+		key: 'deactivateElementsMouseInteraction',
+		value: function deactivateElementsMouseInteraction() {
+			this.elements.currentView.recursiveChildInvoke('deactivateMouseInteraction');
+		}
+	}, {
+		key: 'onShow',
+		value: function onShow() {
+			this.elements.show(new _element2.default({
+				model: elementor.elementsModel
+			}));
+		}
+	}, {
+		key: 'onCloseClick',
+		value: function onCloseClick() {
+			elementor.navigator.close();
+		}
+	}]);
+
+	return _class;
+}(Marionette.LayoutView);
+
+exports.default = _class;
+
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _elementEmpty = __webpack_require__(53);
+
+var _elementEmpty2 = _interopRequireDefault(_elementEmpty);
+
+var _rootEmpty = __webpack_require__(54);
+
+var _rootEmpty2 = _interopRequireDefault(_rootEmpty);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _class = function (_Marionette$Composite) {
+	_inherits(_class, _Marionette$Composite);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+	}
+
+	_createClass(_class, [{
+		key: 'getTemplate',
+		value: function getTemplate() {
+			return '#tmpl-elementor-navigator__elements';
+		}
+	}, {
+		key: 'ui',
+		value: function ui() {
+			return {
+				item: '> .elementor-navigator__item',
+				title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
+				toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
+				toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
+				elements: '> .elementor-navigator__elements'
+			};
+		}
+	}, {
+		key: 'events',
+		value: function events() {
+			return {
+				'contextmenu': 'onContextMenu',
+				'click @ui.item': 'onItemClick',
+				'click @ui.toggle': 'onToggleClick',
+				'click @ui.toggleList': 'onToggleListClick',
+				'dblclick @ui.title': 'onTitleDoubleClick',
+				'keydown @ui.title': 'onTitleKeyDown',
+				'paste @ui.title': 'onTitlePaste',
+				'sortstart @ui.elements': 'onSortStart',
+				'sortover @ui.elements': 'onSortOver',
+				'sortout @ui.elements': 'onSortOut',
+				'sortstop @ui.elements': 'onSortStop',
+				'sortupdate @ui.elements': 'onSortUpdate',
+				'sortreceive @ui.elements': 'onSortReceive'
+			};
+		}
+	}, {
+		key: 'getEmptyView',
+		value: function getEmptyView() {
+			if (this.isRoot()) {
+				return _rootEmpty2.default;
+			}
+
+			if (this.hasChildren()) {
+				return _elementEmpty2.default;
+			}
+
+			return null;
+		}
+	}, {
+		key: 'childViewOptions',
+		value: function childViewOptions() {
+			return {
+				indent: this.getIndent() + 10
+			};
+		}
+	}, {
+		key: 'className',
+		value: function className() {
+			var elType = this.model.get('elType');
+
+			var classes = 'elementor-navigator__element';
+
+			if (elType) {
+				classes += ' elementor-navigator__element-' + elType;
+			}
+
+			if (this.hasChildren()) {
+				classes += ' elementor-navigator__element--has-children';
+			}
+
+			return classes;
+		}
+	}, {
+		key: 'attributes',
+		value: function attributes() {
+			return {
+				'data-model-cid': this.model.cid
+			};
+		}
+	}, {
+		key: 'templateHelpers',
+		value: function templateHelpers() {
+			var helpers = {};
+
+			if (!this.isRoot()) {
+				helpers.title = this.model.getTitle();
+
+				helpers.icon = 'section' === this.model.get('elType') ? '' : this.model.getIcon();
+			}
+
+			return helpers;
+		}
+	}, {
+		key: 'initialize',
+		value: function initialize() {
+			this.collection = this.model.get('elements');
+
+			this.childViewContainer = '.elementor-navigator__elements';
+
+			this.listenTo(this.model, 'request:edit', this.onEditRequest).listenTo(this.model, 'change', this.onModelChange).listenTo(this.model.get('settings'), 'change', this.onModelSettingsChange);
+		}
+	}, {
+		key: 'getIndent',
+		value: function getIndent() {
+			return this.getOption('indent') || 0;
+		}
+	}, {
+		key: 'isRoot',
+		value: function isRoot() {
+			return !this.model.get('elType');
+		}
+	}, {
+		key: 'hasChildren',
+		value: function hasChildren() {
+			return 'widget' !== this.model.get('elType');
+		}
+	}, {
+		key: 'toggleList',
+		value: function toggleList(state, callback) {
+			if (!this.hasChildren() || this.isRoot()) {
+				return;
+			}
+
+			var isActive = this.ui.item.hasClass('elementor-active');
+
+			if (isActive === state) {
+				return;
+			}
+
+			this.ui.item.toggleClass('elementor-active', state);
+
+			var slideMethod = 'slideToggle';
+
+			if (undefined !== state) {
+				slideMethod = 'slide' + (state ? 'Down' : 'Up');
+			}
+
+			this.ui.elements[slideMethod](300, callback);
+		}
+	}, {
+		key: 'toggleHiddenClass',
+		value: function toggleHiddenClass() {
+			this.$el.toggleClass('elementor-navigator__element--hidden', !!this.model.get('hidden'));
+		}
+	}, {
+		key: 'recursiveChildInvoke',
+		value: function recursiveChildInvoke(method) {
+			var _this2 = this,
+			    _arguments = arguments;
+
+			for (var _len = arguments.length, restArgs = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+				restArgs[_key - 1] = arguments[_key];
+			}
+
+			this[method].apply(this, restArgs);
+
+			this.children.each(function (child) {
+				if (!(child instanceof _this2.constructor)) {
+					return;
+				}
+
+				child.recursiveChildInvoke.apply(child, _arguments);
+			});
+		}
+	}, {
+		key: 'recursiveParentInvoke',
+		value: function recursiveParentInvoke(method) {
+			for (var _len2 = arguments.length, restArgs = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+				restArgs[_key2 - 1] = arguments[_key2];
+			}
+
+			if (!(this._parent instanceof this.constructor)) {
+				return;
+			}
+
+			this._parent[method].apply(this._parent, restArgs);
+
+			this._parent.recursiveParentInvoke.apply(this._parent, arguments);
+		}
+	}, {
+		key: 'recursiveChildAgreement',
+		value: function recursiveChildAgreement(method) {
+			for (var _len3 = arguments.length, restArgs = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+				restArgs[_key3 - 1] = arguments[_key3];
+			}
+
+			if (!this[method].apply(this, restArgs)) {
+				return false;
+			}
+
+			var hasAgreement = true;
+
+			var _iteratorNormalCompletion = true;
+			var _didIteratorError = false;
+			var _iteratorError = undefined;
+
+			try {
+				for (var _iterator = Object.values(this.children._views)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+					var child = _step.value;
+
+					if (!(child instanceof this.constructor)) {
+						continue;
+					}
+
+					if (!child.recursiveChildAgreement.apply(child, arguments)) {
+						hasAgreement = false;
+
+						break;
+					}
+				}
+			} catch (err) {
+				_didIteratorError = true;
+				_iteratorError = err;
+			} finally {
+				try {
+					if (!_iteratorNormalCompletion && _iterator.return) {
+						_iterator.return();
+					}
+				} finally {
+					if (_didIteratorError) {
+						throw _iteratorError;
+					}
+				}
+			}
+
+			return hasAgreement;
+		}
+	}, {
+		key: 'activateMouseInteraction',
+		value: function activateMouseInteraction() {
+			this.$el.on({
+				mouseenter: this.onMouseEnter.bind(this),
+				mouseleave: this.onMouseLeave.bind(this)
+			});
+		}
+	}, {
+		key: 'deactivateMouseInteraction',
+		value: function deactivateMouseInteraction() {
+			this.$el.off('mouseenter mouseleave');
+		}
+	}, {
+		key: 'dragShouldBeIgnored',
+		value: function dragShouldBeIgnored(draggedModel) {
+			var childTypes = elementor.helpers.getElementChildType(this.model.get('elType')),
+			    draggedElType = draggedModel.get('elType');
+
+			if ('section' === draggedElType && !draggedModel.get('isInner')) {
+				return true;
+			}
+
+			return !childTypes || -1 === childTypes.indexOf(draggedModel.get('elType'));
+		}
+	}, {
+		key: 'addEditingClass',
+		value: function addEditingClass() {
+			this.ui.item.addClass('elementor-editing');
+		}
+	}, {
+		key: 'removeEditingClass',
+		value: function removeEditingClass() {
+			this.ui.item.removeClass('elementor-editing');
+		}
+	}, {
+		key: 'enterTitleEditing',
+		value: function enterTitleEditing() {
+			this.ui.title.attr('contenteditable', true).focus();
+
+			document.execCommand('selectAll');
+
+			elementor.addBackgroundClickListener('navigator', {
+				ignore: this.ui.title,
+				callback: this.exitTitleEditing.bind(this)
+			});
+		}
+	}, {
+		key: 'exitTitleEditing',
+		value: function exitTitleEditing() {
+			this.ui.title.attr('contenteditable', false);
+
+			var newTitle = this.ui.title.text().trim();
+
+			this.model.get('settings').set('_title', newTitle);
+
+			elementor.removeBackgroundClickListener('navigator');
+		}
+	}, {
+		key: 'activateSortable',
+		value: function activateSortable() {
+			if (!elementor.userCan('design')) {
+				return;
+			}
+
+			this.ui.elements.sortable({
+				items: '> .elementor-navigator__element',
+				placeholder: 'ui-sortable-placeholder',
+				axis: 'y',
+				forcePlaceholderSize: true,
+				connectWith: '.elementor-navigator__element-' + this.model.get('elType') + ' ' + this.ui.elements.selector,
+				cancel: '[contenteditable="true"]'
+			});
+		}
+	}, {
+		key: 'onRender',
+		value: function onRender() {
+			this.activateSortable();
+
+			this.ui.item.css('padding-' + (elementor.config.is_rtl ? 'right' : 'left'), this.getIndent());
+
+			this.toggleHiddenClass();
+		}
+	}, {
+		key: 'onModelChange',
+		value: function onModelChange() {
+			if (undefined !== this.model.changed.hidden) {
+				this.toggleHiddenClass();
+			}
+		}
+	}, {
+		key: 'onModelSettingsChange',
+		value: function onModelSettingsChange(settingsModel) {
+			if (undefined !== settingsModel.changed._title) {
+				this.ui.title.text(this.model.getTitle());
+			}
+		}
+	}, {
+		key: 'onItemClick',
+		value: function onItemClick() {
+			this.model.trigger('request:edit', { scrollIntoView: true });
+		}
+	}, {
+		key: 'onToggleClick',
+		value: function onToggleClick(event) {
+			event.stopPropagation();
+
+			this.model.trigger('request:toggleVisibility');
+		}
+	}, {
+		key: 'onTitleDoubleClick',
+		value: function onTitleDoubleClick() {
+			this.enterTitleEditing();
+		}
+	}, {
+		key: 'onTitleKeyDown',
+		value: function onTitleKeyDown(event) {
+			var ENTER_KEY = 13;
+
+			if (ENTER_KEY === event.which) {
+				event.preventDefault();
+
+				this.exitTitleEditing();
+			}
+		}
+	}, {
+		key: 'onTitlePaste',
+		value: function onTitlePaste(event) {
+			event.preventDefault();
+
+			document.execCommand('insertHTML', false, event.originalEvent.clipboardData.getData('text/plain'));
+		}
+	}, {
+		key: 'onToggleListClick',
+		value: function onToggleListClick(event) {
+			event.stopPropagation();
+
+			this.toggleList();
+		}
+	}, {
+		key: 'onSortStart',
+		value: function onSortStart(event, ui) {
+			this.model.trigger('request:sort:start', event, ui);
+
+			jQuery(ui.item).children('.elementor-navigator__item').trigger('click');
+
+			elementor.navigator.getLayout().activateElementsMouseInteraction();
+		}
+	}, {
+		key: 'onSortStop',
+		value: function onSortStop() {
+			elementor.navigator.getLayout().deactivateElementsMouseInteraction();
+		}
+	}, {
+		key: 'onSortOver',
+		value: function onSortOver(event) {
+			event.stopPropagation();
+
+			this.$el.addClass('elementor-dragging-on-child');
+		}
+	}, {
+		key: 'onSortOut',
+		value: function onSortOut(event) {
+			event.stopPropagation();
+
+			this.$el.removeClass('elementor-dragging-on-child');
+		}
+	}, {
+		key: 'onSortUpdate',
+		value: function onSortUpdate(event, ui) {
+			event.stopPropagation();
+
+			if (!this.ui.elements.is(ui.item.parent())) {
+				return;
+			}
+
+			this.model.trigger('request:sort:update', ui);
+		}
+	}, {
+		key: 'onSortReceive',
+		value: function onSortReceive(event, ui) {
+			this.model.trigger('request:sort:receive', event, ui);
+		}
+	}, {
+		key: 'onMouseEnter',
+		value: function onMouseEnter(event) {
+			var _this3 = this;
+
+			event.stopPropagation();
+
+			var dragShouldBeIgnored = this.recursiveChildAgreement('dragShouldBeIgnored', elementor.channels.data.request('dragging:model'));
+
+			if (dragShouldBeIgnored) {
+				return;
+			}
+
+			this.autoExpandTimeout = setTimeout(function () {
+				_this3.toggleList(true, function () {
+					_this3.ui.elements.sortable('refreshPositions');
+				});
+			}, 500);
+		}
+	}, {
+		key: 'onMouseLeave',
+		value: function onMouseLeave(event) {
+			event.stopPropagation();
+
+			clearTimeout(this.autoExpandTimeout);
+		}
+	}, {
+		key: 'onContextMenu',
+		value: function onContextMenu(event) {
+			this.model.trigger('request:contextmenu', event);
+		}
+	}, {
+		key: 'onEditRequest',
+		value: function onEditRequest() {
+			this.recursiveParentInvoke('toggleList', true);
+
+			elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke('removeEditingClass');
+
+			this.addEditingClass();
+
+			elementor.helpers.scrollToView(this.$el, 400, elementor.navigator.getLayout().elements.$el);
+		}
+	}]);
+
+	return _class;
+}(Marionette.CompositeView);
+
+exports.default = _class;
+
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _class = function (_Marionette$ItemView) {
+	_inherits(_class, _Marionette$ItemView);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+	}
+
+	_createClass(_class, [{
+		key: 'getTemplate',
+		value: function getTemplate() {
+			return '#tmpl-elementor-navigator__elements--empty';
+		}
+	}, {
+		key: 'className',
+		value: function className() {
+			return 'elementor-empty-view';
+		}
+	}, {
+		key: 'onRendr',
+		value: function onRendr() {
+			this.$el.css('padding-' + (elementor.config.is_rtl ? 'right' : 'left'), this.getOption('indent'));
+		}
+	}]);
+
+	return _class;
+}(Marionette.ItemView);
+
+exports.default = _class;
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _class = function (_Marionette$ItemView) {
+	_inherits(_class, _Marionette$ItemView);
+
+	function _class() {
+		_classCallCheck(this, _class);
+
+		return _possibleConstructorReturn(this, (_class.__proto__ || Object.getPrototypeOf(_class)).apply(this, arguments));
+	}
+
+	_createClass(_class, [{
+		key: 'getTemplate',
+		value: function getTemplate() {
+			return '#tmpl-elementor-navigator__root--empty';
+		}
+	}, {
+		key: 'className',
+		value: function className() {
+			return 'elementor-nerd-box';
+		}
+	}]);
+
+	return _class;
+}(Marionette.ItemView);
+
+exports.default = _class;
+
+/***/ }),
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7426,104 +8633,7 @@ helpers = {
 module.exports = helpers;
 
 /***/ }),
-/* 50 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var heartbeat;
-
-heartbeat = {
-
-	init: function init() {
-		var modal;
-
-		this.getModal = function () {
-			if (!modal) {
-				modal = this.initModal();
-			}
-
-			return modal;
-		};
-
-		jQuery(document).on({
-			'heartbeat-send': function heartbeatSend(event, data) {
-				data.elementor_post_lock = {
-					post_ID: elementor.config.document.id
-				};
-			},
-			'heartbeat-tick': function heartbeatTick(event, response) {
-				if (response.locked_user) {
-					if (elementor.saver.isEditorChanged()) {
-						elementor.saver.saveEditor({
-							status: 'autosave'
-						});
-					}
-
-					heartbeat.showLockMessage(response.locked_user);
-				} else {
-					heartbeat.getModal().hide();
-				}
-
-				elementor.config.nonce = response.elementorNonce;
-			},
-			'heartbeat-tick.wp-refresh-nonces': function heartbeatTickWpRefreshNonces(event, response) {
-				var nonces = response['elementor-refresh-nonces'];
-
-				if (nonces) {
-					if (nonces.heartbeatNonce) {
-						elementor.config.nonce = nonces.elementorNonce;
-					}
-
-					if (nonces.heartbeatNonce) {
-						window.heartbeatSettings.nonce = nonces.heartbeatNonce;
-					}
-				}
-			}
-		});
-
-		if (elementor.config.locked_user) {
-			heartbeat.showLockMessage(elementor.config.locked_user);
-		}
-	},
-
-	initModal: function initModal() {
-		var modal = elementor.dialogsManager.createWidget('lightbox', {
-			headerMessage: elementor.translate('take_over')
-		});
-
-		modal.addButton({
-			name: 'go_back',
-			text: elementor.translate('go_back'),
-			callback: function callback() {
-				parent.history.go(-1);
-			}
-		});
-
-		modal.addButton({
-			name: 'take_over',
-			text: elementor.translate('take_over'),
-			callback: function callback() {
-				wp.heartbeat.enqueue('elementor_force_post_lock', true);
-				wp.heartbeat.connectNow();
-			}
-		});
-
-		return modal;
-	},
-
-	showLockMessage: function showLockMessage(lockedUser) {
-		var modal = heartbeat.getModal();
-
-		modal.setMessage(elementor.translate('dialog_user_taken_over', [lockedUser])).show();
-	}
-};
-
-module.exports = heartbeat;
-
-/***/ }),
-/* 51 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7681,7 +8791,7 @@ ImagesManager = function ImagesManager() {
 module.exports = new ImagesManager();
 
 /***/ }),
-/* 52 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7822,15 +8932,15 @@ var Debug = function Debug() {
 module.exports = new Debug();
 
 /***/ }),
-/* 53 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var Schemes,
-    Stylesheet = __webpack_require__(23),
-    ControlsCSSParser = __webpack_require__(12);
+    Stylesheet = __webpack_require__(24),
+    ControlsCSSParser = __webpack_require__(13);
 
 Schemes = function Schemes() {
 	var self = this,
@@ -7964,7 +9074,7 @@ Schemes = function Schemes() {
 module.exports = new Schemes();
 
 /***/ }),
-/* 54 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8087,7 +9197,7 @@ presetsFactory = {
 module.exports = presetsFactory;
 
 /***/ }),
-/* 55 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8095,8 +9205,8 @@ module.exports = presetsFactory;
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var TemplateLibraryLayoutView = __webpack_require__(56),
-    TemplateLibraryCollection = __webpack_require__(68),
+var TemplateLibraryLayoutView = __webpack_require__(61),
+    TemplateLibraryCollection = __webpack_require__(73),
     TemplateLibraryManager;
 
 TemplateLibraryManager = function TemplateLibraryManager() {
@@ -8489,21 +9599,21 @@ TemplateLibraryManager = function TemplateLibraryManager() {
 module.exports = new TemplateLibraryManager();
 
 /***/ }),
-/* 56 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var BaseModalLayout = __webpack_require__(8),
-    TemplateLibraryHeaderActionsView = __webpack_require__(57),
-    TemplateLibraryHeaderMenuView = __webpack_require__(58),
-    TemplateLibraryHeaderPreviewView = __webpack_require__(59),
-    TemplateLibraryHeaderBackView = __webpack_require__(60),
-    TemplateLibraryCollectionView = __webpack_require__(61),
-    TemplateLibrarySaveTemplateView = __webpack_require__(65),
-    TemplateLibraryImportView = __webpack_require__(66),
-    TemplateLibraryPreviewView = __webpack_require__(67);
+    TemplateLibraryHeaderActionsView = __webpack_require__(62),
+    TemplateLibraryHeaderMenuView = __webpack_require__(63),
+    TemplateLibraryHeaderPreviewView = __webpack_require__(64),
+    TemplateLibraryHeaderBackView = __webpack_require__(65),
+    TemplateLibraryCollectionView = __webpack_require__(66),
+    TemplateLibrarySaveTemplateView = __webpack_require__(70),
+    TemplateLibraryImportView = __webpack_require__(71),
+    TemplateLibraryPreviewView = __webpack_require__(72);
 
 module.exports = BaseModalLayout.extend({
 
@@ -8579,7 +9689,7 @@ module.exports = BaseModalLayout.extend({
 });
 
 /***/ }),
-/* 57 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8628,7 +9738,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 58 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8691,13 +9801,13 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 59 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryInsertTemplateBehavior = __webpack_require__(24);
+var TemplateLibraryInsertTemplateBehavior = __webpack_require__(25);
 
 module.exports = Marionette.ItemView.extend({
 	template: '#tmpl-elementor-template-library-header-preview',
@@ -8712,7 +9822,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 60 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8733,15 +9843,15 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 61 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryTemplateLocalView = __webpack_require__(62),
-    TemplateLibraryTemplateRemoteView = __webpack_require__(63),
-    Masonry = __webpack_require__(15),
+var TemplateLibraryTemplateLocalView = __webpack_require__(67),
+    TemplateLibraryTemplateRemoteView = __webpack_require__(68),
+    Masonry = __webpack_require__(16),
     TemplateLibraryCollectionView;
 
 TemplateLibraryCollectionView = Marionette.CompositeView.extend({
@@ -8754,7 +9864,7 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend({
 	reorderOnSort: true,
 
 	emptyView: function emptyView() {
-		var EmptyView = __webpack_require__(64);
+		var EmptyView = __webpack_require__(69);
 
 		return new EmptyView();
 	},
@@ -8957,13 +10067,13 @@ TemplateLibraryCollectionView = Marionette.CompositeView.extend({
 module.exports = TemplateLibraryCollectionView;
 
 /***/ }),
-/* 62 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryTemplateView = __webpack_require__(25),
+var TemplateLibraryTemplateView = __webpack_require__(26),
     TemplateLibraryTemplateLocalView;
 
 TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend({
@@ -9010,13 +10120,13 @@ TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend({
 module.exports = TemplateLibraryTemplateLocalView;
 
 /***/ }),
-/* 63 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryTemplateView = __webpack_require__(25),
+var TemplateLibraryTemplateView = __webpack_require__(26),
     TemplateLibraryTemplateRemoteView;
 
 TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend({
@@ -9054,7 +10164,7 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend({
 module.exports = TemplateLibraryTemplateRemoteView;
 
 /***/ }),
-/* 64 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9111,7 +10221,7 @@ TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend({
 module.exports = TemplateLibraryTemplatesEmptyView;
 
 /***/ }),
-/* 65 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9162,7 +10272,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
 module.exports = TemplateLibrarySaveTemplateView;
 
 /***/ }),
-/* 66 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9264,7 +10374,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend({
 module.exports = TemplateLibraryImportView;
 
 /***/ }),
-/* 67 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9289,13 +10399,13 @@ TemplateLibraryPreviewView = Marionette.ItemView.extend({
 module.exports = TemplateLibraryPreviewView;
 
 /***/ }),
-/* 68 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TemplateLibraryTemplateModel = __webpack_require__(69),
+var TemplateLibraryTemplateModel = __webpack_require__(74),
     TemplateLibraryCollection;
 
 TemplateLibraryCollection = Backbone.Collection.extend({
@@ -9305,7 +10415,7 @@ TemplateLibraryCollection = Backbone.Collection.extend({
 module.exports = TemplateLibraryCollection;
 
 /***/ }),
-/* 69 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9327,7 +10437,7 @@ module.exports = Backbone.Model.extend({
 });
 
 /***/ }),
-/* 70 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9561,7 +10671,7 @@ Ajax = {
 module.exports = Ajax;
 
 /***/ }),
-/* 71 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9644,13 +10754,13 @@ Conditions = function Conditions() {
 module.exports = new Conditions();
 
 /***/ }),
-/* 72 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var HistoryPageView = __webpack_require__(73),
+var HistoryPageView = __webpack_require__(78),
     Manager;
 
 Manager = function Manager() {
@@ -9666,9 +10776,9 @@ Manager = function Manager() {
 	var init = function init() {
 		elementor.on('preview:loaded', addPanelPage);
 
-		self.history = __webpack_require__(79);
+		self.history = __webpack_require__(84);
 
-		self.revisions = __webpack_require__(83);
+		self.revisions = __webpack_require__(93);
 
 		self.revisions.init();
 	};
@@ -9679,16 +10789,16 @@ Manager = function Manager() {
 module.exports = new Manager();
 
 /***/ }),
-/* 73 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TabHistoryView = __webpack_require__(74),
-    TabHistoryEmpty = __webpack_require__(75),
-    TabRevisionsView = __webpack_require__(76),
-    TabRevisionsEmpty = __webpack_require__(78);
+var TabHistoryView = __webpack_require__(79),
+    TabHistoryEmpty = __webpack_require__(80),
+    TabRevisionsView = __webpack_require__(81),
+    TabRevisionsEmpty = __webpack_require__(83);
 
 module.exports = Marionette.LayoutView.extend({
 	template: '#tmpl-elementor-panel-history-page',
@@ -9787,7 +10897,7 @@ module.exports = Marionette.LayoutView.extend({
 });
 
 /***/ }),
-/* 74 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9859,7 +10969,7 @@ module.exports = Marionette.CompositeView.extend({
 });
 
 /***/ }),
-/* 75 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9872,7 +10982,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 76 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9883,7 +10993,7 @@ module.exports = Marionette.CompositeView.extend({
 
 	template: '#tmpl-elementor-panel-revisions',
 
-	childView: __webpack_require__(77),
+	childView: __webpack_require__(82),
 
 	childViewContainer: '#elementor-revisions-list',
 
@@ -10104,7 +11214,7 @@ module.exports = Marionette.CompositeView.extend({
 });
 
 /***/ }),
-/* 77 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10127,7 +11237,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 78 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10140,16 +11250,16 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 79 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var HistoryCollection = __webpack_require__(80),
-    HistoryItem = __webpack_require__(26),
-    ElementHistoryBehavior = __webpack_require__(81),
-    CollectionHistoryBehavior = __webpack_require__(82);
+var HistoryCollection = __webpack_require__(85),
+    HistoryItem = __webpack_require__(27),
+    ElementHistoryBehavior = __webpack_require__(86),
+    CollectionHistoryBehavior = __webpack_require__(87);
 
 var Manager = function Manager() {
 	var self = this,
@@ -10540,20 +11650,20 @@ var Manager = function Manager() {
 module.exports = new Manager();
 
 /***/ }),
-/* 80 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ItemModel = __webpack_require__(26);
+var ItemModel = __webpack_require__(27);
 
 module.exports = Backbone.Collection.extend({
 	model: ItemModel
 });
 
 /***/ }),
-/* 81 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10705,7 +11815,7 @@ module.exports = Marionette.Behavior.extend({
 });
 
 /***/ }),
-/* 82 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10821,8 +11931,10 @@ module.exports = Marionette.Behavior.extend({
 		    didAction = false,
 		    behavior;
 
-		// Find the new behavior and work with him
-		if (history.behavior.view.model) {
+		var BaseElementView = __webpack_require__(10);
+
+		// Find the new behavior and work with him.
+		if (history.behavior.view instanceof BaseElementView) {
 			var modelID = history.behavior.view.model.get('id'),
 			    view = elementor.history.history.findView(modelID);
 			if (view) {
@@ -10867,13 +11979,675 @@ module.exports = Marionette.Behavior.extend({
 });
 
 /***/ }),
-/* 83 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var RevisionsCollection = __webpack_require__(84),
+var Module = __webpack_require__(2),
+    ContextMenu;
+
+ContextMenu = Module.extend({
+
+	getDefaultSettings: function getDefaultSettings() {
+		return {
+			actions: {},
+			classes: {
+				list: 'elementor-context-menu-list',
+				group: 'elementor-context-menu-list__group',
+				groupPrefix: 'elementor-context-menu-list__group-',
+				item: 'elementor-context-menu-list__item',
+				itemTypePrefix: 'elementor-context-menu-list__item-',
+				itemTitle: 'elementor-context-menu-list__item__title',
+				itemShortcut: 'elementor-context-menu-list__item__shortcut',
+				iconShortcut: 'elementor-context-menu-list__item__icon',
+				itemDisabled: 'elementor-context-menu-list__item--disabled',
+				divider: 'elementor-context-menu-list__divider',
+				hidden: 'elementor-hidden'
+			}
+		};
+	},
+
+	buildActionItem: function buildActionItem(action) {
+		var self = this,
+		    classes = self.getSettings('classes'),
+		    $item = jQuery('<div>', { 'class': classes.item + ' ' + classes.itemTypePrefix + action.name }),
+		    $itemTitle = jQuery('<div>', { 'class': classes.itemTitle }).text(action.title),
+		    $itemIcon = jQuery('<div>', { 'class': classes.iconShortcut });
+
+		if (action.icon) {
+			$itemIcon.html(jQuery('<i>', { 'class': action.icon }));
+		}
+
+		$item.append($itemIcon, $itemTitle);
+
+		if (action.shortcut) {
+			var $itemShortcut = jQuery('<div>', { 'class': classes.itemShortcut }).html(action.shortcut);
+
+			$item.append($itemShortcut);
+		}
+
+		if (action.callback) {
+			$item.on('click', function () {
+				self.runAction(action);
+			});
+		}
+
+		action.$item = $item;
+
+		return $item;
+	},
+
+	buildActionsList: function buildActionsList() {
+		var self = this,
+		    classes = self.getSettings('classes'),
+		    groups = self.getSettings('groups'),
+		    $list = jQuery('<div>', { 'class': classes.list });
+
+		groups.forEach(function (group) {
+			var $group = jQuery('<div>', { 'class': classes.group + ' ' + classes.groupPrefix + group.name });
+
+			group.actions.forEach(function (action) {
+				$group.append(self.buildActionItem(action));
+			});
+
+			$list.append($group);
+
+			group.$item = $group;
+		});
+
+		return $list;
+	},
+
+	toggleGroupVisibility: function toggleGroupVisibility(group, state) {
+		group.$item.toggleClass(this.getSettings('classes.hidden'), !state);
+	},
+
+	toggleActionVisibility: function toggleActionVisibility(action, state) {
+		action.$item.toggleClass(this.getSettings('classes.hidden'), !state);
+	},
+
+	toggleActionUsability: function toggleActionUsability(action, state) {
+		action.$item.toggleClass(this.getSettings('classes.itemDisabled'), !state);
+	},
+
+	isActionEnabled: function isActionEnabled(action) {
+		if (!action.callback && !action.groups) {
+			return false;
+		}
+
+		return action.isEnabled ? action.isEnabled() : true;
+	},
+
+	runAction: function runAction(action) {
+		if (!this.isActionEnabled(action)) {
+			return;
+		}
+
+		action.callback();
+
+		this.getModal().hide();
+	},
+
+	initModal: function initModal() {
+		var modal;
+
+		this.getModal = function () {
+			if (!modal) {
+				modal = elementor.dialogsManager.createWidget('simple', {
+					className: 'elementor-context-menu',
+					message: this.buildActionsList(),
+					iframe: elementor.$preview,
+					effects: {
+						hide: 'hide',
+						show: 'show'
+					},
+					hide: {
+						onOutsideContextMenu: true
+					},
+					position: {
+						my: (elementor.config.is_rtl ? 'right' : 'left') + ' top',
+						collision: 'fit'
+					}
+				});
+			}
+
+			return modal;
+		};
+	},
+
+	show: function show(event) {
+		var self = this,
+		    modal = self.getModal();
+
+		modal.setSettings('position', {
+			of: event
+		});
+
+		self.getSettings('groups').forEach(function (group) {
+			var isGroupVisible = false !== group.isVisible;
+
+			self.toggleGroupVisibility(group, isGroupVisible);
+
+			if (isGroupVisible) {
+				group.actions.forEach(function (action) {
+					var isActionVisible = false !== action.isVisible;
+
+					self.toggleActionVisibility(action, isActionVisible);
+
+					if (isActionVisible) {
+						self.toggleActionUsability(action, self.isActionEnabled(action));
+					}
+				});
+			}
+		});
+
+		modal.show();
+	},
+
+	destroy: function destroy() {
+		this.getModal().destroy();
+	},
+
+	onInit: function onInit() {
+		this.initModal();
+	}
+});
+
+module.exports = ContextMenu;
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _base = __webpack_require__(30);
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AddSectionView = function (_BaseAddSectionView) {
+	_inherits(AddSectionView, _BaseAddSectionView);
+
+	function AddSectionView() {
+		_classCallCheck(this, AddSectionView);
+
+		return _possibleConstructorReturn(this, (AddSectionView.__proto__ || Object.getPrototypeOf(AddSectionView)).apply(this, arguments));
+	}
+
+	_createClass(AddSectionView, [{
+		key: 'className',
+		value: function className() {
+			return _get(AddSectionView.prototype.__proto__ || Object.getPrototypeOf(AddSectionView.prototype), 'className', this).call(this) + ' elementor-add-section-inline';
+		}
+	}, {
+		key: 'fadeToDeath',
+		value: function fadeToDeath() {
+			var self = this;
+
+			self.$el.slideUp(function () {
+				self.destroy();
+			});
+		}
+	}, {
+		key: 'paste',
+		value: function paste() {
+			_get(AddSectionView.prototype.__proto__ || Object.getPrototypeOf(AddSectionView.prototype), 'paste', this).call(this);
+
+			this.destroy();
+		}
+	}, {
+		key: 'onCloseButtonClick',
+		value: function onCloseButtonClick() {
+			this.fadeToDeath();
+		}
+	}, {
+		key: 'onPresetSelected',
+		value: function onPresetSelected(event) {
+			_get(AddSectionView.prototype.__proto__ || Object.getPrototypeOf(AddSectionView.prototype), 'onPresetSelected', this).call(this, event);
+
+			this.destroy();
+		}
+	}, {
+		key: 'onAddTemplateButtonClick',
+		value: function onAddTemplateButtonClick() {
+			_get(AddSectionView.prototype.__proto__ || Object.getPrototypeOf(AddSectionView.prototype), 'onAddTemplateButtonClick', this).call(this);
+
+			this.destroy();
+		}
+	}, {
+		key: 'onDropping',
+		value: function onDropping() {
+			_get(AddSectionView.prototype.__proto__ || Object.getPrototypeOf(AddSectionView.prototype), 'onDropping', this).call(this);
+
+			this.destroy();
+		}
+	}]);
+
+	return AddSectionView;
+}(_base2.default);
+
+exports.default = AddSectionView;
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var BaseElementView = __webpack_require__(10),
+    ColumnEmptyView = __webpack_require__(91),
+    ColumnView;
+
+ColumnView = BaseElementView.extend({
+	template: Marionette.TemplateCache.get('#tmpl-elementor-column-content'),
+
+	emptyView: ColumnEmptyView,
+
+	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
+
+	toggleEditTools: true,
+
+	behaviors: function behaviors() {
+		var behaviors = BaseElementView.prototype.behaviors.apply(this, arguments);
+
+		_.extend(behaviors, {
+			Sortable: {
+				behaviorClass: __webpack_require__(19),
+				elChildType: 'widget'
+			},
+			Resizable: {
+				behaviorClass: __webpack_require__(92)
+			}
+		});
+
+		return elementor.hooks.applyFilters('elements/column/behaviors', behaviors, this);
+	},
+
+	className: function className() {
+		var classes = BaseElementView.prototype.className.apply(this, arguments),
+		    type = this.isInner() ? 'inner' : 'top';
+
+		return classes + ' elementor-column elementor-' + type + '-column';
+	},
+
+	tagName: function tagName() {
+		return this.model.getSetting('html_tag') || 'div';
+	},
+
+	ui: function ui() {
+		var ui = BaseElementView.prototype.ui.apply(this, arguments);
+
+		ui.columnInner = '> .elementor-column-wrap';
+
+		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
+
+		return ui;
+	},
+
+	initialize: function initialize() {
+		BaseElementView.prototype.initialize.apply(this, arguments);
+
+		this.addControlValidator('_inline_size', this.onEditorInlineSizeInputChange);
+	},
+
+	getContextMenuGroups: function getContextMenuGroups() {
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply(this, arguments),
+		    generalGroupIndex = groups.indexOf(_.findWhere(groups, { name: 'general' }));
+
+		groups.splice(generalGroupIndex + 1, 0, {
+			name: 'addNew',
+			actions: [{
+				name: 'addNew',
+				icon: 'eicon-plus',
+				title: elementor.translate('new_column'),
+				callback: this.addNewColumn.bind(this)
+			}]
+		});
+
+		return groups;
+	},
+
+	isDroppingAllowed: function isDroppingAllowed() {
+		var elementView = elementor.channels.panelElements.request('element:selected');
+
+		if (!elementView) {
+			return false;
+		}
+
+		var elType = elementView.model.get('elType');
+
+		if ('section' === elType) {
+			return !this.isInner();
+		}
+
+		return 'widget' === elType;
+	},
+
+	getPercentsForDisplay: function getPercentsForDisplay() {
+		var inlineSize = +this.model.getSetting('_inline_size') || this.getPercentSize();
+
+		return inlineSize.toFixed(1) + '%';
+	},
+
+	changeSizeUI: function changeSizeUI() {
+		var self = this,
+		    columnSize = self.model.getSetting('_column_size');
+
+		self.$el.attr('data-col', columnSize);
+
+		_.defer(function () {
+			// Wait for the column size to be applied
+			if (self.ui.percentsTooltip) {
+				self.ui.percentsTooltip.text(self.getPercentsForDisplay());
+			}
+		});
+	},
+
+	getPercentSize: function getPercentSize(size) {
+		if (!size) {
+			size = this.el.getBoundingClientRect().width;
+		}
+
+		return +(size / this.$el.parent().width() * 100).toFixed(3);
+	},
+
+	getSortableOptions: function getSortableOptions() {
+		return {
+			connectWith: '.elementor-widget-wrap',
+			items: '> .elementor-element'
+		};
+	},
+
+	changeChildContainerClasses: function changeChildContainerClasses() {
+		var emptyClass = 'elementor-element-empty',
+		    populatedClass = 'elementor-element-populated';
+
+		if (this.collection.isEmpty()) {
+			this.ui.columnInner.removeClass(populatedClass).addClass(emptyClass);
+		} else {
+			this.ui.columnInner.removeClass(emptyClass).addClass(populatedClass);
+		}
+	},
+
+	addNewColumn: function addNewColumn() {
+		this.trigger('request:add:new');
+	},
+
+	// Events
+	onCollectionChanged: function onCollectionChanged() {
+		BaseElementView.prototype.onCollectionChanged.apply(this, arguments);
+
+		this.changeChildContainerClasses();
+	},
+
+	onRender: function onRender() {
+		var self = this;
+
+		BaseElementView.prototype.onRender.apply(self, arguments);
+
+		self.changeChildContainerClasses();
+
+		self.changeSizeUI();
+
+		self.$el.html5Droppable({
+			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
+			axis: ['vertical'],
+			groups: ['elementor-element'],
+			isDroppingAllowed: self.isDroppingAllowed.bind(self),
+			currentElementClass: 'elementor-html5dnd-current-element',
+			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
+			hasDraggingOnChildClass: 'elementor-dragging-on-child',
+			onDropping: function onDropping(side, event) {
+				event.stopPropagation();
+
+				var newIndex = jQuery(this).index();
+
+				if ('bottom' === side) {
+					newIndex++;
+				}
+
+				self.addElementFromPanel({ at: newIndex });
+			}
+		});
+	},
+
+	onSettingsChanged: function onSettingsChanged(settings) {
+		BaseElementView.prototype.onSettingsChanged.apply(this, arguments);
+
+		var changedAttributes = settings.changedAttributes();
+
+		if ('_column_size' in changedAttributes || '_inline_size' in changedAttributes) {
+			this.changeSizeUI();
+		}
+	},
+
+	onEditorInlineSizeInputChange: function onEditorInlineSizeInputChange(newValue, oldValue) {
+		var errors = [],
+		    columnSize = this.model.getSetting('_column_size');
+
+		// If there's only one column
+		if (100 === columnSize) {
+			errors.push('Could not resize one column');
+
+			return errors;
+		}
+
+		if (!oldValue) {
+			oldValue = columnSize;
+		}
+
+		try {
+			this._parent.resizeChild(this, +oldValue, +newValue);
+		} catch (e) {
+			if (e.message === this._parent.errors.columnWidthTooLarge) {
+				errors.push(e.message);
+			}
+		}
+
+		return errors;
+	},
+
+	onAddButtonClick: function onAddButtonClick(event) {
+		event.stopPropagation();
+
+		this.addNewColumn();
+	}
+});
+
+module.exports = ColumnView;
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = Marionette.ItemView.extend({
+	template: '#tmpl-elementor-empty-preview',
+
+	className: 'elementor-empty-view',
+
+	events: {
+		'click': 'onClickAdd'
+	},
+
+	behaviors: function behaviors() {
+		return {
+			contextMenu: {
+				behaviorClass: __webpack_require__(11),
+				groups: this.getContextMenuGroups()
+			}
+		};
+	},
+
+	getContextMenuGroups: function getContextMenuGroups() {
+		return [{
+			name: 'general',
+			actions: [{
+				name: 'paste',
+				title: elementor.translate('paste'),
+				callback: this.paste.bind(this),
+				isEnabled: this.isPasteEnabled.bind(this)
+			}]
+		}];
+	},
+
+	paste: function paste() {
+		var self = this,
+		    elements = elementor.getStorage('transfer').elements,
+		    index = 0;
+
+		elements.forEach(function (item) {
+			self._parent.addChildElement(item, { at: index, clone: true });
+
+			index++;
+		});
+	},
+
+	isPasteEnabled: function isPasteEnabled() {
+		var transferData = elementor.getStorage('transfer');
+
+		if (!transferData) {
+			return false;
+		}
+
+		if ('section' === transferData.elementsType) {
+			return transferData.elements[0].isInner && !this._parent.isInner();
+		}
+
+		return 'widget' === transferData.elementsType;
+	},
+
+	onClickAdd: function onClickAdd() {
+		elementor.getPanelView().setPage('elements');
+	}
+});
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var ResizableBehavior;
+
+ResizableBehavior = Marionette.Behavior.extend({
+	defaults: {
+		handles: elementor.config.is_rtl ? 'w' : 'e'
+	},
+
+	events: {
+		resizestart: 'onResizeStart',
+		resizestop: 'onResizeStop',
+		resize: 'onResize'
+	},
+
+	initialize: function initialize() {
+		Marionette.Behavior.prototype.initialize.apply(this, arguments);
+
+		this.listenTo(elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched);
+	},
+
+	active: function active() {
+		if (!elementor.userCan('design')) {
+			return;
+		}
+		this.deactivate();
+
+		var options = _.clone(this.options);
+
+		delete options.behaviorClass;
+
+		var $childViewContainer = this.getChildViewContainer(),
+		    defaultResizableOptions = {},
+		    resizableOptions = _.extend(defaultResizableOptions, options);
+
+		$childViewContainer.resizable(resizableOptions);
+	},
+
+	deactivate: function deactivate() {
+		if (this.getChildViewContainer().resizable('instance')) {
+			this.getChildViewContainer().resizable('destroy');
+		}
+	},
+
+	onEditModeSwitched: function onEditModeSwitched(activeMode) {
+		if ('edit' === activeMode) {
+			this.active();
+		} else {
+			this.deactivate();
+		}
+	},
+
+	onRender: function onRender() {
+		var self = this;
+
+		_.defer(function () {
+			self.onEditModeSwitched(elementor.channels.dataEditMode.request('activeMode'));
+		});
+	},
+
+	onDestroy: function onDestroy() {
+		this.deactivate();
+	},
+
+	onResizeStart: function onResizeStart(event) {
+		event.stopPropagation();
+
+		this.view.$el.data('originalWidth', this.view.el.getBoundingClientRect().width);
+
+		this.view.triggerMethod('request:resize:start', event);
+	},
+
+	onResizeStop: function onResizeStop(event) {
+		event.stopPropagation();
+
+		this.view.triggerMethod('request:resize:stop');
+	},
+
+	onResize: function onResize(event, ui) {
+		event.stopPropagation();
+
+		this.view.triggerMethod('request:resize', ui, event);
+	},
+
+	getChildViewContainer: function getChildViewContainer() {
+		return this.$el;
+	}
+});
+
+module.exports = ResizableBehavior;
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var RevisionsCollection = __webpack_require__(94),
     RevisionsManager;
 
 RevisionsManager = function RevisionsManager() {
@@ -11001,13 +12775,13 @@ RevisionsManager = function RevisionsManager() {
 module.exports = new RevisionsManager();
 
 /***/ }),
-/* 84 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var RevisionModel = __webpack_require__(85);
+var RevisionModel = __webpack_require__(95);
 
 module.exports = Backbone.Collection.extend({
 	model: RevisionModel,
@@ -11017,7 +12791,7 @@ module.exports = Backbone.Collection.extend({
 });
 
 /***/ }),
-/* 85 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11034,7 +12808,7 @@ RevisionModel.prototype.sync = function () {
 module.exports = RevisionModel;
 
 /***/ }),
-/* 86 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11244,13 +13018,13 @@ module.exports = Marionette.Behavior.extend({
 });
 
 /***/ }),
-/* 87 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TagPanelView = __webpack_require__(88);
+var TagPanelView = __webpack_require__(98);
 
 module.exports = Marionette.Behavior.extend({
 
@@ -11486,13 +13260,13 @@ module.exports = Marionette.Behavior.extend({
 });
 
 /***/ }),
-/* 88 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var TagControlsStack = __webpack_require__(89),
+var TagControlsStack = __webpack_require__(99),
     SettingsModel = __webpack_require__(3);
 
 module.exports = Marionette.ItemView.extend({
@@ -11627,14 +13401,14 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 89 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ControlsStack = __webpack_require__(10),
-    EmptyView = __webpack_require__(90);
+var ControlsStack = __webpack_require__(12),
+    EmptyView = __webpack_require__(100);
 
 module.exports = ControlsStack.extend({
 	activeTab: 'content',
@@ -11660,7 +13434,7 @@ module.exports = ControlsStack.extend({
 });
 
 /***/ }),
-/* 90 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11673,7 +13447,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 91 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11703,7 +13477,7 @@ module.exports = ControlBaseView.extend({
 });
 
 /***/ }),
-/* 92 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11811,7 +13585,7 @@ ControlCodeEditorItemView = ControlBaseDataView.extend({
 module.exports = ControlCodeEditorItemView;
 
 /***/ }),
-/* 93 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11859,7 +13633,7 @@ ControlColorItemView = ControlBaseDataView.extend({
 module.exports = ControlColorItemView;
 
 /***/ }),
-/* 94 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11897,13 +13671,13 @@ ControlDateTimePickerItemView = ControlBaseDataView.extend({
 module.exports = ControlDateTimePickerItemView;
 
 /***/ }),
-/* 95 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ControlBaseUnitsItemView = __webpack_require__(30),
+var ControlBaseUnitsItemView = __webpack_require__(34),
     ControlDimensionsItemView;
 
 ControlDimensionsItemView = ControlBaseUnitsItemView.extend({
@@ -12066,7 +13840,7 @@ ControlDimensionsItemView = ControlBaseUnitsItemView.extend({
 module.exports = ControlDimensionsItemView;
 
 /***/ }),
-/* 96 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12102,7 +13876,7 @@ module.exports = ControlSelect2View.extend({
 });
 
 /***/ }),
-/* 97 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12297,7 +14071,7 @@ ControlMediaItemView = ControlBaseDataView.extend({
 module.exports = ControlMediaItemView;
 
 /***/ }),
-/* 98 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12357,7 +14131,7 @@ ControlIconView = ControlSelect2View.extend({
 module.exports = ControlIconView;
 
 /***/ }),
-/* 99 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12396,7 +14170,7 @@ ControlImageDimensionsItemView = ControlMultipleBaseItemView.extend({
 module.exports = ControlImageDimensionsItemView;
 
 /***/ }),
-/* 100 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12513,14 +14287,14 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend({
 module.exports = ControlMediaItemView;
 
 /***/ }),
-/* 101 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var ControlBaseDataView = __webpack_require__(0),
-    NumberValidator = __webpack_require__(102),
+    NumberValidator = __webpack_require__(112),
     ControlNumberItemView;
 
 ControlNumberItemView = ControlBaseDataView.extend({
@@ -12550,13 +14324,13 @@ ControlNumberItemView = ControlBaseDataView.extend({
 module.exports = ControlNumberItemView;
 
 /***/ }),
-/* 102 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Validator = __webpack_require__(17);
+var Validator = __webpack_require__(18);
 
 module.exports = Validator.extend({
 	validationMethod: function validationMethod(newValue) {
@@ -12578,7 +14352,7 @@ module.exports = Validator.extend({
 });
 
 /***/ }),
-/* 103 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12616,13 +14390,13 @@ ControlOrderItemView = ControlMultipleBaseItemView.extend({
 module.exports = ControlOrderItemView;
 
 /***/ }),
-/* 104 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ControlChooseView = __webpack_require__(29),
+var ControlChooseView = __webpack_require__(33),
     ControlPopoverStarterView;
 
 ControlPopoverStarterView = ControlChooseView.extend({
@@ -12653,14 +14427,14 @@ ControlPopoverStarterView = ControlChooseView.extend({
 module.exports = ControlPopoverStarterView;
 
 /***/ }),
-/* 105 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var ControlBaseDataView = __webpack_require__(0),
-    RepeaterRowView = __webpack_require__(31),
+    RepeaterRowView = __webpack_require__(35),
     BaseSettingsModel = __webpack_require__(3),
     ControlRepeaterItemView;
 
@@ -12949,7 +14723,7 @@ ControlRepeaterItemView = ControlBaseDataView.extend({
 module.exports = ControlRepeaterItemView;
 
 /***/ }),
-/* 106 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12975,7 +14749,7 @@ ControlSectionItemView = ControlBaseView.extend({
 module.exports = ControlSectionItemView;
 
 /***/ }),
-/* 107 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13000,13 +14774,13 @@ ControlSelectItemView = ControlBaseDataView.extend({}, {
 module.exports = ControlSelectItemView;
 
 /***/ }),
-/* 108 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ControlBaseUnitsItemView = __webpack_require__(30),
+var ControlBaseUnitsItemView = __webpack_require__(34),
     ControlSliderItemView;
 
 ControlSliderItemView = ControlBaseUnitsItemView.extend({
@@ -13071,7 +14845,7 @@ ControlSliderItemView = ControlBaseUnitsItemView.extend({
 module.exports = ControlSliderItemView;
 
 /***/ }),
-/* 109 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13129,7 +14903,7 @@ ControlStructureItemView = ControlBaseDataView.extend({
 module.exports = ControlStructureItemView;
 
 /***/ }),
-/* 110 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13150,7 +14924,7 @@ module.exports = ControlBaseDataView.extend({
 });
 
 /***/ }),
-/* 111 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13171,7 +14945,7 @@ ControlTabItemView = ControlBaseView.extend({
 module.exports = ControlTabItemView;
 
 /***/ }),
-/* 112 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13258,7 +15032,7 @@ module.exports = BaseMultiple.extend({
 });
 
 /***/ }),
-/* 113 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13325,7 +15099,7 @@ ControlWPWidgetItemView = ControlBaseDataView.extend({
 module.exports = ControlWPWidgetItemView;
 
 /***/ }),
-/* 114 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13513,7 +15287,7 @@ ControlWysiwygItemView = ControlBaseDataView.extend({
 module.exports = ControlWysiwygItemView;
 
 /***/ }),
-/* 115 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13531,13 +15305,13 @@ ColumnSettingsModel = BaseSettingsModel.extend({
 module.exports = ColumnSettingsModel;
 
 /***/ }),
-/* 116 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var BaseElementView = __webpack_require__(18),
+var BaseElementView = __webpack_require__(10),
     WidgetView;
 
 WidgetView = BaseElementView.extend({
@@ -13574,7 +15348,7 @@ WidgetView = BaseElementView.extend({
 
 		_.extend(behaviors, {
 			InlineEditing: {
-				behaviorClass: __webpack_require__(122),
+				behaviorClass: __webpack_require__(127),
 				inlineEditingClass: 'elementor-inline-editing'
 			}
 		});
@@ -13733,631 +15507,7 @@ WidgetView = BaseElementView.extend({
 module.exports = WidgetView;
 
 /***/ }),
-/* 117 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Module = __webpack_require__(2),
-    ContextMenu;
-
-ContextMenu = Module.extend({
-
-	getDefaultSettings: function getDefaultSettings() {
-		return {
-			actions: {},
-			classes: {
-				list: 'elementor-context-menu-list',
-				group: 'elementor-context-menu-list__group',
-				groupPrefix: 'elementor-context-menu-list__group-',
-				item: 'elementor-context-menu-list__item',
-				itemTypePrefix: 'elementor-context-menu-list__item-',
-				itemTitle: 'elementor-context-menu-list__item__title',
-				itemShortcut: 'elementor-context-menu-list__item__shortcut',
-				iconShortcut: 'elementor-context-menu-list__item__icon',
-				itemDisabled: 'elementor-context-menu-list__item--disabled',
-				divider: 'elementor-context-menu-list__divider',
-				hidden: 'elementor-hidden'
-			}
-		};
-	},
-
-	buildActionItem: function buildActionItem(action) {
-		var self = this,
-		    classes = self.getSettings('classes'),
-		    $item = jQuery('<div>', { 'class': classes.item + ' ' + classes.itemTypePrefix + action.name }),
-		    $itemTitle = jQuery('<div>', { 'class': classes.itemTitle }).text(action.title),
-		    $itemIcon = jQuery('<div>', { 'class': classes.iconShortcut });
-
-		if (action.icon) {
-			$itemIcon.html(jQuery('<i>', { 'class': action.icon }));
-		}
-
-		$item.append($itemIcon, $itemTitle);
-
-		if (action.shortcut) {
-			var $itemShortcut = jQuery('<div>', { 'class': classes.itemShortcut }).html(action.shortcut);
-
-			$item.append($itemShortcut);
-		}
-
-		if (action.callback) {
-			$item.on('click', function () {
-				self.runAction(action);
-			});
-		}
-
-		action.$item = $item;
-
-		return $item;
-	},
-
-	buildActionsList: function buildActionsList() {
-		var self = this,
-		    classes = self.getSettings('classes'),
-		    groups = self.getSettings('groups'),
-		    $list = jQuery('<div>', { 'class': classes.list });
-
-		groups.forEach(function (group) {
-			var $group = jQuery('<div>', { 'class': classes.group + ' ' + classes.groupPrefix + group.name });
-
-			group.actions.forEach(function (action) {
-				$group.append(self.buildActionItem(action));
-			});
-
-			$list.append($group);
-
-			group.$item = $group;
-		});
-
-		return $list;
-	},
-
-	toggleGroupVisibility: function toggleGroupVisibility(group, state) {
-		group.$item.toggleClass(this.getSettings('classes.hidden'), !state);
-	},
-
-	toggleActionVisibility: function toggleActionVisibility(action, state) {
-		action.$item.toggleClass(this.getSettings('classes.hidden'), !state);
-	},
-
-	toggleActionUsability: function toggleActionUsability(action, state) {
-		action.$item.toggleClass(this.getSettings('classes.itemDisabled'), !state);
-	},
-
-	isActionEnabled: function isActionEnabled(action) {
-		if (!action.callback && !action.groups) {
-			return false;
-		}
-
-		return action.isEnabled ? action.isEnabled() : true;
-	},
-
-	runAction: function runAction(action) {
-		if (!this.isActionEnabled(action)) {
-			return;
-		}
-
-		action.callback();
-
-		this.getModal().hide();
-	},
-
-	initModal: function initModal() {
-		var modal;
-
-		this.getModal = function () {
-			if (!modal) {
-				modal = elementor.dialogsManager.createWidget('simple', {
-					className: 'elementor-context-menu',
-					message: this.buildActionsList(),
-					iframe: elementor.$preview,
-					effects: {
-						hide: 'hide',
-						show: 'show'
-					},
-					hide: {
-						onOutsideContextMenu: true
-					},
-					position: {
-						my: (elementor.config.is_rtl ? 'right' : 'left') + ' top',
-						collision: 'fit'
-					}
-				});
-			}
-
-			return modal;
-		};
-	},
-
-	show: function show(event) {
-		var self = this,
-		    modal = self.getModal();
-
-		modal.setSettings('position', {
-			of: event
-		});
-
-		self.getSettings('groups').forEach(function (group) {
-			var isGroupVisible = false !== group.isVisible;
-
-			self.toggleGroupVisibility(group, isGroupVisible);
-
-			if (isGroupVisible) {
-				group.actions.forEach(function (action) {
-					var isActionVisible = false !== action.isVisible;
-
-					self.toggleActionVisibility(action, isActionVisible);
-
-					if (isActionVisible) {
-						self.toggleActionUsability(action, self.isActionEnabled(action));
-					}
-				});
-			}
-		});
-
-		modal.show();
-	},
-
-	destroy: function destroy() {
-		this.getModal().destroy();
-	},
-
-	onInit: function onInit() {
-		this.initModal();
-	}
-});
-
-module.exports = ContextMenu;
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var BaseAddSectionView = __webpack_require__(36);
-
-module.exports = BaseAddSectionView.extend({
-
-	className: function className() {
-		return BaseAddSectionView.prototype.className.apply(this, arguments) + ' elementor-add-section-inline';
-	},
-
-	fadeToDeath: function fadeToDeath() {
-		var self = this;
-
-		self.$el.slideUp(function () {
-			self.destroy();
-		});
-	},
-
-	paste: function paste() {
-		BaseAddSectionView.prototype.paste.apply(this, arguments);
-
-		this.destroy();
-	},
-
-	onCloseButtonClick: function onCloseButtonClick() {
-		this.fadeToDeath();
-	},
-
-	onPresetSelected: function onPresetSelected() {
-		BaseAddSectionView.prototype.onPresetSelected.apply(this, arguments);
-
-		this.destroy();
-	},
-
-	onAddTemplateButtonClick: function onAddTemplateButtonClick() {
-		BaseAddSectionView.prototype.onAddTemplateButtonClick.apply(this, arguments);
-
-		this.destroy();
-	},
-
-	onDropping: function onDropping() {
-		BaseAddSectionView.prototype.onDropping.apply(this, arguments);
-
-		this.destroy();
-	}
-});
-
-/***/ }),
-/* 119 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var BaseElementView = __webpack_require__(18),
-    ColumnEmptyView = __webpack_require__(120),
-    ColumnView;
-
-ColumnView = BaseElementView.extend({
-	template: Marionette.TemplateCache.get('#tmpl-elementor-column-content'),
-
-	emptyView: ColumnEmptyView,
-
-	childViewContainer: '> .elementor-column-wrap > .elementor-widget-wrap',
-
-	toggleEditTools: true,
-
-	behaviors: function behaviors() {
-		var behaviors = BaseElementView.prototype.behaviors.apply(this, arguments);
-
-		_.extend(behaviors, {
-			Sortable: {
-				behaviorClass: __webpack_require__(19),
-				elChildType: 'widget'
-			},
-			Resizable: {
-				behaviorClass: __webpack_require__(121)
-			}
-		});
-
-		return elementor.hooks.applyFilters('elements/column/behaviors', behaviors, this);
-	},
-
-	className: function className() {
-		var classes = BaseElementView.prototype.className.apply(this, arguments),
-		    type = this.isInner() ? 'inner' : 'top';
-
-		return classes + ' elementor-column elementor-' + type + '-column';
-	},
-
-	tagName: function tagName() {
-		return this.model.getSetting('html_tag') || 'div';
-	},
-
-	ui: function ui() {
-		var ui = BaseElementView.prototype.ui.apply(this, arguments);
-
-		ui.columnInner = '> .elementor-column-wrap';
-
-		ui.percentsTooltip = '> .elementor-element-overlay .elementor-column-percents-tooltip';
-
-		return ui;
-	},
-
-	initialize: function initialize() {
-		BaseElementView.prototype.initialize.apply(this, arguments);
-
-		this.addControlValidator('_inline_size', this.onEditorInlineSizeInputChange);
-	},
-
-	getContextMenuGroups: function getContextMenuGroups() {
-		var groups = BaseElementView.prototype.getContextMenuGroups.apply(this, arguments),
-		    generalGroupIndex = groups.indexOf(_.findWhere(groups, { name: 'general' }));
-
-		groups.splice(generalGroupIndex + 1, 0, {
-			name: 'addNew',
-			actions: [{
-				name: 'addNew',
-				icon: 'eicon-plus',
-				title: elementor.translate('new_column'),
-				callback: this.addNewColumn.bind(this)
-			}]
-		});
-
-		return groups;
-	},
-
-	isDroppingAllowed: function isDroppingAllowed() {
-		var elementView = elementor.channels.panelElements.request('element:selected');
-
-		if (!elementView) {
-			return false;
-		}
-
-		var elType = elementView.model.get('elType');
-
-		if ('section' === elType) {
-			return !this.isInner();
-		}
-
-		return 'widget' === elType;
-	},
-
-	getPercentsForDisplay: function getPercentsForDisplay() {
-		var inlineSize = +this.model.getSetting('_inline_size') || this.getPercentSize();
-
-		return inlineSize.toFixed(1) + '%';
-	},
-
-	changeSizeUI: function changeSizeUI() {
-		var self = this,
-		    columnSize = self.model.getSetting('_column_size');
-
-		self.$el.attr('data-col', columnSize);
-
-		_.defer(function () {
-			// Wait for the column size to be applied
-			if (self.ui.percentsTooltip) {
-				self.ui.percentsTooltip.text(self.getPercentsForDisplay());
-			}
-		});
-	},
-
-	getPercentSize: function getPercentSize(size) {
-		if (!size) {
-			size = this.el.getBoundingClientRect().width;
-		}
-
-		return +(size / this.$el.parent().width() * 100).toFixed(3);
-	},
-
-	getSortableOptions: function getSortableOptions() {
-		return {
-			connectWith: '.elementor-widget-wrap',
-			items: '> .elementor-element'
-		};
-	},
-
-	changeChildContainerClasses: function changeChildContainerClasses() {
-		var emptyClass = 'elementor-element-empty',
-		    populatedClass = 'elementor-element-populated';
-
-		if (this.collection.isEmpty()) {
-			this.ui.columnInner.removeClass(populatedClass).addClass(emptyClass);
-		} else {
-			this.ui.columnInner.removeClass(emptyClass).addClass(populatedClass);
-		}
-	},
-
-	addNewColumn: function addNewColumn() {
-		this.trigger('request:add:new');
-	},
-
-	// Events
-	onCollectionChanged: function onCollectionChanged() {
-		BaseElementView.prototype.onCollectionChanged.apply(this, arguments);
-
-		this.changeChildContainerClasses();
-	},
-
-	onRender: function onRender() {
-		var self = this;
-
-		BaseElementView.prototype.onRender.apply(self, arguments);
-
-		self.changeChildContainerClasses();
-
-		self.changeSizeUI();
-
-		self.$el.html5Droppable({
-			items: ' > .elementor-column-wrap > .elementor-widget-wrap > .elementor-element, >.elementor-column-wrap > .elementor-widget-wrap > .elementor-empty-view > .elementor-first-add',
-			axis: ['vertical'],
-			groups: ['elementor-element'],
-			isDroppingAllowed: self.isDroppingAllowed.bind(self),
-			currentElementClass: 'elementor-html5dnd-current-element',
-			placeholderClass: 'elementor-sortable-placeholder elementor-widget-placeholder',
-			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			onDropping: function onDropping(side, event) {
-				event.stopPropagation();
-
-				var newIndex = jQuery(this).index();
-
-				if ('bottom' === side) {
-					newIndex++;
-				}
-
-				self.addElementFromPanel({ at: newIndex });
-			}
-		});
-	},
-
-	onSettingsChanged: function onSettingsChanged(settings) {
-		BaseElementView.prototype.onSettingsChanged.apply(this, arguments);
-
-		var changedAttributes = settings.changedAttributes();
-
-		if ('_column_size' in changedAttributes || '_inline_size' in changedAttributes) {
-			this.changeSizeUI();
-		}
-	},
-
-	onEditorInlineSizeInputChange: function onEditorInlineSizeInputChange(newValue, oldValue) {
-		var errors = [],
-		    columnSize = this.model.getSetting('_column_size');
-
-		// If there's only one column
-		if (100 === columnSize) {
-			errors.push('Could not resize one column');
-
-			return errors;
-		}
-
-		if (!oldValue) {
-			oldValue = columnSize;
-		}
-
-		try {
-			this._parent.resizeChild(this, +oldValue, +newValue);
-		} catch (e) {
-			if (e.message === this._parent.errors.columnWidthTooLarge) {
-				errors.push(e.message);
-			}
-		}
-
-		return errors;
-	},
-
-	onAddButtonClick: function onAddButtonClick(event) {
-		event.stopPropagation();
-
-		this.addNewColumn();
-	}
-});
-
-module.exports = ColumnView;
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = Marionette.ItemView.extend({
-	template: '#tmpl-elementor-empty-preview',
-
-	className: 'elementor-empty-view',
-
-	events: {
-		'click': 'onClickAdd'
-	},
-
-	behaviors: function behaviors() {
-		return {
-			contextMenu: {
-				behaviorClass: __webpack_require__(11),
-				groups: this.getContextMenuGroups()
-			}
-		};
-	},
-
-	getContextMenuGroups: function getContextMenuGroups() {
-		return [{
-			name: 'general',
-			actions: [{
-				name: 'paste',
-				title: elementor.translate('paste'),
-				callback: this.paste.bind(this),
-				isEnabled: this.isPasteEnabled.bind(this)
-			}]
-		}];
-	},
-
-	paste: function paste() {
-		var self = this,
-		    elements = elementor.getStorage('transfer').elements,
-		    index = 0;
-
-		elements.forEach(function (item) {
-			self._parent.addChildElement(item, { at: index, clone: true });
-
-			index++;
-		});
-	},
-
-	isPasteEnabled: function isPasteEnabled() {
-		var transferData = elementor.getStorage('transfer');
-
-		if (!transferData) {
-			return false;
-		}
-
-		if ('section' === transferData.elementsType) {
-			return transferData.elements[0].isInner && !this._parent.isInner();
-		}
-
-		return 'widget' === transferData.elementsType;
-	},
-
-	onClickAdd: function onClickAdd() {
-		elementor.getPanelView().setPage('elements');
-	}
-});
-
-/***/ }),
-/* 121 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var ResizableBehavior;
-
-ResizableBehavior = Marionette.Behavior.extend({
-	defaults: {
-		handles: elementor.config.is_rtl ? 'w' : 'e'
-	},
-
-	events: {
-		resizestart: 'onResizeStart',
-		resizestop: 'onResizeStop',
-		resize: 'onResize'
-	},
-
-	initialize: function initialize() {
-		Marionette.Behavior.prototype.initialize.apply(this, arguments);
-
-		this.listenTo(elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched);
-	},
-
-	active: function active() {
-		if (!elementor.userCan('design')) {
-			return;
-		}
-		this.deactivate();
-
-		var options = _.clone(this.options);
-
-		delete options.behaviorClass;
-
-		var $childViewContainer = this.getChildViewContainer(),
-		    defaultResizableOptions = {},
-		    resizableOptions = _.extend(defaultResizableOptions, options);
-
-		$childViewContainer.resizable(resizableOptions);
-	},
-
-	deactivate: function deactivate() {
-		if (this.getChildViewContainer().resizable('instance')) {
-			this.getChildViewContainer().resizable('destroy');
-		}
-	},
-
-	onEditModeSwitched: function onEditModeSwitched(activeMode) {
-		if ('edit' === activeMode) {
-			this.active();
-		} else {
-			this.deactivate();
-		}
-	},
-
-	onRender: function onRender() {
-		var self = this;
-
-		_.defer(function () {
-			self.onEditModeSwitched(elementor.channels.dataEditMode.request('activeMode'));
-		});
-	},
-
-	onDestroy: function onDestroy() {
-		this.deactivate();
-	},
-
-	onResizeStart: function onResizeStart(event) {
-		event.stopPropagation();
-
-		this.view.$el.data('originalWidth', this.view.el.getBoundingClientRect().width);
-
-		this.view.triggerMethod('request:resize:start', event);
-	},
-
-	onResizeStop: function onResizeStop(event) {
-		event.stopPropagation();
-
-		this.view.triggerMethod('request:resize:stop');
-	},
-
-	onResize: function onResize(event, ui) {
-		event.stopPropagation();
-
-		this.view.triggerMethod('request:resize', ui, event);
-	},
-
-	getChildViewContainer: function getChildViewContainer() {
-		return this.$el;
-	}
-});
-
-module.exports = ResizableBehavior;
-
-/***/ }),
-/* 122 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14546,7 +15696,7 @@ InlineEditingBehavior = Marionette.Behavior.extend({
 module.exports = InlineEditingBehavior;
 
 /***/ }),
-/* 123 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14555,7 +15705,7 @@ module.exports = InlineEditingBehavior;
 var PanelElementsElementsView;
 
 PanelElementsElementsView = Marionette.CollectionView.extend({
-	childView: __webpack_require__(38),
+	childView: __webpack_require__(39),
 
 	id: 'elementor-panel-elements',
 
@@ -14599,13 +15749,13 @@ PanelElementsElementsView = Marionette.CollectionView.extend({
 module.exports = PanelElementsElementsView;
 
 /***/ }),
-/* 124 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PanelMenuGroupView = __webpack_require__(125),
+var PanelMenuGroupView = __webpack_require__(130),
     PanelMenuPageView;
 
 PanelMenuPageView = Marionette.CompositeView.extend({
@@ -14712,13 +15862,13 @@ PanelMenuPageView = Marionette.CompositeView.extend({
 module.exports = PanelMenuPageView;
 
 /***/ }),
-/* 125 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PanelMenuItemView = __webpack_require__(126);
+var PanelMenuItemView = __webpack_require__(131);
 
 module.exports = Marionette.CompositeView.extend({
 	template: '#tmpl-elementor-panel-menu-group',
@@ -14768,7 +15918,7 @@ module.exports = Marionette.CompositeView.extend({
 });
 
 /***/ }),
-/* 126 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14785,7 +15935,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 127 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14799,7 +15949,7 @@ module.exports = Module.extend({
 	CACHE_KEY_NOT_FOUND_ERROR: 'Cache key not found',
 
 	tags: {
-		Base: __webpack_require__(128)
+		Base: __webpack_require__(133)
 	},
 
 	cache: {},
@@ -14945,7 +16095,7 @@ module.exports = Module.extend({
 });
 
 /***/ }),
-/* 128 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15022,7 +16172,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 129 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15033,12 +16183,12 @@ var Module = __webpack_require__(2);
 module.exports = Module.extend({
 	modules: {
 		base: __webpack_require__(21),
-		general: __webpack_require__(130),
-		page: __webpack_require__(131)
+		general: __webpack_require__(135),
+		page: __webpack_require__(136)
 	},
 
 	panelPages: {
-		base: __webpack_require__(132)
+		base: __webpack_require__(137)
 	},
 
 	onInit: function onInit() {
@@ -15057,7 +16207,7 @@ module.exports = Module.extend({
 });
 
 /***/ }),
-/* 130 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15079,7 +16229,7 @@ module.exports = BaseSettings.extend({
 });
 
 /***/ }),
-/* 131 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15125,13 +16275,13 @@ module.exports = BaseSettings.extend({
 });
 
 /***/ }),
-/* 132 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ControlsStack = __webpack_require__(10);
+var ControlsStack = __webpack_require__(12);
 
 module.exports = ControlsStack.extend({
 	id: function id() {
@@ -15154,7 +16304,7 @@ module.exports = ControlsStack.extend({
 });
 
 /***/ }),
-/* 133 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15375,7 +16525,7 @@ module.exports = Module.extend({
 });
 
 /***/ }),
-/* 134 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15469,13 +16619,13 @@ module.exports = Module.extend({
 });
 
 /***/ }),
-/* 135 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var BaseRegion = __webpack_require__(39);
+var BaseRegion = __webpack_require__(23);
 
 module.exports = BaseRegion.extend({
 	el: '#elementor-panel',
@@ -15495,7 +16645,7 @@ module.exports = BaseRegion.extend({
 	constructor: function constructor() {
 		BaseRegion.prototype.constructor.apply(this, arguments);
 
-		var PanelLayoutView = __webpack_require__(136);
+		var PanelLayoutView = __webpack_require__(141);
 
 		this.show(new PanelLayoutView());
 
@@ -15549,13 +16699,13 @@ module.exports = BaseRegion.extend({
 });
 
 /***/ }),
-/* 136 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var EditModeItemView = __webpack_require__(137),
+var EditModeItemView = __webpack_require__(142),
     PanelLayoutView;
 
 PanelLayoutView = Marionette.LayoutView.extend({
@@ -15594,11 +16744,11 @@ PanelLayoutView = Marionette.LayoutView.extend({
 	buildPages: function buildPages() {
 		var pages = {
 			elements: {
-				view: __webpack_require__(138),
+				view: __webpack_require__(143),
 				title: '<img src="' + elementor.config.assets_url + 'images/logo-panel.svg">'
 			},
 			editor: {
-				view: __webpack_require__(143)
+				view: __webpack_require__(148)
 			},
 			menu: {
 				view: elementor.modules.layouts.panel.pages.menu.Menu,
@@ -15608,10 +16758,10 @@ PanelLayoutView = Marionette.LayoutView.extend({
 				view: __webpack_require__(42)
 			},
 			typographyScheme: {
-				view: __webpack_require__(146)
+				view: __webpack_require__(151)
 			},
 			colorPickerScheme: {
-				view: __webpack_require__(147)
+				view: __webpack_require__(152)
 			}
 		};
 
@@ -15621,7 +16771,7 @@ PanelLayoutView = Marionette.LayoutView.extend({
 		_.each(disabledSchemes, function (schemeType) {
 			var scheme = elementor.schemes.getScheme(schemeType);
 
-			pages[schemeType + 'Scheme'].view = __webpack_require__(148).extend({
+			pages[schemeType + 'Scheme'].view = __webpack_require__(153).extend({
 				disabledTitle: scheme.disabled_title
 			});
 		});
@@ -15666,13 +16816,15 @@ PanelLayoutView = Marionette.LayoutView.extend({
 	},
 
 	setPage: function setPage(page, title, viewOptions) {
+		var pages = this.getPages();
+
 		if ('elements' === page && !elementor.userCan('design')) {
-			var pages = this.getPages();
-			if (pages.hasOwnProperty('page_settings')) {
+			if (pages.page_settings) {
 				page = 'page_settings';
 			}
 		}
-		var pageData = this.getPages(page);
+
+		var pageData = pages[page];
 
 		if (!pageData) {
 			throw new ReferenceError('Elementor panel doesn\'t have page named \'' + page + '\'');
@@ -15700,20 +16852,7 @@ PanelLayoutView = Marionette.LayoutView.extend({
 	},
 
 	openEditor: function openEditor(model, view) {
-		var currentPageName = this.getCurrentPageName();
-
-		if ('editor' === currentPageName) {
-			var currentPageView = this.getCurrentPageView(),
-			    currentEditableModel = currentPageView.model;
-
-			if (currentEditableModel === model) {
-				return;
-			}
-		}
-
-		var elementData = elementor.getElementData(model);
-
-		this.setPage('editor', elementor.translate('edit_element', [elementData.title]), {
+		this.setPage('editor', elementor.translate('edit_element', [elementor.getElementData(model).title]), {
 			model: model,
 			controls: elementor.getElementControls(model),
 			editedElementView: view
@@ -15729,8 +16868,8 @@ PanelLayoutView = Marionette.LayoutView.extend({
 	},
 
 	onBeforeShow: function onBeforeShow() {
-		var PanelFooterItemView = __webpack_require__(149),
-		    PanelHeaderItemView = __webpack_require__(150);
+		var PanelFooterItemView = __webpack_require__(154),
+		    PanelHeaderItemView = __webpack_require__(155);
 
 		// Edit Mode
 		this.showChildView('modeSwitcher', new EditModeItemView());
@@ -15775,7 +16914,7 @@ PanelLayoutView = Marionette.LayoutView.extend({
 module.exports = PanelLayoutView;
 
 /***/ }),
-/* 137 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15834,18 +16973,18 @@ EditModeItemView = Marionette.ItemView.extend({
 module.exports = EditModeItemView;
 
 /***/ }),
-/* 138 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PanelElementsCategoriesCollection = __webpack_require__(139),
+var PanelElementsCategoriesCollection = __webpack_require__(144),
     PanelElementsElementsCollection = __webpack_require__(41),
-    PanelElementsCategoriesView = __webpack_require__(140),
+    PanelElementsCategoriesView = __webpack_require__(145),
     PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
-    PanelElementsSearchView = __webpack_require__(142),
-    PanelElementsGlobalView = __webpack_require__(37),
+    PanelElementsSearchView = __webpack_require__(147),
+    PanelElementsGlobalView = __webpack_require__(38),
     PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend({
@@ -16009,6 +17148,10 @@ PanelElementsLayoutView = Marionette.LayoutView.extend({
 	},
 
 	focusSearch: function focusSearch() {
+		if (!elementor.userCan('design')) {
+			return;
+		}
+
 		this.search.currentView.ui.input.focus();
 	},
 
@@ -16042,7 +17185,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend({
 module.exports = PanelElementsLayoutView;
 
 /***/ }),
-/* 139 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16058,13 +17201,13 @@ PanelElementsCategoriesCollection = Backbone.Collection.extend({
 module.exports = PanelElementsCategoriesCollection;
 
 /***/ }),
-/* 140 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var PanelElementsCategoryView = __webpack_require__(141),
+var PanelElementsCategoryView = __webpack_require__(146),
     PanelElementsCategoriesView;
 
 PanelElementsCategoriesView = Marionette.CompositeView.extend({
@@ -16090,7 +17233,7 @@ PanelElementsCategoriesView = Marionette.CompositeView.extend({
 module.exports = PanelElementsCategoriesView;
 
 /***/ }),
-/* 141 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16117,7 +17260,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend({
 		return 'elementor-panel-category-' + this.model.get('name');
 	},
 
-	childView: __webpack_require__(38),
+	childView: __webpack_require__(39),
 
 	childViewContainer: '.elementor-panel-category-items',
 
@@ -16158,7 +17301,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend({
 module.exports = PanelElementsCategoryView;
 
 /***/ }),
-/* 142 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16197,13 +17340,13 @@ PanelElementsSearchView = Marionette.ItemView.extend({
 module.exports = PanelElementsSearchView;
 
 /***/ }),
-/* 143 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ControlsStack = __webpack_require__(10),
+var ControlsStack = __webpack_require__(12),
     EditorView;
 
 EditorView = ControlsStack.extend({
@@ -16283,7 +17426,7 @@ EditorView = ControlsStack.extend({
 module.exports = EditorView;
 
 /***/ }),
-/* 144 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16325,7 +17468,7 @@ PanelSchemeColorView = PanelSchemeItemView.extend({
 module.exports = PanelSchemeColorView;
 
 /***/ }),
-/* 145 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16407,7 +17550,7 @@ PanelSchemeTypographyView = PanelSchemeItemView.extend({
 module.exports = PanelSchemeTypographyView;
 
 /***/ }),
-/* 146 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16425,7 +17568,7 @@ PanelSchemeTypographyView = PanelSchemeBaseView.extend({
 module.exports = PanelSchemeTypographyView;
 
 /***/ }),
-/* 147 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16457,7 +17600,7 @@ PanelSchemeColorPickerView = PanelSchemeColorsView.extend({
 module.exports = PanelSchemeColorPickerView;
 
 /***/ }),
-/* 148 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16484,7 +17627,7 @@ PanelSchemeDisabledView = Marionette.ItemView.extend({
 module.exports = PanelSchemeDisabledView;
 
 /***/ }),
-/* 149 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16609,7 +17752,7 @@ module.exports = Marionette.ItemView.extend({
 });
 
 /***/ }),
-/* 150 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16660,760 +17803,19 @@ PanelHeaderItemView = Marionette.ItemView.extend({
 module.exports = PanelHeaderItemView;
 
 /***/ }),
-/* 151 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var BaseRegion = __webpack_require__(39);
-
-module.exports = BaseRegion.extend({
-	el: '#elementor-navigator',
-
-	isDocked: false,
-
-	opened: false,
-
-	getStorageKey: function getStorageKey() {
-		return 'navigator';
-	},
-
-	getDefaultStorage: function getDefaultStorage() {
-		return {
-			visible: false,
-			size: {
-				width: '',
-				height: '',
-				top: '',
-				bottom: '',
-				right: '',
-				left: ''
-			}
-		};
-	},
-
-	constructor: function constructor() {
-		BaseRegion.prototype.constructor.apply(this, arguments);
-
-		this.ensurePosition = this.ensurePosition.bind(this);
-
-		this.listenTo(elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched);
-
-		if (this.storage.visible) {
-			this.open();
-		}
-	},
-
-	getLayout: function getLayout() {
-		return this.currentView;
-	},
-
-	getDraggableOptions: function getDraggableOptions() {
-		return {
-			iframeFix: true,
-			handle: '#elementor-navigator__header',
-			drag: this.onDrag.bind(this),
-			stop: this.onDragStop.bind(this)
-		};
-	},
-
-	getResizableOptions: function getResizableOptions() {
-		var self = this;
-
-		return {
-			handles: 'all',
-			containment: 'document',
-			minWidth: 150,
-			maxWidth: 500,
-			minHeight: 240,
-			start: function start() {
-				elementor.$previewWrapper.addClass('ui-resizable-resizing');
-			},
-			stop: function stop() {
-				elementor.$previewWrapper.removeClass('ui-resizable-resizing');
-
-				if (self.isDocked) {
-					self.storage.size.width = elementor.helpers.getElementInlineStyle(self.$el, ['width']).width;
-
-					elementor.setStorage('navigator', self.storage);
-				} else {
-					self.saveSize();
-				}
-			}
-		};
-	},
-
-	beforeFirstOpen: function beforeFirstOpen() {
-		var NavigatorLayoutView = __webpack_require__(152);
-
-		this.show(new NavigatorLayoutView());
-
-		this.$el.draggable(this.getDraggableOptions());
-
-		this.$el.resizable(this.getResizableOptions());
-	},
-
-	open: function open(model) {
-		if (!this.opened) {
-			this.beforeFirstOpen();
-
-			this.opened = true;
-		}
-
-		this.$el.show();
-
-		if (this.storage.docked) {
-			this.dock();
-
-			this.setDockedSize();
-		} else {
-			this.setSize();
-		}
-
-		if (model) {
-			model.trigger('request:edit');
-		}
-
-		this.saveStorage('visible', true);
-
-		this.ensurePosition();
-
-		elementor.$window.on('resize', this.ensurePosition);
-	},
-
-	close: function close(silent) {
-		this.$el.hide();
-
-		if (this.isDocked) {
-			this.undock(true);
-		}
-
-		if (!silent) {
-			this.saveStorage('visible', false);
-		}
-
-		elementor.$window.off('resize', this.ensurePosition);
-	},
-
-	isOpen: function isOpen() {
-		return this.$el.is(':visible');
-	},
-
-	dock: function dock() {
-		elementor.$body.addClass('elementor-navigator-docked');
-
-		var side = elementor.config.is_rtl ? 'left' : 'right',
-		    resizableOptions = this.getResizableOptions();
-
-		this.$el.css({
-			height: '',
-			top: '',
-			bottom: '',
-			left: '',
-			right: ''
-		});
-
-		elementor.$previewWrapper.css(side, this.storage.size.width);
-
-		this.$el.resizable('destroy');
-
-		resizableOptions.handles = elementor.config.is_rtl ? 'e' : 'w';
-
-		resizableOptions.resize = function (event, ui) {
-			elementor.$previewWrapper.css(side, ui.size.width);
-		};
-
-		this.$el.resizable(resizableOptions);
-
-		this.isDocked = true;
-
-		this.saveStorage('docked', true);
-	},
-
-	undock: function undock(silent) {
-		elementor.$body.removeClass('elementor-navigator-docked');
-
-		elementor.$previewWrapper.css(elementor.config.is_rtl ? 'left' : 'right', '');
-
-		this.setSize();
-
-		this.$el.resizable('destroy');
-
-		this.$el.resizable(this.getResizableOptions());
-
-		this.isDocked = false;
-
-		if (!silent) {
-			this.saveStorage('docked', false);
-		}
-	},
-
-	setSize: function setSize() {
-		if (this.storage.size) {
-			this.$el.css(this.storage.size);
-		}
-	},
-
-	setDockedSize: function setDockedSize() {
-		this.$el.css('width', this.storage.size.width);
-	},
-
-	ensurePosition: function ensurePosition() {
-		if (this.isDocked) {
-			return;
-		}
-
-		var offset = this.$el.offset();
-
-		if (offset.left > innerWidth) {
-			this.$el.css({
-				left: '',
-				right: ''
-			});
-		}
-
-		if (offset.top > innerHeight) {
-			this.$el.css({
-				top: '',
-				bottom: ''
-			});
-		}
-	},
-
-	onDrag: function onDrag(event, ui) {
-		if (this.isDocked) {
-			if (ui.position.left === ui.originalPosition.left) {
-				if (ui.position.top !== ui.originalPosition.top) {
-					return false;
-				}
-			} else {
-				this.undock();
-			}
-
-			return;
-		}
-
-		if (0 > ui.position.top) {
-			ui.position.top = 0;
-		}
-
-		var isOutOfLeft = 0 > ui.position.left,
-		    isOutOfRight = ui.position.left + this.el.offsetWidth > innerWidth;
-
-		if (elementor.config.is_rtl) {
-			if (isOutOfRight) {
-				ui.position.left = innerWidth - this.el.offsetWidth;
-			}
-		} else if (isOutOfLeft) {
-			ui.position.left = 0;
-		}
-
-		elementor.$body.toggleClass('elementor-navigator--dock-hint', elementor.config.is_rtl ? isOutOfLeft : isOutOfRight);
-	},
-
-	onDragStop: function onDragStop(event, ui) {
-		if (this.isDocked) {
-			return;
-		}
-
-		this.saveSize();
-
-		var elementRight = ui.position.left + this.el.offsetWidth;
-
-		if (0 > ui.position.left || elementRight > innerWidth) {
-			this.dock();
-		}
-
-		elementor.$body.removeClass('elementor-navigator--dock-hint');
-	},
-
-	onEditModeSwitched: function onEditModeSwitched(activeMode) {
-		if ('edit' === activeMode && this.storage.visible) {
-			this.open();
-		} else {
-			this.close(true);
-		}
-	}
-});
-
-/***/ }),
-/* 152 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = Marionette.LayoutView.extend({
-	template: '#tmpl-elementor-navigator',
-
-	id: 'elementor-navigator__inner',
-
-	ui: {
-		toggleAll: '#elementor-navigator__toggle-all',
-		close: '#elementor-navigator__close'
-	},
-
-	events: {
-		'click @ui.toggleAll': 'toggleAll',
-		'click @ui.close': 'onCloseClick'
-	},
-
-	regions: {
-		elements: '#elementor-navigator__elements'
-	},
-
-	toggleAll: function toggleAll() {
-		var state = 'expand' === this.ui.toggleAll.data('elementor-action'),
-		    classes = ['eicon-collapse', 'eicon-expand'];
-
-		this.ui.toggleAll.data('elementor-action', state ? 'collapse' : 'expand').removeClass(classes[+state]).addClass(classes[+!state]);
-
-		this.elements.currentView.recursiveChildInvoke('toggleList', state);
-	},
-
-	activateElementsMouseInteraction: function activateElementsMouseInteraction() {
-		this.elements.currentView.recursiveChildInvoke('activateMouseInteraction');
-	},
-
-	deactivateElementsMouseInteraction: function deactivateElementsMouseInteraction() {
-		this.elements.currentView.recursiveChildInvoke('deactivateMouseInteraction');
-	},
-
-	onShow: function onShow() {
-		var ElementView = __webpack_require__(153);
-
-		this.elements.show(new ElementView({
-			model: elementor.elementsModel
-		}));
-	},
-
-	onCloseClick: function onCloseClick() {
-		elementor.navigator.close();
-	}
-});
-
-/***/ }),
-/* 153 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = Marionette.CompositeView.extend({
-	template: '#tmpl-elementor-navigator__elements',
-
-	childViewContainer: '.elementor-navigator__elements',
-
-	ui: {
-		item: '> .elementor-navigator__item',
-		title: '> .elementor-navigator__item .elementor-navigator__element__title__text',
-		toggle: '> .elementor-navigator__item > .elementor-navigator__element__toggle',
-		toggleList: '> .elementor-navigator__item > .elementor-navigator__element__list-toggle',
-		elements: '> .elementor-navigator__elements'
-	},
-
-	events: {
-		'contextmenu': 'onContextMenu',
-		'click @ui.item': 'onItemClick',
-		'click @ui.toggle': 'onToggleClick',
-		'click @ui.toggleList': 'onToggleListClick',
-		'dblclick @ui.title': 'onTitleDoubleClick',
-		'keydown @ui.title': 'onTitleKeyDown',
-		'paste @ui.title': 'onTitlePaste',
-		'sortstart @ui.elements': 'onSortStart',
-		'sortover @ui.elements': 'onSortOver',
-		'sortout @ui.elements': 'onSortOut',
-		'sortstop @ui.elements': 'onSortStop',
-		'sortupdate @ui.elements': 'onSortUpdate',
-		'sortreceive @ui.elements': 'onSortReceive'
-	},
-
-	getEmptyView: function getEmptyView() {
-		if (this.isRoot()) {
-			return __webpack_require__(154);
-		}
-
-		if (this.hasChildren()) {
-			return __webpack_require__(155);
-		}
-
-		return null;
-	},
-
-	childViewOptions: function childViewOptions() {
-		return {
-			indent: this.getIndent() + 10
-		};
-	},
-
-	className: function className() {
-		var classes = 'elementor-navigator__element',
-		    elType = this.model.get('elType');
-
-		if (elType) {
-			classes += ' elementor-navigator__element-' + elType;
-		}
-
-		if (this.hasChildren()) {
-			classes += ' elementor-navigator__element--has-children';
-		}
-
-		return classes;
-	},
-
-	attributes: function attributes() {
-		return {
-			'data-model-cid': this.model.cid
-		};
-	},
-
-	templateHelpers: function templateHelpers() {
-		var helpers = {};
-
-		if (!this.isRoot()) {
-			helpers.title = this.model.getTitle();
-
-			helpers.icon = 'section' === this.model.get('elType') ? '' : this.model.getIcon();
-		}
-
-		return helpers;
-	},
-
-	initialize: function initialize() {
-		this.collection = this.model.get('elements');
-
-		this.listenTo(this.model, 'request:edit', this.onEditRequest).listenTo(this.model, 'change', this.onModelChange);
-	},
-
-	getIndent: function getIndent() {
-		return this.getOption('indent') || 0;
-	},
-
-	isRoot: function isRoot() {
-		return !this.model.get('elType');
-	},
-
-	hasChildren: function hasChildren() {
-		return 'widget' !== this.model.get('elType');
-	},
-
-	toggleList: function toggleList(state, callback) {
-		if (!this.hasChildren() || this.isRoot()) {
-			return;
-		}
-
-		var isActive = this.ui.item.hasClass('elementor-active');
-
-		if (isActive === state) {
-			return;
-		}
-
-		this.ui.item.toggleClass('elementor-active', state);
-
-		var slideMethod = 'slideToggle';
-
-		if (undefined !== state) {
-			slideMethod = 'slide' + (state ? 'Down' : 'Up');
-		}
-
-		this.ui.elements[slideMethod](300, callback);
-	},
-
-	toggleHiddenClass: function toggleHiddenClass() {
-		this.$el.toggleClass('elementor-navigator__element--hidden', !!this.model.get('hidden'));
-	},
-
-	recursiveChildInvoke: function recursiveChildInvoke() {
-		var args = Array.prototype.slice.call(arguments),
-		    method = args.slice(0, 1),
-		    restArgs = args.slice(1);
-
-		this[method].apply(this, restArgs);
-
-		this.children.each(function (child) {
-			if (!(child instanceof module.exports)) {
-				return;
-			}
-
-			child.recursiveChildInvoke.apply(child, args);
-		});
-	},
-
-	recursiveParentInvoke: function recursiveParentInvoke() {
-		var args = Array.prototype.slice.call(arguments),
-		    method = args.slice(0, 1),
-		    restArgs = args.slice(1);
-
-		if (!(this._parent instanceof module.exports)) {
-			return;
-		}
-
-		this._parent[method].apply(this._parent, restArgs);
-
-		this._parent.recursiveParentInvoke.apply(this._parent, args);
-	},
-
-	recursiveChildAgreement: function recursiveChildAgreement() {
-		var args = Array.prototype.slice.call(arguments),
-		    method = args.slice(0, 1),
-		    restArgs = args.slice(1);
-
-		if (!this[method].apply(this, restArgs)) {
-			return false;
-		}
-
-		var hasAgreement = true;
-
-		// Using jQuery loop to allow break
-		jQuery.each(this.children._views, function () {
-			if (!(this instanceof module.exports)) {
-				return;
-			}
-
-			if (!this.recursiveChildAgreement.apply(this, args)) {
-				return hasAgreement = false;
-			}
-		});
-
-		return hasAgreement;
-	},
-
-	activateMouseInteraction: function activateMouseInteraction() {
-		this.$el.on({
-			mouseenter: this.onMouseEnter.bind(this),
-			mouseleave: this.onMouseLeave.bind(this)
-		});
-	},
-
-	deactivateMouseInteraction: function deactivateMouseInteraction() {
-		this.$el.off('mouseenter mouseleave');
-	},
-
-	dragShouldBeIgnored: function dragShouldBeIgnored(draggedModel) {
-		var childTypes = elementor.helpers.getElementChildType(this.model.get('elType')),
-		    draggedElType = draggedModel.get('elType');
-
-		if ('section' === draggedElType && !draggedModel.get('isInner')) {
-			return true;
-		}
-
-		return !childTypes || -1 === childTypes.indexOf(draggedModel.get('elType'));
-	},
-
-	addEditingClass: function addEditingClass() {
-		this.ui.item.addClass('elementor-editing');
-	},
-
-	removeEditingClass: function removeEditingClass() {
-		this.ui.item.removeClass('elementor-editing');
-	},
-
-	enterTitleEditing: function enterTitleEditing() {
-		this.ui.title.attr('contenteditable', true).focus();
-
-		document.execCommand('selectAll');
-
-		elementor.addBackgroundClickListener('navigator', {
-			ignore: this.ui.title,
-			callback: this.exitTitleEditing.bind(this)
-		});
-	},
-
-	exitTitleEditing: function exitTitleEditing() {
-		this.ui.title.attr('contenteditable', false);
-
-		var newTitle = this.ui.title.text().trim(),
-		    settings = this.model.get('settings');
-
-		if (newTitle) {
-			settings.set('_title', newTitle, { silent: true });
-		} else {
-			settings.unset('_title', { silent: true });
-
-			this.ui.title.text(this.model.getDefaultTitle());
-		}
-
-		elementor.saver.setFlagEditorChange(true);
-
-		elementor.removeBackgroundClickListener('navigator');
-	},
-
-	onRender: function onRender() {
-		var self = this;
-
-		self.ui.elements.sortable({
-			items: '> .elementor-navigator__element',
-			placeholder: 'ui-sortable-placeholder',
-			axis: 'y',
-			forcePlaceholderSize: true,
-			connectWith: '.elementor-navigator__element-' + self.model.get('elType') + ' ' + self.ui.elements.selector,
-			cancel: '[contenteditable="true"]'
-		});
-
-		this.ui.item.css('padding-' + (elementor.config.is_rtl ? 'right' : 'left'), this.getIndent());
-
-		this.toggleHiddenClass();
-	},
-
-	onModelChange: function onModelChange() {
-		if (undefined !== this.model.changed.hidden) {
-			this.toggleHiddenClass();
-		}
-	},
-
-	onItemClick: function onItemClick() {
-		this.model.trigger('request:edit');
-	},
-
-	onToggleClick: function onToggleClick(event) {
-		event.stopPropagation();
-
-		this.model.trigger('request:toggleVisibility');
-	},
-
-	onTitleDoubleClick: function onTitleDoubleClick() {
-		this.enterTitleEditing();
-	},
-
-	onTitleKeyDown: function onTitleKeyDown(event) {
-		var ENTER_KEY = 13;
-
-		if (ENTER_KEY === event.which) {
-			event.preventDefault();
-
-			this.exitTitleEditing();
-		}
-	},
-
-	onTitlePaste: function onTitlePaste(event) {
-		event.preventDefault();
-
-		document.execCommand('insertHTML', false, event.originalEvent.clipboardData.getData('text/plain'));
-	},
-
-	onToggleListClick: function onToggleListClick(event) {
-		event.stopPropagation();
-
-		this.toggleList();
-	},
-
-	onSortStart: function onSortStart(event, ui) {
-		this.model.trigger('request:sort:start', event, ui);
-
-		jQuery(ui.item).children('.elementor-navigator__item').trigger('click');
-
-		elementor.navigator.getLayout().activateElementsMouseInteraction();
-	},
-
-	onSortStop: function onSortStop() {
-		elementor.navigator.getLayout().deactivateElementsMouseInteraction();
-	},
-
-	onSortOver: function onSortOver(event) {
-		event.stopPropagation();
-
-		this.$el.addClass('elementor-dragging-on-child');
-	},
-
-	onSortOut: function onSortOut(event) {
-		event.stopPropagation();
-
-		this.$el.removeClass('elementor-dragging-on-child');
-	},
-
-	onSortUpdate: function onSortUpdate(event, ui) {
-		event.stopPropagation();
-
-		if (!this.ui.elements.is(ui.item.parent())) {
-			return;
-		}
-
-		this.model.trigger('request:sort:update', ui);
-	},
-
-	onSortReceive: function onSortReceive(event, ui) {
-		this.model.trigger('request:sort:receive', event, ui);
-	},
-
-	onMouseEnter: function onMouseEnter(event) {
-		event.stopPropagation();
-
-		var self = this;
-
-		var dragShouldBeIgnored = this.recursiveChildAgreement('dragShouldBeIgnored', elementor.channels.data.request('dragging:model'));
-
-		if (dragShouldBeIgnored) {
-			return;
-		}
-
-		self.autoExpandTimeout = setTimeout(function () {
-			self.toggleList(true, function () {
-				self.ui.elements.sortable('refreshPositions');
-			});
-		}, 500);
-	},
-
-	onMouseLeave: function onMouseLeave(event) {
-		event.stopPropagation();
-
-		clearTimeout(this.autoExpandTimeout);
-	},
-
-	onContextMenu: function onContextMenu(event) {
-		this.model.trigger('request:contextmenu', event);
-	},
-
-	onEditRequest: function onEditRequest() {
-		this.recursiveParentInvoke('toggleList', true);
-
-		elementor.navigator.getLayout().elements.currentView.recursiveChildInvoke('removeEditingClass');
-
-		this.addEditingClass();
-
-		elementor.helpers.scrollToView(this.$el, 400, elementor.navigator.getLayout().elements.$el);
-	}
-});
-
-/***/ }),
-/* 154 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = Marionette.ItemView.extend({
-	template: '#tmpl-elementor-navigator__root--empty',
-
-	className: 'elementor-nerd-box'
-});
-
-/***/ }),
-/* 155 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = Marionette.ItemView.extend({
-	template: '#tmpl-elementor-navigator__elements--empty',
-
-	className: 'elementor-empty-view',
-
-	onRender: function onRender() {
-		this.$el.css('padding-' + (elementor.config.is_rtl ? 'right' : 'left'), this.getOption('indent'));
-	}
-});
-
-/***/ }),
 /* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var BaseSectionsContainerView = __webpack_require__(157),
-    AddSectionView = __webpack_require__(158),
+var _independent = __webpack_require__(157);
+
+var _independent2 = _interopRequireDefault(_independent);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var BaseSectionsContainerView = __webpack_require__(158),
     Preview;
 
 Preview = BaseSectionsContainerView.extend({
@@ -17539,7 +17941,7 @@ Preview = BaseSectionsContainerView.extend({
 		if (!elementor.userCan('design')) {
 			return;
 		}
-		var addNewSectionView = new AddSectionView();
+		var addNewSectionView = new _independent2.default();
 
 		addNewSectionView.render();
 
@@ -17556,8 +17958,59 @@ module.exports = Preview;
 "use strict";
 
 
-var SectionView = __webpack_require__(35),
-    BaseContainer = __webpack_require__(34),
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _base = __webpack_require__(30);
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var AddSectionView = function (_BaseAddSectionView) {
+	_inherits(AddSectionView, _BaseAddSectionView);
+
+	function AddSectionView() {
+		_classCallCheck(this, AddSectionView);
+
+		return _possibleConstructorReturn(this, (AddSectionView.__proto__ || Object.getPrototypeOf(AddSectionView)).apply(this, arguments));
+	}
+
+	_createClass(AddSectionView, [{
+		key: 'onCloseButtonClick',
+		value: function onCloseButtonClick() {
+			this.closeSelectPresets();
+		}
+	}, {
+		key: 'id',
+		get: function get() {
+			return 'elementor-add-new-section';
+		}
+	}]);
+
+	return AddSectionView;
+}(_base2.default);
+
+exports.default = AddSectionView;
+
+/***/ }),
+/* 158 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var SectionView = __webpack_require__(29),
+    BaseContainer = __webpack_require__(28),
     BaseSectionsContainerView;
 
 BaseSectionsContainerView = BaseContainer.extend({
@@ -17605,23 +18058,6 @@ BaseSectionsContainerView = BaseContainer.extend({
 });
 
 module.exports = BaseSectionsContainerView;
-
-/***/ }),
-/* 158 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var BaseAddSectionView = __webpack_require__(36);
-
-module.exports = BaseAddSectionView.extend({
-	id: 'elementor-add-new-section',
-
-	onCloseButtonClick: function onCloseButtonClick() {
-		this.closeSelectPresets();
-	}
-});
 
 /***/ }),
 /* 159 */
