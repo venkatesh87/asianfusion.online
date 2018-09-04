@@ -1,4 +1,4 @@
-/*! elementor - v2.2.0 - 28-08-2018 */
+/*! elementor - v2.2.1 - 03-09-2018 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -120,7 +120,7 @@ module.exports = ViewModule;
 
 /***/ }),
 
-/***/ 15:
+/***/ 16:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -180,61 +180,6 @@ module.exports = ViewModule.extend({
 
 /***/ }),
 
-/***/ 16:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var HotKeys = function HotKeys() {
-	var hotKeysHandlers = {};
-
-	var applyHotKey = function applyHotKey(event) {
-		var handlers = hotKeysHandlers[event.which];
-
-		if (!handlers) {
-			return;
-		}
-
-		jQuery.each(handlers, function () {
-			var handler = this;
-
-			if (handler.isWorthHandling && !handler.isWorthHandling(event)) {
-				return;
-			}
-
-			// Fix for some keyboard sources that consider alt key as ctrl key
-			if (!handler.allowAltKey && event.altKey) {
-				return;
-			}
-
-			event.preventDefault();
-
-			handler.handle(event);
-		});
-	};
-
-	this.isControlEvent = function (event) {
-		return event[elementor.envData.mac ? 'metaKey' : 'ctrlKey'];
-	};
-
-	this.addHotKeyHandler = function (keyCode, handlerName, handler) {
-		if (!hotKeysHandlers[keyCode]) {
-			hotKeysHandlers[keyCode] = {};
-		}
-
-		hotKeysHandlers[keyCode][handlerName] = handler;
-	};
-
-	this.bindListener = function ($listener) {
-		$listener.on('keydown', applyHotKey);
-	};
-};
-
-module.exports = new HotKeys();
-
-/***/ }),
-
 /***/ 167:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -290,14 +235,14 @@ module.exports = new HotKeys();
 
 			self.modules = {
 				StretchElement: __webpack_require__(183),
-				Masonry: __webpack_require__(15)
+				Masonry: __webpack_require__(16)
 			};
 
 			self.elementsHandler = new ElementsHandler($);
 		};
 
 		var initHotKeys = function initHotKeys() {
-			self.hotKeys = __webpack_require__(16);
+			self.hotKeys = __webpack_require__(17);
 
 			self.hotKeys.bindListener(elements.$window);
 		};
@@ -976,6 +921,61 @@ module.exports = function ($scope) {
 
 /***/ }),
 
+/***/ 17:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var HotKeys = function HotKeys() {
+	var hotKeysHandlers = {};
+
+	var applyHotKey = function applyHotKey(event) {
+		var handlers = hotKeysHandlers[event.which];
+
+		if (!handlers) {
+			return;
+		}
+
+		jQuery.each(handlers, function () {
+			var handler = this;
+
+			if (handler.isWorthHandling && !handler.isWorthHandling(event)) {
+				return;
+			}
+
+			// Fix for some keyboard sources that consider alt key as ctrl key
+			if (!handler.allowAltKey && event.altKey) {
+				return;
+			}
+
+			event.preventDefault();
+
+			handler.handle(event);
+		});
+	};
+
+	this.isControlEvent = function (event) {
+		return event[elementor.envData.mac ? 'metaKey' : 'ctrlKey'];
+	};
+
+	this.addHotKeyHandler = function (keyCode, handlerName, handler) {
+		if (!hotKeysHandlers[keyCode]) {
+			hotKeysHandlers[keyCode] = {};
+		}
+
+		hotKeysHandlers[keyCode][handlerName] = handler;
+	};
+
+	this.bindListener = function ($listener) {
+		$listener.on('keydown', applyHotKey);
+	};
+};
+
+module.exports = new HotKeys();
+
+/***/ }),
+
 /***/ 170:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1121,6 +1121,7 @@ VideoModule = HandlerModule.extend({
 	handleVideo: function handleVideo() {
 		if (!this.getElementSettings('lightbox')) {
 			this.elements.$imageOverlay.remove();
+
 			this.playVideo();
 		}
 	},
@@ -1134,9 +1135,11 @@ VideoModule = HandlerModule.extend({
 
 		var $videoIframe = this.elements.$videoIframe,
 		    lazyLoad = $videoIframe.data('lazy-load');
+
 		if (lazyLoad) {
 			$videoIframe.attr('src', lazyLoad);
 		}
+
 		var newSourceUrl = $videoIframe[0].src.replace('&autoplay=0', '');
 
 		$videoIframe[0].src = newSourceUrl + '&autoplay=1';

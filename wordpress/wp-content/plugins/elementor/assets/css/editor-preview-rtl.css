@@ -1,4 +1,4 @@
-/*! elementor - v2.2.0 - 28-08-2018 */
+/*! elementor - v2.2.1 - 03-09-2018 */
 @charset "UTF-8";
 .elementor-panel-box {
   margin-top: 10px;
@@ -384,7 +384,7 @@
   width: 30%;
   float: left; }
   .elementor-slider-input input {
-    width: 50px;
+    max-width: 80%;
     float: left;
     padding: 5px 5px; }
 
