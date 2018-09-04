@@ -1,4 +1,4 @@
-/*! elementor - v2.2.0 - 28-08-2018 */
+/*! elementor - v2.2.1 - 03-09-2018 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -120,7 +120,7 @@ module.exports = ViewModule;
 
 /***/ }),
 
-/***/ 13:
+/***/ 14:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -163,7 +163,7 @@ module.exports = TemplateLibraryHeaderView;
 
 /***/ }),
 
-/***/ 14:
+/***/ 15:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -193,7 +193,6 @@ var ViewModule = __webpack_require__(1),
 var NewTemplateModule = ViewModule.extend({
 
 	getDefaultSettings: function getDefaultSettings() {
-
 		return {
 			selectors: {
 				addButton: '.page-title-action:first, #elementor-template-library-add-new'
@@ -244,14 +243,12 @@ var BaseModalLayout = __webpack_require__(8),
 module.exports = BaseModalLayout.extend({
 
 	getModalOptions: function getModalOptions() {
-
 		return {
 			id: 'elementor-new-template-modal'
 		};
 	},
 
 	getLogoOptions: function getLogoOptions() {
-
 		return {
 			title: elementorAdmin.config.i18n.new_template
 		};
@@ -518,9 +515,9 @@ module.exports = Module;
 "use strict";
 
 
-var TemplateLibraryHeaderView = __webpack_require__(13),
+var TemplateLibraryHeaderView = __webpack_require__(14),
     TemplateLibraryHeaderLogoView = __webpack_require__(9),
-    TemplateLibraryLoadingView = __webpack_require__(14);
+    TemplateLibraryLoadingView = __webpack_require__(15);
 
 module.exports = Marionette.LayoutView.extend({
 	el: function el() {
