@@ -17,6 +17,7 @@ fi
 
 readonly PUBLIC_WEB_DIR=$(jq -r ".publicWebDir" ./app.json)
 readonly WP_NAME=$(jq -r ".docker.wordpress.name" ./app.json)
+readonly DB_NAME=$(jq -r ".rds.instanceName" ./app.json)
 readonly CONNECT_LOCAL_MYSQL_FOR_DEV=$(jq -r ".connectLocalMysqlForDev" ./app.json)
 
 if [ "$APP_BRANCH" == "dev" ] && [ "$CONNECT_LOCAL_MYSQL_FOR_DEV" -eq 1 ] && [ "$IS_DEPLOYMENT" -eq 0 ]; then
@@ -42,4 +43,5 @@ sed -i '' -e "s/define('DB_NAME', 'to-be-replaced');/define('DB_NAME', '$DATABAS
 sed -i '' -e "s/define('DB_USER', 'to-be-replaced');/define('DB_USER', '$USER');/g" $WP_CONFIG_FILE
 sed -i '' -e "s/define('DB_PASSWORD', 'to-be-replaced');/define('DB_PASSWORD', '$PASSWORD');/g" $WP_CONFIG_FILE
 sed -i '' -e "s/define('DB_HOST', 'to-be-replaced');/define('DB_HOST', '$HOST');/g" $WP_CONFIG_FILE
-sed -i '' -e "s/define('WP_NAME', '');/define('WP_NAME', '$WP_NAME');/g" $WP_CONFIG_FILE
+sed -i '' -e "s/define('LOCAL_DB_NAME', '');/define('LOCAL_DB_NAME', '$DB_NAME');/g" $WP_CONFIG_FILE
+sed -i '' -e "s/define('LOCAL_WP_NAME', '');/define('LOCAL_WP_NAME', '$WP_NAME');/g" $WP_CONFIG_FILE

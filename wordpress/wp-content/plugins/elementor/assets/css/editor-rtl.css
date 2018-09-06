@@ -1,4 +1,4 @@
-/*! elementor - v2.2.0 - 28-08-2018 */
+/*! elementor - v2.2.1 - 03-09-2018 */
 @charset "UTF-8";
 .dialog-widget-content {
   background-color: #fff;
@@ -365,7 +365,7 @@ body {
 
 .elementor-loader-wrapper {
   position: absolute;
-  width: 200px;
+  width: 300px;
   left: 50%;
   top: 50%;
   -webkit-transform: translateX(-50%) translateY(-50%);
@@ -449,7 +449,8 @@ body {
   text-transform: uppercase;
   margin-top: 30px;
   letter-spacing: 7px;
-  font-size: 10px; }
+  font-size: 10px;
+  width: 100%; }
 
 .elementor-button {
   font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
@@ -1742,7 +1743,7 @@ select {
   width: 30%;
   float: left; }
   .elementor-slider-input input {
-    width: 50px;
+    max-width: 80%;
     float: left;
     padding: 5px 5px; }
 
@@ -3221,7 +3222,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
   text-decoration: underline;
   color: #39b54a; }
   #elementor-template-library-modal a.elementor-template-library-blank-footer-link:hover {
-    font-weight: 500; }
+    color: #2d8e3a; }
 
 #elementor-template-library-header-menu {
   text-align: center;
@@ -3788,8 +3789,7 @@ body.elementor-editor-preview #elementor-mode-switcher {
 #elementor-template-library-save-template-submit {
   width: 150px;
   -webkit-border-radius: 3px 0 0 3px;
-          border-radius: 3px 0 0 3px;
-  font-weight: 500; }
+          border-radius: 3px 0 0 3px; }
   #elementor-template-library-save-template-submit:hover {
     -webkit-box-shadow: none;
             box-shadow: none; }
@@ -3811,7 +3811,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
   #elementor-template-library-import-form-label {
     margin-top: 20px;
     padding: 15px 35px;
-    font-size: 16px;
     display: inline-block; }
   #elementor-template-library-import-form-input {
     display: none; }
@@ -3832,7 +3831,6 @@ body.elementor-editor-preview #elementor-mode-switcher {
       -ms-transform: translateX(-50%);
           transform: translateX(-50%);
   color: #a4afb7;
-  font-size: 16px;
   font-style: italic; }
   @media (max-height: 700px) {
     .elementor-template-library-blank-footer {
@@ -4296,7 +4294,8 @@ body.elementor-editor-preview #elementor-mode-switcher {
           flex-grow: 1;
   overflow: hidden; }
   .elementor-navigator__element__title__text {
-    white-space: nowrap; }
+    white-space: nowrap;
+    -webkit-user-select: text; }
     .elementor-navigator__element__title__text[contenteditable="true"] {
       outline: none;
       color: #6d7882;
