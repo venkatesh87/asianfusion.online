@@ -46,6 +46,14 @@ function new_loop_shop_per_page( $cols ) {
 }
 
 //
+// Change "Shipping" text in checkout
+//
+add_filter( 'woocommerce_shipping_package_name', 'custom_shipping_package_name' );
+function custom_shipping_package_name( $name ) {
+  return 'Pickup or delivery?';
+}
+
+//
 // Change text
 //
 add_filter( 'gettext', 'change_woocommerce_return_to_shop_text', 20, 3 );
@@ -55,6 +63,14 @@ function change_woocommerce_return_to_shop_text( $translated_text, $text, $domai
       if ( ITEM_SELECT_BUTTON_TEXT !== 'Select options') {
         $translated_text = __( ITEM_SELECT_BUTTON_TEXT, 'woocommerce' );
       }
+      break;
+    // Label in email template
+    case 'Shipping:':
+      $translated_text = __( 'Pickup or delivery?', 'woocommerce' );
+      break;
+    // Label in email template
+    case 'Shipping address':
+      $translated_text = __( 'Delivery address', 'woocommerce' );
       break;
     case 'Product':
       $translated_text = __( 'Item', 'woocommerce' );
@@ -104,7 +120,7 @@ add_filter('woocommerce_checkout_fields', 'custom_override_billing_checkout_fiel
 function custom_override_billing_checkout_fields($fields) {
   $fields['billing']['billing_phone_ext'] = array(
       'type' => 'text',
-      'label' => __('Phone Extension', 'woocommerce'),
+      'label' => __('Phone extension', 'woocommerce'),
       'clear' => false,
       'required' => false
   );
@@ -126,7 +142,7 @@ function custom_override_shipping_checkout_fields($fields) {
   );
   $fields['shipping']['shipping_phone_ext'] = array(
       'type' => 'text',
-      'label' => __('Phone Extension', 'woocommerce'),
+      'label' => __('Phone extension', 'woocommerce'),
       'clear' => false,
       'required' => false
   );
@@ -197,15 +213,15 @@ add_action('woocommerce_checkout_update_order_meta', 'checkout_field_update_orde
 function checkout_field_update_order_meta($order_id) {
 
   if (!empty($_POST['billing']['billing_phone_ext'])) {
-      update_post_meta($order_id, 'Billing Phone Extension', esc_attr($_POST['billing']['billing_phone_ext']));
+      update_post_meta($order_id, 'Billing phone extension', esc_attr($_POST['billing']['billing_phone_ext']));
   }
 
   if (!empty($_POST['shipping']['shipping_phone'])) {
-      update_post_meta($order_id, 'Shipping Phone', esc_attr($_POST['shipping']['shipping_phone']));
+      update_post_meta($order_id, 'Shipping phone', esc_attr($_POST['shipping']['shipping_phone']));
   }
 
   if (!empty($_POST['shipping']['shipping_phone_ext'])) {
-      update_post_meta($order_id, 'Shipping Phone Extension', esc_attr($_POST['shipping']['shipping_phone_ext']));
+      update_post_meta($order_id, 'Shipping phone extension', esc_attr($_POST['shipping']['shipping_phone_ext']));
   }
 }
 
@@ -220,7 +236,7 @@ function shipping_display_admin_order_meta($order) {
   if (!empty($shipping_phone)) {
     echo '<p><strong>' . __('Phone') . ':</strong><br> ' . $shipping_phone . '</p>';
     if (!empty($shipping_phone_ext)) {
-      echo '<p><strong>' . __('Phone Extension') . ':</strong><br> ' . $shipping_phone_ext . '</p>';
+      echo '<p><strong>' . __('Phone extension') . ':</strong><br> ' . $shipping_phone_ext . '</p>';
     }
   }
 }
@@ -234,7 +250,7 @@ add_action('woocommerce_admin_order_data_after_billing_address', 'billing_displa
 function billing_display_admin_order_meta($order) {
   $billing_phone_ext = get_post_meta($order->id, '_billing_phone_ext', true);
   if (!empty($billing_phone_ext)) {
-    echo '<p><strong>' . __('Phone Extension') . ':</strong><br> ' . $billing_phone_ext . '</p>';
+    echo '<p><strong>' . __('Phone extension') . ':</strong><br> ' . $billing_phone_ext . '</p>';
   }
 }
 

@@ -1,4 +1,4 @@
-/*! elementor - v2.2.0 - 28-08-2018 */
+/*! elementor - v2.2.1 - 03-09-2018 */
 .elementor-screen-only,
 .screen-reader-text,
 .screen-reader-text span,
@@ -477,7 +477,7 @@ body .gutenberg #elementor-switch-mode {
   transition: all 0.5s ease; }
   #elementor-editor .elementor-loader-wrapper {
     position: absolute;
-    width: 200px;
+    width: 300px;
     left: 50%;
     top: 50%;
     -webkit-transform: translateX(-50%) translateY(-50%);
@@ -557,7 +557,8 @@ body .gutenberg #elementor-switch-mode {
     text-transform: uppercase;
     margin-top: 30px;
     letter-spacing: 7px;
-    font-size: 10px; }
+    font-size: 10px;
+    width: 100%; }
 
 #elementor-go-to-edit-page-link {
   height: 100%;
@@ -1056,6 +1057,9 @@ body .gutenberg #elementor-switch-mode {
 .post-type-elementor_library #elementor-template-library-tabs-wrapper {
   padding-top: 2em;
   margin-bottom: 2em; }
+
+#elementor-new-template-modal .dialog-message {
+  max-height: 70vh; }
 
 #elementor-new-template-dialog-content {
   display: -webkit-box;

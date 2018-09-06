@@ -20,7 +20,10 @@
 
 
 /** More reliable way to determine https protocol in load balancing environments **/
-define('SERVER_PROTOCOL', isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : ((isset( $_SERVER["HTTPS"] ) && strtolower( $_SERVER["HTTPS"] ) == "on" ) ? 'https' : 'http')); 
+define('SERVER_PROTOCOL', isset($_SERVER['HTTP_X_FORWARDED_PROTO']) 
+  ? $_SERVER['HTTP_X_FORWARDED_PROTO']
+  : ((isset( $_SERVER["HTTPS"] ) && strtolower( $_SERVER["HTTPS"] ) == "on" )
+    ? 'https' : 'http')); 
 
 /** Configure server URL dynamically so that multiple environment URLs work **/
 $serverUrl = SERVER_PROTOCOL . '://' . $_SERVER['HTTP_HOST'];
@@ -31,13 +34,14 @@ define('WP_HOME', $serverUrl);
 define('DISALLOW_FILE_EDIT', true);
 
 /** Custom MAMP setup **/
-define('WP_NAME', '');
+define('LOCAL_WP_NAME', '');
+define('LOCAL_DB_NAME', '');
 
 /** MySQL credentials **/
-if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === WP_NAME) {
+if (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === LOCAL_WP_NAME) {
   define('DB_USER', 'wordpress');
   define('DB_PASSWORD', 'wordpress');
-  define('DB_NAME', WP_NAME);
+  define('DB_NAME', LOCAL_DB_NAME);
   define('DB_HOST', '127.0.0.1');
 } else {
   define('DB_NAME', 'to-be-replaced');
