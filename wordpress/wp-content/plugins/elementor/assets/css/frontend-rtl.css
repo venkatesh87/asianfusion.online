@@ -1,4 +1,4 @@
-/*! elementor - v2.2.0 - 28-08-2018 */
+/*! elementor - v2.2.1 - 03-09-2018 */
 .dialog-widget-content {
   background-color: #fff;
   position: absolute;
@@ -2445,7 +2445,10 @@ body.elementor-page .elementor-widget-menu-anchor {
       width: 60px;
       height: 60px;
       -webkit-border-radius: 50%;
-              border-radius: 50%; }
+              border-radius: 50%;
+      -o-object-fit: cover;
+         object-fit: cover;
+      max-width: none; }
     .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-aside .elementor-testimonial-image {
       padding-left: 15px; }
     .elementor-testimonial-wrapper .elementor-testimonial-meta.elementor-testimonial-image-position-aside .elementor-testimonial-details {
