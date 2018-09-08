@@ -6,8 +6,8 @@ for BRANCH in `git branch --list|sed 's/\*//g'`;
       git checkout $BRANCH
       git merge dev --no-edit
       git push
-      sh ./post-checkout
     fi 
   done
 
 git checkout dev
+sh ./post-checkout
