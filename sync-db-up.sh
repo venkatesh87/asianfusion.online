@@ -15,8 +15,13 @@ readonly S3_SQL_FILE=${DATABASE}_${DATE}.sql
 SQL_FILE=${DATABASE}.sql
 
 if [ "$BRANCH" == "local" ]; then
-  DB_NAME=$(jq -r ".rds.instanceName" ./app.json)
-  SQL_FILE=${DB_NAME}_local.sql
+  DATABASE=$(jq -r ".rds.instanceName" ./app.json)
+  SQL_FILE=${DATABASE}_local.sql
+fi
+
+if [ "$DATABASE" == null ]; then
+  echo "Database not found for '$BRANCH' branch, wrong branch?"
+  exit
 fi
 
 sh ./dump-db.sh $BRANCH
