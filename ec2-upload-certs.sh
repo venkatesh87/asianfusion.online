@@ -42,6 +42,9 @@ rsync -ah -e "ssh -i $KEY_PATH" $TMP_CERT_DIR/ ${SSH_USER}@${PUBLIC_IP}:${TMP_CE
 
 ec2_ssh_run_cmd "sudo mkdir -p ${CERT_DIR};sudo cp ${TMP_CERT_DIR}/* ${CERT_DIR}/;rm -rf ${TMP_CERT_DIR};sudo chown -R root:root ${CERT_DIR}"
 
+# Reload web server
+ec2_ssh_run_cmd "sudo systemctl reload httpd; sudo systemctl status httpd | grep 'Active'"
+
 rm -rf $TMP_CERT_DIR
 
 echo Uploaded SSL certs for $DOMAIN_NAME
