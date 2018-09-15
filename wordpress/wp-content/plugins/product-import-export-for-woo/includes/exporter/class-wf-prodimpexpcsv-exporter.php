@@ -10,7 +10,6 @@ class WF_ProdImpExpCsv_Exporter {
 	 */
 	public static function do_export( $post_type = 'product' ) {
 		global $wpdb;
-
 		$export_limit                = ! empty( $_POST['limit'] ) ? intval( $_POST['limit'] ) : 999999999;
 		$export_count                = 0;
 		$limit                       = 100;
