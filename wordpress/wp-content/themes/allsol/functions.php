@@ -5,14 +5,22 @@
 //
 function enqueue_styles() {
 
-    $parent_style = 'parent-style'; 
+  $parent_style = 'parent-style';
+  $child_style = 'child-style';
+  $client_style = 'client-style';
 
-    wp_enqueue_style( $parent_style, get_template_directory_uri() . '/style.css' );
-    wp_enqueue_style( 'child-style',
-        get_stylesheet_directory_uri() . '/style.css',
-        array( $parent_style ),
-        wp_get_theme()->get('Version')
+  wp_enqueue_style( $parent_style, get_template_directory_uri() . '/style.css' );
+  wp_enqueue_style( $child_style,
+      get_stylesheet_directory_uri() . '/style.css',
+      array( $parent_style ),
+      wp_get_theme()->get('Version')
     );
+  wp_enqueue_style( $client_style,
+      get_stylesheet_directory_uri() . '/client-style.css',
+      array( $parent_style, $child_style ),
+      wp_get_theme()->get('Version')
+  );
+
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_styles' );
 
@@ -256,3 +264,12 @@ function hide_plugins() {
 }
 
 add_action('pre_current_active_plugins', 'hide_plugins');
+
+
+//
+// Loads client customizations
+//
+
+define( 'ALLSOL_THEME_DIR', get_stylesheet_directory() . '/' );
+
+require_once ALLSOL_THEME_DIR . 'client-customizations.php';
