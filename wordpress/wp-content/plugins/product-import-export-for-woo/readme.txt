@@ -4,7 +4,7 @@ Donate link: https://www.webtoffee.com/plugins/
 Tags: woocommerce product import, woocommerce import products, woocommerce export products, export woocommerce products, import products into woocommerce
 Requires at least: 3.0.1
 Tested up to: 4.9.8
-Stable tag: 1.4.6
+Stable tag: 1.4.7
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -20,7 +20,7 @@ Are you trying to import products into WooCommerce store or export WooCommerce p
 
 &#128312; Export Simple Products  in to a CSV file.
 &#128312; Import Simple Products in CSV format in to WooCommerce Store.
-&#128312; Tested OK with WooCommerce 3.4.4.
+&#128312; Tested OK with WooCommerce 3.4.5.
 
 
 Highlights: WooCommerce Product Export, WooCommerce Product CSV Import Suite, WooCommerce bulk product upload, WooCommerce import products with images, import amazon products to WooCommerce, Export Products to xls. Pro Version supports both Simple and Variable products.
@@ -144,6 +144,11 @@ Yes. You can import or export product images along with other details
 
 == Changelog ==
 
+= 1.4.7 =
+* Tested OK with WC 3.4.5
+* Review link added in footer.
+* Bug fix.
+
 = 1.4.6 =
 * Tested OK with WC 3.4.4
 * Bug fix:importing date.
@@ -244,7 +249,7 @@ Yes. You can import or export product images along with other details
 
 == Upgrade Notice ==
 
-= 1.4.6 =
-* Tested OK with WC 3.4.4
-* Bug fix:importing date.
-* Bug fix:- JSON_HEX_APOS on ajax post.
+= 1.4.7 =
+* Tested OK with WC 3.4.5
+* Review link added in footer.
+* Bug fix.

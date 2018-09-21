@@ -10,3 +10,4 @@ for BRANCH in `git branch --list|sed 's/\*//g'`;
   done
 
 git checkout dev
+sh ./post-checkout

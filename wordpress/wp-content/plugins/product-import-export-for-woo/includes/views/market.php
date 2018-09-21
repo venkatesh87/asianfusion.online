@@ -8,6 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
         <h2><?php _e('Watch getting started video', 'wf_csv_import_export');?></h2>
     <iframe src="https://www.youtube.com/embed/L-01qI1EZWE?rel=0&showinfo=0" frameborder="0" allowfullscreen="allowfullscreen" align="center"></iframe>
     </div>
+    <div class="pipe-review-widget">
+        <?php
+        echo sprintf(__('<div class=""><p><i>If you like the plugin please leave us a %1$s review!</i><p></div>', 'wf_csv_import_export'), '<a href="https://wordpress.org/support/plugin/product-import-export-for-woo/reviews?rate=5#new-post" target="_blank" class="xa-pipe-rating-link" data-reviewed="' . esc_attr__('Thanks for the review.', 'wf_csv_import_export') . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>');
+        ?>
+    </div>
     <div class="pipe-premium-features">
     <center><a href="https://www.xadapter.com/product/product-import-export-plugin-for-woocommerce/" target="_blank" class="button button-primary button-go-pro"><?php _e('Upgrade to Premium Version', 'wf_csv_import_export'); ?></a></center>
     <span>
@@ -33,9 +38,5 @@ if ( ! defined( 'ABSPATH' ) ) {
         <a href="http://productimportexport.webtoffee.com/" target="_blank" class="button button-doc-demo"><?php _e('Live Demo', 'wf_csv_import_export'); ?></a> 
         <a href="https://www.xadapter.com/category/product/product-import-export-plugin-for-woocommerce/" target="_blank" class="button button-doc-demo"><?php _e('Documentation', 'wf_csv_import_export'); ?></a></center>
     </div>
-    <div class="pipe-review-widget">
-        <?php
-        echo sprintf(__('<div class=""><p><i>If you like the plugin please leave us a %1$s review!</i><p></div>', 'wf_csv_import_export'), '<a href="https://wordpress.org/support/plugin/product-import-export-for-woo/reviews?rate=5#new-post" target="_blank" class="xa-pipe-rating-link" data-reviewed="' . esc_attr__('Thanks for the review.', 'wf_csv_import_export') . '">&#9733;&#9733;&#9733;&#9733;&#9733;</a>');
-        ?>
-    </div>
+    
     </div>

@@ -7,11 +7,22 @@ if [[ $# -ne 0 ]] ; then
   BRANCH=$1
 fi
 
+DATABASE=$(jq -r ".${BRANCH}.database" ./db.json)
+SQL_FILE=${DATABASE}.sql
+
 readonly DB_BACKUP_S3_BUCKET=$(jq -r ".aws.dbBackupS3Bucket" ./app.json)
-readonly DATABASE=$(jq -r ".${BRANCH}.database" ./db.json)
 readonly DATE=`date '+%Y-%m-%d-%H-%M-%S'`
-readonly SQL_FILE=${DATABASE}.sql
 readonly S3_SQL_FILE=${DATABASE}_${DATE}.sql
+
+if [ "$BRANCH" == "local" ]; then
+  DATABASE=$(jq -r ".rds.instanceName" ./app.json)
+  SQL_FILE=${DATABASE}_local.sql
+fi
+
+if [ "$DATABASE" == null ]; then
+  echo "Database not found for '$BRANCH' branch, wrong branch?"
+  exit
+fi
 
 sh ./dump-db.sh $BRANCH
 
