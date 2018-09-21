@@ -1997,6 +1997,9 @@ body.elementor-page .elementor-widget-menu-anchor {
     display: block;
     width: 100%; }
 
+.elementor-widget-video .elementor-video {
+  object-fit: cover; }
+
 .slick-slider {
   position: relative;
   display: block;
@@ -2734,13 +2737,13 @@ button.swiper-pagination-bullet {
   padding: 0; }
 
 @media (max-width: ELEMENTOR_SCREEN_SM_MAX) {
-  .elementor .elementor-hidden-phone {
+  .elementor-hidden-phone {
     display: none; } }
 
 @media (min-width: ELEMENTOR_SCREEN_MD_MIN) and (max-width: ELEMENTOR_SCREEN_MD_MAX) {
-  .elementor .elementor-hidden-tablet {
+  .elementor-hidden-tablet {
     display: none; } }
 
 @media (min-width: ELEMENTOR_SCREEN_LG_MIN) {
-  .elementor .elementor-hidden-desktop {
+  .elementor-hidden-desktop {
     display: none; } }
