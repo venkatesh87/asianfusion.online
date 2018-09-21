@@ -8,6 +8,7 @@ function enqueue_styles() {
   $parent_style = 'parent-style';
   $child_style = 'child-style';
   $client_style = 'client-style';
+  $client_script = 'client-script';
 
   wp_enqueue_style( $parent_style, get_template_directory_uri() . '/style.css' );
   wp_enqueue_style( $child_style,
@@ -19,8 +20,12 @@ function enqueue_styles() {
       get_stylesheet_directory_uri() . '/client-style.css',
       array( $parent_style, $child_style ),
       wp_get_theme()->get('Version')
-  );
+    );
+
+  wp_enqueue_script( $client_script, get_stylesheet_directory_uri() . '/client-script.js', array('jquery'), '1.0.0', true );
+
 }
+
 add_action( 'wp_enqueue_scripts', 'enqueue_styles' );
 
 //
