@@ -1,4 +1,4 @@
-/*! elementor - v2.2.1 - 03-09-2018 */
+/*! elementor - v2.2.4 - 20-09-2018 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -210,15 +210,10 @@ module.exports = ViewModule.extend({
 
 		var initElements = function initElements() {
 			elements.window = window;
-
 			elements.$window = $(window);
-
 			elements.$document = $(document);
-
 			elements.$body = $('body');
-
 			elements.$elementor = elements.$document.find('.elementor');
-
 			elements.$wpAdminBar = elements.$document.find('#wpadminbar');
 		};
 
@@ -258,17 +253,18 @@ module.exports = ViewModule.extend({
 		};
 
 		var addIeCompatibility = function addIeCompatibility() {
-			var isIE = 'Microsoft Internet Explorer' === navigator.appName || !!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g) || !!navigator.userAgent.match(/rv:11/);
+			var isIE = 'Microsoft Internet Explorer' === navigator.appName || !!navigator.userAgent.match(/Trident/g) || !!navigator.userAgent.match(/MSIE/g) || !!navigator.userAgent.match(/rv:11/),
+			    el = document.createElement('div'),
+			    supportsGrid = 'string' === typeof el.style.grid;
 
-			if (!isIE) {
+			if (!isIE && supportsGrid) {
 				return;
 			}
 			elements.$body.addClass('elementor-msie');
 
-			var $frontendCss = jQuery('#elementor-frontend-css'),
-			    msieCss = $frontendCss[0].outerHTML.replace('css/frontend', 'css/frontend-msie').replace('elementor-frontend-css', 'elementor-frontend-msie-css');
+			var msieCss = '<link rel="stylesheet" id="elementor-frontend-css-msie" href="' + elementorFrontend.config.urls.assets + 'css/frontend-msie.min.css?' + elementorFrontend.config.version + '" type="text/css" />';
 
-			$frontendCss.after(msieCss);
+			elements.$body.append(msieCss);
 		};
 
 		this.init = function () {
@@ -451,7 +447,7 @@ ElementsHandler = function ElementsHandler($) {
 	// element-type.skin-type
 	var handlers = {
 		// Elements
-		'section': __webpack_require__(169),
+		section: __webpack_require__(169),
 
 		// Widgets
 		'accordion.default': __webpack_require__(170),
@@ -1286,8 +1282,8 @@ TextEditor = HandlerModule.extend({
 	getDefaultElements: function getDefaultElements() {
 		var selectors = this.getSettings('selectors'),
 		    classes = this.getSettings('classes'),
-		    $dropCap = jQuery('<span>', { 'class': classes.dropCap }),
-		    $dropCapLetter = jQuery('<span>', { 'class': classes.dropCapLetter });
+		    $dropCap = jQuery('<span>', { class: classes.dropCap }),
+		    $dropCapLetter = jQuery('<span>', { class: classes.dropCapLetter });
 
 		$dropCap.append($dropCapLetter);
 
@@ -1702,8 +1698,8 @@ LightboxModule = ViewModule.extend({
 	setImageContent: function setImageContent(imageURL) {
 		var self = this,
 		    classes = self.getSettings('classes'),
-		    $item = jQuery('<div>', { 'class': classes.item }),
-		    $image = jQuery('<img>', { src: imageURL, 'class': classes.image + ' ' + classes.preventClose });
+		    $item = jQuery('<div>', { class: classes.item }),
+		    $image = jQuery('<img>', { src: imageURL, class: classes.image + ' ' + classes.preventClose });
 
 		$item.append($image);
 
@@ -1712,8 +1708,8 @@ LightboxModule = ViewModule.extend({
 
 	setVideoContent: function setVideoContent(options) {
 		var classes = this.getSettings('classes'),
-		    $videoContainer = jQuery('<div>', { 'class': classes.videoContainer }),
-		    $videoWrapper = jQuery('<div>', { 'class': classes.videoWrapper }),
+		    $videoContainer = jQuery('<div>', { class: classes.videoContainer }),
+		    $videoWrapper = jQuery('<div>', { class: classes.videoWrapper }),
 		    $videoElement,
 		    modal = this.getModal();
 
@@ -1753,10 +1749,10 @@ LightboxModule = ViewModule.extend({
 		    self = this,
 		    classes = self.getSettings('classes'),
 		    slideshowClasses = classes.slideshow,
-		    $container = $('<div>', { 'class': slideshowClasses.container }),
-		    $slidesWrapper = $('<div>', { 'class': slideshowClasses.slidesWrapper }),
-		    $prevButton = $('<div>', { 'class': slideshowClasses.prevButton + ' ' + classes.preventClose }).html($('<i>', { 'class': slideshowClasses.prevButtonIcon })),
-		    $nextButton = $('<div>', { 'class': slideshowClasses.nextButton + ' ' + classes.preventClose }).html($('<i>', { 'class': slideshowClasses.nextButtonIcon }));
+		    $container = $('<div>', { class: slideshowClasses.container }),
+		    $slidesWrapper = $('<div>', { class: slideshowClasses.slidesWrapper }),
+		    $prevButton = $('<div>', { class: slideshowClasses.prevButton + ' ' + classes.preventClose }).html($('<i>', { class: slideshowClasses.prevButtonIcon })),
+		    $nextButton = $('<div>', { class: slideshowClasses.nextButton + ' ' + classes.preventClose }).html($('<i>', { class: slideshowClasses.nextButtonIcon }));
 
 		options.slides.forEach(function (slide) {
 			var slideClass = slideshowClasses.slide + ' ' + classes.item;
@@ -1765,17 +1761,17 @@ LightboxModule = ViewModule.extend({
 				slideClass += ' ' + classes.video;
 			}
 
-			var $slide = $('<div>', { 'class': slideClass });
+			var $slide = $('<div>', { class: slideClass });
 
 			if (slide.video) {
 				$slide.attr('data-elementor-slideshow-video', slide.video);
 
-				var $playIcon = $('<div>', { 'class': classes.playButton }).html($('<i>', { 'class': classes.playButtonIcon }));
+				var $playIcon = $('<div>', { class: classes.playButton }).html($('<i>', { class: classes.playButtonIcon }));
 
 				$slide.append($playIcon);
 			} else {
-				var $zoomContainer = $('<div>', { 'class': 'swiper-zoom-container' }),
-				    $slideImage = $('<img>', { 'class': classes.image + ' ' + classes.preventClose, src: slide.image });
+				var $zoomContainer = $('<div>', { class: 'swiper-zoom-container' }),
+				    $slideImage = $('<img>', { class: classes.image + ' ' + classes.preventClose, src: slide.image });
 
 				$zoomContainer.append($slideImage);
 
@@ -1856,8 +1852,8 @@ LightboxModule = ViewModule.extend({
 		}
 
 		var classes = this.getSettings('classes'),
-		    $videoContainer = jQuery('<div>', { 'class': classes.videoContainer + ' ' + classes.invisible }),
-		    $videoWrapper = jQuery('<div>', { 'class': classes.videoWrapper }),
+		    $videoContainer = jQuery('<div>', { class: classes.videoContainer + ' ' + classes.invisible }),
+		    $videoWrapper = jQuery('<div>', { class: classes.videoWrapper }),
 		    $videoFrame = jQuery('<iframe>', { src: videoURL }),
 		    $playIcon = $activeSlide.children('.' + classes.playButton);
 
@@ -1910,7 +1906,6 @@ LightboxModule = ViewModule.extend({
 		    isClickInsideElementor = !!$target.closest('#elementor').length;
 
 		if (!this.isLightboxLink(element)) {
-
 			if (editMode && isClickInsideElementor) {
 				event.preventDefault();
 			}
@@ -2087,10 +2082,9 @@ module.exports = ViewModule.extend({
 
 			if (isFixed) {
 				correctOffset = containerOffset;
-			} else {
-				if (elementOffset > containerOffset) {
-					correctOffset = elementOffset - containerOffset;
-				}
+			}
+			if (elementOffset > containerOffset) {
+				correctOffset = elementOffset - containerOffset;
 			}
 		}
 

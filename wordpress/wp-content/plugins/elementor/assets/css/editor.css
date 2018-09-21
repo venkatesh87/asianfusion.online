@@ -1,4 +1,4 @@
-/*! elementor - v2.2.1 - 03-09-2018 */
+/*! elementor - v2.2.4 - 20-09-2018 */
 @charset "UTF-8";
 .dialog-widget-content {
   background-color: #fff;
@@ -3349,13 +3349,15 @@ body.elementor-editor-preview #elementor-mode-switcher {
 
 .elementor-template-library-order-label {
   text-transform: uppercase;
-  cursor: pointer;
   padding-right: 22px;
   -webkit-user-select: none;
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none; }
-  .elementor-template-library-order-label:hover {
+
+label.elementor-template-library-order-label {
+  cursor: pointer; }
+  label.elementor-template-library-order-label:hover {
     color: #556068; }
 
 #elementor-template-library-filter {

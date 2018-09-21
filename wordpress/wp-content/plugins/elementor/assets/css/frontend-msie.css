@@ -1,4 +1,4 @@
-/*! elementor - v2.2.1 - 03-09-2018 */
+/*! elementor - v2.2.4 - 20-09-2018 */
 .elementor-msie ul.products, .elementor-msie .elementor-grid {
   display: -webkit-box;
   display: -webkit-flex;
@@ -193,9 +193,4 @@
     padding-right: 10px;
     padding-left: 10px;
     margin-bottom: 20px; }
-  .elementor-msie .elementor-element.elementor-wc-products ul.products .elementor-post, .elementor-msie .elementor-posts .elementor-post {
-    display: -webkit-box;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex; }
 /*# sourceMappingURL=frontend-msie.css.map */

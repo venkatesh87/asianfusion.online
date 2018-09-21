@@ -1,4 +1,4 @@
-/*! elementor - v2.2.1 - 03-09-2018 */
+/*! elementor - v2.2.4 - 20-09-2018 */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -621,7 +621,7 @@ module.exports = Marionette.ItemView.extend({
 	className: 'elementor-templates-modal__header__logo',
 
 	events: {
-		'click': 'onClick'
+		click: 'onClick'
 	},
 
 	templateHelpers: function templateHelpers() {
